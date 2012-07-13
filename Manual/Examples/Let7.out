@@ -1,0 +1,14 @@
+__   __ __  __  ____   ___      _________________________________________
+||   || ||  || ||  || ||__      Hugs 98: Based on the Haskell 98 standard
+||___|| ||__|| ||__||  __||     Copyright (c) 1994-2005
+||---||         ___||           World Wide Web: http://haskell.org/hugs
+||   ||                         Report bugs to: hugs-bugs@haskell.org
+||   || Version: March 2005     _________________________________________
+
+Hugs mode: Restart with command line option +98 for Haskell 98 mode
+
+Type :? for help
+Let7> Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1)
+Let7> Let ("a" :=: Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1)) (Bin (Var "a") Times (Var "a"))
+Let7> Let ("a" :=: Bin (Const 4) Times (Bin (Bin (Const 7) Plus (Const 1)) Minus (Const 1))) (Bin (Var "a") Times (Var "a"))
+Let7> [Leaving Hugs]

@@ -1,0 +1,3 @@
+> Let8>> run expr "let\n    a = 4 * (7 + 1 - 1\n in a * a" :: IO Expr
+> 'Warning: ) inserted'
+> Let ("a" :=: Bin (Const 4) Times (Bin (Bin (Const 7) Plus (Const 1)) Minus (Const 1))) (Bin (Var "a") Times (Var "a"))

@@ -1,0 +1,26 @@
+> module Calc where
+> import Lexer
+> import Result
+>
+> %{
+>
+> Terminal                      =  Numeral {Int}
+>                               |  Addop {Op}
+>                               |  Mulop {Op}
+>                               |  LParen  as "("
+>                               |  RParen  as ")";
+>
+> Nonterminal                   =  expr {Int}
+>                               |  term {Int}
+>                               |  factor {Int};
+>
+> expr    {app op v1 v2}        :  expr {v1}, Addop {op}, term {v2};
+>         {e}                   |  term {e};
+> term    {app op v1 v2}        :  term {v1}, Mulop {op}, factor {v2};
+>         {e}                   |  factor {e};
+> factor  {n}                   :  Numeral {n};
+>         {e}                   |  "(", expr {e}, ")";
+>
+> }%
+>
+> frown _                       =  fail "syntax error"

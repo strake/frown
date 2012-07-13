@@ -1,0 +1,6 @@
+> Let7>> run expr "4 * (7 + 1) - 1" :: IO Expr
+> Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1)
+> Let7>> run expr "let\n    a = 4 * (7 + 1) - 1\n in a * a" :: IO Expr
+> Let ("a" :=: Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1)) (Bin (Var "a") Times (Var "a"))
+> Let7>> run expr "let\n    a = 4 * (7 + 1 - 1\n in a * a" :: IO Expr
+> Let ("a" :=: Bin (Const 4) Times (Bin (Bin (Const 7) Plus (Const 1)) Minus (Const 1))) (Bin (Var "a") Times (Var "a"))

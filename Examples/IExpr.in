@@ -1,0 +1,2 @@
+expr (lexer "a+b*c+d") :: [Expr]
+expr (lexer "a+b c+d") :: [Expr]

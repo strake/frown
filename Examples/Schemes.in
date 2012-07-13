@@ -1,0 +1,4 @@
+expr (lexer "a") :: Maybe Expr
+expr (lexer "a (b, c, d)") :: Maybe Expr
+expr (lexer "a (b c, d e f)") :: Maybe Expr
+expr (lexer "a (b c, d) e (f, g)") :: Maybe Expr

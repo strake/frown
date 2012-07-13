@@ -1,0 +1,15 @@
+__   __ __  __  ____   ___      _________________________________________
+||   || ||  || ||  || ||__      Hugs 98: Based on the Haskell 98 standard
+||___|| ||__|| ||__||  __||     Copyright (c) 1994-2005
+||---||         ___||           World Wide Web: http://haskell.org/hugs
+||   ||                         Report bugs to: hugs-bugs@haskell.org
+||   || Version: March 2005     _________________________________________
+
+Hugs mode: Restart with command line option +98 for Haskell 98 mode
+
+Type :? for help
+List> Just (Call "a" [])
+List> Just (Call "a" [Call "b" []])
+List> Just (Call "a" [Call "b" [Id "c",Id "d"]])
+List> Just (Call "a" [Call "b" [Id "c",Id "d"],Id "e",Call "f" [Id "g"]])
+List> [Leaving Hugs]

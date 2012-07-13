@@ -1,0 +1,75 @@
+The standard example: arithmetic expressions (see dragon book p222).
+
+	frown --debug Expr.lg
+
+Try
+	expr (lexer "a+b*c+d") :: [Expr]
+
+Tracing the parse:
+
+	frown --debug --trace Expr.g
+
+Try
+	expr (lexer "a+b*c+d")
+
+> module Expr
+> where
+> import Char
+>
+> data AddOp                    =  Plus  | Minus
+>                                  deriving (Show)
+> data MulOp                    =  Times | Divide
+>                                  deriving (Show)
+>
+> data Expr                     =  Id String
+>                               |  Add Expr AddOp Expr
+>                               |  Mul Expr MulOp Expr
+>                                  deriving (Show)
+>
+> type Result                   =  []
+>
+> %{
+>
+> Terminal                      =         Ident {String}
+>                               |         Addop {AddOp}
+>                               |         Mulop {MulOp}
+>                               |  "(" =  LPar
+>                               |  ")" =  RPar
+>                               |        *EOF;
+>
+>*expr {Expr};
+> expr {Add e1 op e2}           :  expr {e1}, Addop {op}, term {e2};
+>      {e}                      |  term {e};
+>
+> term {Expr};
+> term {Mul e1 op e2}           :  term {e1}, Mulop {op}, factor {e2};
+>      {e}                      |  factor {e};
+>
+>*factor {Expr};
+> factor {e}                    :  "(", expr {e}, ")";
+>        {Id s}                 |  Ident {s};
+>
+> }%
+>
+> frown ts                      =  fail "syntax error"
+> 
+> data Terminal                 =  Ident String
+>                               |  Addop AddOp
+>                               |  Mulop MulOp
+>                               |  LPar
+>                               |  RPar
+>                               |  EOF
+>                                  deriving (Show)
+>
+> lexer                         :: String -> [Terminal]
+> lexer []                      =  [EOF]
+> lexer ('+' : cs)              =  Addop Plus   : lexer cs
+> lexer ('-' : cs)              =  Addop Minus  : lexer cs
+> lexer ('*' : cs)              =  Mulop Times  : lexer cs
+> lexer ('/' : cs)              =  Mulop Divide : lexer cs
+> lexer ('(' : cs)              =  LPar : lexer cs
+> lexer (')' : cs)              =  RPar : lexer cs
+> lexer (c : cs)
+>     | isAlpha c               =  let (n, cs') = span isAlphaNum cs
+>                                  in  Ident (c : n) : lexer cs'
+>     | otherwise               =  lexer cs

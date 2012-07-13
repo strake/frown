@@ -1,0 +1,63 @@
+This example demonstrates rule schemata.
+
+	frown Tuple.lg
+
+Try
+
+	expr (lexer "(a, b, (c, d), ((e, f), g))") :: Maybe Expr
+
+> module Tuple
+> where
+> import Char
+>
+> data Expr                     =  Id String
+>                               |  Call String [Expr]
+>                               |  Tuple [Expr]
+>                                  deriving (Show)
+>
+> type Result                   =  Maybe
+>
+> %{
+>
+> Terminal                      =         Ident {String}
+>                               |  "(" =  LPar
+>                               |  ")" =  RPar
+>                               |  "," =  Comma;
+>
+> :: expr {Expr};
+> expr {Id s}                   :  Ident {s};
+>      {Tuple es}               |  "(", sepBy expr "," {es}, ")";
+
+Schemes (predefined).
+
+> {-
+> sepBy x sep {[a]}             <- x {a}, sep;
+> sepBy x sep {[]}              :  ;
+>             {as}              |  sepBy1 x sep {as};
+>
+> sepBy1 x sep {[a]}            <- x {a}, sep;
+> sepBy1 x sep {s []}           :  sepBy1' x sep {s};
+>
+> sepBy1' x sep {[a] -> [a]}    <- x {a}, sep;
+> sepBy1' x sep
+>     {\ as -> a : as}          :  x {a};
+>     {\ as -> s (a : as)}      |  sepBy1' x sep {s}, sep, x {a};
+> -}
+
+> }%
+>
+> frown ts                      =  fail "syntax error"
+> 
+
+> data Terminal                 =  Ident String | LPar | RPar | Comma
+>                                  deriving (Show)
+>
+> lexer                         :: String -> [Terminal]
+> lexer []                      =  []
+> lexer ('(' : cs)              =  LPar  : lexer cs
+> lexer (')' : cs)              =  RPar  : lexer cs
+> lexer (',' : cs)              =  Comma : lexer cs
+> lexer (c : cs)
+>     | isAlpha c               =  let (n, cs') = span isAlphaNum cs
+>                                  in  Ident (c : n) : lexer cs'
+>     | otherwise               =  lexer cs

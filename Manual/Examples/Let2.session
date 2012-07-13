@@ -1,0 +1,8 @@
+> Let2>> expr (lexer "4 * (7 + 1) - 1") :: Result Expr
+> Return (Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1))
+> Let2>> expr (lexer "4 * 7 + 1 - 1") :: Result Expr
+> Return (Bin (Bin (Bin (Const 4) Times (Const 7)) Plus (Const 1)) Minus (Const 1))
+> Let2>> expr (lexer "let\n    a = 4 * (7 + 1) - 1\n in a * a") :: Result Expr
+> Return (Let ("a" :=: Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1)) (Bin (Var "a") Times (Var "a")))
+> Let2>> expr (lexer "let\n    a = 4 * (7 + 1 - 1\n in a * a") :: Result Expr
+> Fail "syntax error"

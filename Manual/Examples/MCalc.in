@@ -1,0 +1,3 @@
+expr (lexer "4711")
+expr (lexer "4 * (7 + 1) - 1")
+expr (lexer "4 * (7 + 1 - 1")

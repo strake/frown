@@ -1,0 +1,36 @@
+> module Let1 where
+> import Lexer
+> import Monad
+>
+> data Expr                     =  Const Int | Var String | Bin Expr Op Expr | Let Decl Expr
+>                                  deriving (Show)
+>
+> data Decl                     =  String :=: Expr
+>                                  deriving (Show)
+>
+> %{
+>
+> Terminal                      =  Numeral {Int}
+>                               |  Ident {String}
+>                               |  Addop {Op}
+>                               |  Mulop {Op}
+>                               |  KWLet   as "let"
+>                               |  KWIn    as "in"
+>                               |  Equal   as "="
+>                               |  LParen  as "("
+>                               |  RParen  as ")";
+>
+> expr  {Expr};
+> expr  {Const n}               :  Numeral {n};
+>       {Var s}                 |  Ident {s};
+>       {Bin e1 op e2}          |  expr {e1}, Addop {op}, expr {e2};
+>       {Bin e1 op e2}          |  expr {e1}, Mulop {op}, expr {e2};
+>       {Let d e}               |  "let", decl {d}, "in", expr {e};
+>       {e}                     |  "(", expr {e}, ")";
+>
+> decl  {Decl};
+> decl  {s :=: e}               :  Ident {s}, "=", expr {e};
+>
+> }%
+>
+> frown _                       =  fail "syntax error"

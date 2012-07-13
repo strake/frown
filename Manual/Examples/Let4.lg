@@ -1,0 +1,55 @@
+%if False
+
+> module Let4 where
+> import MLexer1
+>
+> data Expr                     =  Const Int | Var String | Bin Expr Op Expr | Let Decl Expr
+>                                  deriving (Show)
+>
+> data Decl                     =  String :=: Expr
+>                                  deriving (Show)
+>
+> %{
+
+%endif
+
+> Terminal                      =  Numeral {Int}
+>                               |  Ident {String}
+>                               |  Addop {Op}
+>                               |  Mulop {Op}
+>                               |  KWLet   as "let"
+>                               |  KWIn    as "in"
+>                               |  Equal   as "="
+>                               |  LParen  as "("
+>                               |  RParen  as ")"
+>                               |  *EOF;
+
+%if False
+
+> left     6 Addop {Op};
+> left     7 Mulop {Op};
+> nonassoc 0 "in";
+>
+> expr  {Expr};
+> expr  {Const n}               :  Numeral {n};
+>       {Var s}                 |  Ident {s};
+>       {Bin e1 op e2}          |  expr {e1}, Addop {op}, expr {e2};
+>       {Bin e1 op e2}          |  expr {e1}, Mulop {op}, expr {e2};
+>       {Let d e}               |  "let", decl {d}, "in", expr {e};
+>       {e}                     |  "(", expr {e}, ")";
+>
+> decl  {Decl};
+> decl  {s :=: e}               :  Ident {s}, "=", expr {e};
+>
+> }%
+
+%endif
+and we have to provide a type signature for the generated parser (in
+the Haskell section).
+
+> expr                          :: (Monad m) => Lex m Expr
+>
+
+The type signature is necessary to avoid an `unresolved top-level
+overloading' error (the monomorphism restriction strikes again).
+

@@ -1,0 +1,45 @@
+{-
+
+	frown --code=stackless --optimize Ross.lg
+
+Try
+
+	expr (lexer "f(g(a))(h(b)(c))")
+
+-}
+
+> module Ross
+> where
+> import Char
+>
+> data Expr  =  Ident  String
+>            |  Apply  Expr Expr
+>               deriving (Show)
+>
+> data Terminal  =  IDENT String | LPAR | RPAR
+>
+> type Result  =  []
+>
+> %{
+>
+> Terminal  =  IDENT {String}
+>           |  LPAR  as "("
+>           |  RPAR  as ")";
+>
+> Nonterminal  =  expr {Expr};
+>
+> expr  {Ident x}    :  IDENT {x};
+>       {Apply t u}  |  expr {t}, "(", expr {u}, ")";
+>      
+> }%
+>
+> frown ts  =  fail "syntax error"
+>
+> lexer              ::  String -> [Terminal]
+> lexer []           =   []
+> lexer ('(' : cs)   =   LPAR : lexer cs
+> lexer (')' : cs)   =   RPAR : lexer cs
+> lexer (c : cs)
+>   | isAlpha c      =   IDENT (c : s) : lexer cs'
+>   | otherwise      =   lexer cs
+>   where  (s, cs')  =   span isAlphaNum cs

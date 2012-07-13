@@ -1,0 +1,19 @@
+> module Paren2 where
+> import Result
+>
+> data Tree                     =  Leaf | Fork Tree Tree
+>                                  deriving (Show)
+>
+> %{
+>
+> Terminal                      =  '(' | ')';
+>
+> Nonterminal                   =  paren {Tree};
+>
+> paren  {Leaf}                 :  ;
+>        {Fork t u}             |  paren {t}, '(', paren {u}, ')';
+>       
+>
+> }%
+>
+> frown _                       =  fail "syntax error"

@@ -1,0 +1,42 @@
+%if False
+
+> module MCalc where
+> import Lexer
+
+%endif
+
+> trace                         :: Op -> (Int -> Int -> IO Int)
+> trace op v1 v2                =  putStrLn s >> return v
+>     where v                   =  app op v1 v2
+>           s                   =  show v1 ++ name op ++ show v2 ++ "=" ++ show v
+
+%if False
+
+> %{
+>
+> Terminal                      =  Numeral {Int}
+>                               |  Addop {Op}
+>                               |  Mulop {Op}
+>                               |  LParen as "("
+>                               |  RParen as ")";
+>
+> Nonterminal                   =  expr {Int}
+>                               |  term {Int}
+>                               |  factor {Int};
+
+%endif
+
+> expr {% trace op v1 v2}       :  expr {v1}, Addop {op}, term {v2};
+> term {% trace op v1 v2}       :  term {v1}, Mulop {op}, factor {v2};
+
+%if False
+
+> expr {e}                      :  term {e};
+> term {e}                      :  factor {e};
+> factor {e}                    :  "(", expr {e}, ")";
+>        {n}                    |  Numeral {n};
+> }%
+>
+> frown _                       =  fail "syntax error"
+
+%endif

@@ -1,0 +1,10 @@
+> Let3>> eval "2 + 7" :: IO Int
+> 9
+> Let3>> eval "a + b" :: IO Int
+> 0
+> Let3>> eval "let x = 4 in x * x" :: IO Int
+> 16
+> Let3>> eval "let x = 4 in x * x + x" :: IO Int
+> 20
+> Let3>> eval "(let x = 4 in x * x) + x" :: IO Int
+> 16

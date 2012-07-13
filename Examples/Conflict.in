@@ -1,0 +1,3 @@
+s "cb" >>= print
+s "aacbb" >>= print
+s "aacb" >>= print

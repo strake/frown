@@ -1,0 +1,60 @@
+Frown, an LALR(k) Parser Generator for Haskell 98
+=================================================
+
+Version
+-------
+
+0.6 (beta release).
+
+Prerequisites
+-------------
+
+You require a recent version of GHC, ie >=5.02 (due to some minor
+changes to Haskell 98).
+
+Installation (make)
+-------------------
+
+Edit the makefile to specify the destination directories for the
+binary and the documentation.
+
+make            compiles
+make install	compiles and installs
+make test	runs several tests (*)
+
+(*) For `Loop.g' and `code=stackless' there is a known difference (the
+generated parser is less strict than the standard one). Also,
+`Empty.g' does not work yet. Finally, in the case of a syntax error
+there may be a difference between optimized and unoptimized parsers if
+monadic actions are involved (the former possibly executes more
+reductions). So error reports may differ.
+
+Installation (cabal)
+--------------------
+
+Alternatively, you can build Frown using Cabal (>=1.1.3, Haskell's
+Common Architecture for Building Applications and Libraries).
+
+Globally:
+
+runhaskell Setup.hs configure --ghc
+runhaskell Setup.hs build
+runhaskell Setup.hs install
+
+Locally:
+
+runhaskell Setup.hs configure --ghc --prefix=$HOME
+runhaskell Setup.hs build
+runhaskell Setup.hs install --user
+
+Usage
+-----
+
+The call
+
+	frown -h
+
+displays the various options to frown. For more information consult
+the manual.
+
+Happy frowning, Ralf Hinze

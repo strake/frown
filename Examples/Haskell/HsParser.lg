@@ -1,0 +1,1133 @@
+-----------------------------------------------------------------------------
+
+(c) Simon Marlow, Sven Panne 1997-2000
+
+Haskell grammar.
+-----------------------------------------------------------------------------
+-- Adapted to Frown, Ralf Hinze, 2001
+
+Compile me with
+
+	frown --lexer --expected --optimize --signature HsParser.lg
+	ghc -c -v -Rghc-timing HsParser.hs +RTS -c -M150M
+
+	frown --lexer --expected --signature --optimize --code=compact HsParser.lg
+	ghc -c -v -Rghc-timing HsParser.hs +RTS -c -M150M
+	ghc -c -v -O -Rghc-timing HsParser.hs +RTS -c -M150M
+
+	frown --lexer --expected --signature --optimize --code=stackless HsParser.lg
+	ghc -c -v -Rghc-timing HsParser.hs +RTS -c -M150M
+	ghc -c -v -O -Rghc-timing HsParser.hs +RTS -c -M150M
+
+	frown --lexer --expected --signature --optimize --code=gvstack HsParser.lg
+
+ToDo: Is (,) valid as exports? We don't allow it.
+ToDo: Check exactly which names must be qualified with Prelude (commas and friends)
+ToDo: Inst (MPCs?)
+ToDo: Polish constr a bit
+ToDo: Ugly: infixexp is used for lhs, pat, exp0, ...
+ToDo: Differentiate between record updates and labeled construction.
+
+Conflicts: 10 shift/reduce
+
+7 for abiguity in 'if x then y else z + 1'
+	(shift parses as 'if x then y else (z + 1)', as per longest-parse rule)
+1 for ambiguity in 'if x then y else z :: T'
+	(shift parses as 'if x then y else (z :: T)', as per longest-parse rule)
+2 for ambiguity in 'case x of y :: a -> b'
+	(don't know whether to reduce 'a' as a btype or shift the '->'.
+	 conclusion:  bogus expression anyway, doesn't matter)
+
+> module HsParser (xmodule) where
+> 
+> import HsSyn
+> import HsParseMonad           hiding (  Result  )
+> import HsLexer
+> import HsParseUtils
+> import List
+> import Monad
+>
+> type Terminal                 =  Token
+> type Result a                 =  Lex a
+> 
+> -- frown t                       =  parseError ("syntax error: " ++ show t)
+> frown la t                    =  parseError ("syntax error: " ++ show t
+>                                              ++ "\nexpected: " ++ concat (intersperse ", " (map wrap la)))
+> 
+> wrap                          :: String -> String
+> wrap ""                       =  ""
+> wrap s
+>     | head s == '<' && last s == '>'
+>                               =  s
+>     | otherwise               =  "`" ++ s ++ "'"
+>
+> %{
+> 
+> Terminal =  VarId {String}            as "<varid>"
+>          |  QVarId {(String,String)}  as "<qualified varid> "
+>          |  ConId {String}            as "<conid>"
+>          |  QConId {(String,String)}  as "<qualified conid>"
+>          |  VarSym {String}           as "<varsym>"
+>          |  QVarSym {(String,String)} as "<qualified varsym>"
+>          |  ConSym {String}           as "<consym>"
+>          |  QConSym {(String,String)} as "<qualified consym>"
+>          |  IntTok {String}           as "<integer numeral>"
+>          |  FloatTok {String}         as "<float numeral>"
+>          |  Character {Char}          as "<char literal>"
+>          |  StringTok {String}        as "<string literal>"
+
+Symbols.
+
+>          |  LeftParen   as "("
+>          |  RightParen  as ")"
+>          |  SemiColon   as ";"
+>          |  LeftCurly   as "{"
+>          |  RightCurly  as "}"
+>          |  VRightCurly as "virtual }"
+>          |  LeftSquare  as "["
+>          |  RightSquare as "]"
+>          |  Comma       as ","
+>          |  Underscore  as "_"
+>          |  BackQuote   as "`"
+
+Reserved operators.
+
+>          |  DotDot      as ".."
+>          |  DoubleColon as "::"
+>          |  Equals      as "="
+>          |  Backslash   as "\\"
+>          |  Bar         as "|"
+>          |  LeftArrow   as "<-"
+>          |  RightArrow  as "->"
+>          |  At          as "@"
+>          |  Tilde       as "~"
+>          |  DoubleArrow as "=>"
+>          |  Minus       as "-"
+>          |  Exclamation as "!"
+
+Reserved Ids.
+
+>          |  KW_As        as "as"
+>          |  KW_Case      as "case"
+>          |  KW_Class     as "class"
+>          |  KW_Data      as "data"
+>          |  KW_Default   as "default"
+>          |  KW_Deriving  as "deriving"
+>          |  KW_Do        as "do"
+>          |  KW_Else      as "else"
+>          |  KW_Hiding    as "hiding"
+>          |  KW_If        as "if"
+>          |  KW_Import    as "import"
+>          |  KW_In        as "in"
+>          |  KW_Infix     as "infix"
+>          |  KW_InfixL    as "infixl"
+>          |  KW_InfixR    as "infixr"
+>          |  KW_Instance  as "instance"
+>          |  KW_Let       as "let"
+>          |  KW_Module    as "module"
+>          |  KW_NewType   as "newtype"
+>          |  KW_Of        as "of"
+>          |  KW_Then      as "then"
+>          |  KW_Type      as "type"
+>          |  KW_Where     as "where"
+>          |  KW_Qualified as "qualified"
+>
+>          | *EOF as "<end of input>";
+> 
+> {-
+> Nonterminal =  xmodule {HsModule}
+>             |  body {([HsImportDecl],[HsDecl])}
+>             |  bodyaux {([HsImportDecl],[HsDecl])}
+>             |  optsemi
+>             |  maybeexports {Maybe [HsExportSpec]}
+>             |  exports {[HsExportSpec]}
+>             |  maybecomma
+>             |  exportlist {[HsExportSpec]}
+>             |  export {HsExportSpec}
+>             |  qcnames {[HsQName]}
+>             |  qcname {HsQName}
+>             |  impdecls {[HsImportDecl]}
+>             |  impdecl {HsImportDecl}
+>             |  optqualified {Bool}
+>             |  maybeas {Maybe Module}
+>             |  maybeimpspec {Maybe (Bool, [HsImportSpec])}
+>             |  impspec {(Bool, [HsImportSpec])}
+>             |  importlist {[HsImportSpec]}
+>             |  import {HsImportSpec}
+>             |  cnames {[HsName]}
+>             |  cname {HsName}
+>             |  fixdecl {HsDecl}
+>             |  precedence {Int}
+>             |  infix {HsAssoc}
+>             |  ops {[HsName]}
+>             |  topdecls {[HsDecl]}
+>             |  topdecl {HsDecl}
+>             |  decls {[HsDecl]}
+>             |  decls1 {[HsDecl]}
+>             |  decl {HsDecl}
+>             |  decllist {[HsDecl]}
+>             |  signdecl {HsDecl}
+>             |  vars {[HsName]}
+>             |  type {HsType}
+>             |  btype {HsType}
+>             |  atype {HsType}
+>             |  gtycon {HsQName}
+>             |  ctype {HsQualType}
+>             |  types {[HsType]}
+>             |  simpletype {(HsName, [HsName])}
+>             |  tyvars {[HsName]}
+>             |  constrs {[HsConDecl]}
+>             |  constr {HsConDecl}
+>             |  scontype {(HsName, [HsBangType])}
+>             |  scontype1 {(HsName, [HsBangType])}
+>             |  satype {HsBangType}
+>             |  sbtype {HsBangType}
+>             |  fielddecls {[([HsName],HsBangType)]}
+>             |  fielddecl {([HsName],HsBangType)}
+>             |  stype {HsBangType}
+>             |  deriving {[HsQName]}
+>             |  dclasses {[HsQName]}
+>             |  optcbody {[HsDecl]}
+>             |  cbody {[HsDecl]}
+>             |  cmethods {[HsDecl]}
+>             |  cdefaults {[HsDecl]}
+>             |  optvaldefs {[HsDecl]}
+>             |  valdefs {[HsDecl]}
+>             |  valdef {HsDecl}
+>             |  rhs {HsRhs}
+>             |  gdrhs {[HsGuardedRhs]}
+>             |  gdrh {HsGuardedRhs}
+>             |  exp {HsExp}
+>             |  infixexp {HsExp}
+>             |  exp10 {HsExp}
+>             |  fexp {HsExp}
+>             |  aexps {[HsExp]}
+>             |  aexp {HsExp}
+>             |  aexp1 {HsExp}
+>             |  commas {Int}
+>             |  texps {[HsExp]}
+>             |  listexp {HsExp}
+>             |  lexps {[HsExp]}
+>             |  quals {[HsStmt]}
+>             |  qual {HsStmt}
+>             |  altslist {[HsAlt]}
+>             |  alts {[HsAlt]}
+>             |  alt {HsAlt}
+>             |  ralt {HsGuardedAlts}
+>             |  gdpats {[HsGuardedAlt]}
+>             |  gdpat {HsGuardedAlt}
+>             |  stmtlist {[HsStmt]}
+>             |  stmts {[HsStmt]}
+>             |  stmts1 {[HsStmt]}
+>             |  fbinds {[HsFieldUpdate]}
+>             |  fbind {HsFieldUpdate}
+>             |  gcon {HsExp}
+>             |  var {HsName}
+>             |  qvar {HsQName}
+>             |  con {HsName}
+>             |  qcon {HsQName}
+>             |  varop {HsName}
+>             |  qvarop {HsQName}
+>             |  qvaropm {HsQName}
+>             |  conop {HsName}
+>             |  qconop {HsQName}
+>             |  op {HsName}
+>             |  qop {HsExp}
+>             |  qopm {HsExp}
+>             |  qvarid {HsQName}
+>             |  varid {HsName}
+>             |  qconid {HsQName}
+>             |  conid {HsName}
+>             |  qconsym {HsQName}
+>             |  consym {HsName}
+>             |  qvarsym {HsQName}
+>             |  qvarsymm {HsQName}
+>             |  varsym {HsName}
+>             |  varsymm {HsName}
+>             |  qvarsym1 {HsQName}
+>             |  literal {HsExp}
+>             |  srcloc {SrcLoc}
+>             |  close {()}
+>             |  layout_on {()}
+>             |  modid {Module}
+>             |  tyconorcls {HsName}
+>             |  tycon {HsName}
+>             |  qtyconorcls {HsQName}
+>             |  qtycls {HsQName}
+>             |  tyvar {HsName};
+> -}
+
+Module Header.
+
+> xmodule {HsModule};
+> xmodule {mkModule x2 x3 x5}
+>         :  KW_Module, modid {x2}, maybeexports {x3}, KW_Where, body {x5};
+>        {mkModule main_mod Nothing x1}
+>         |  body {x1};
+> 
+> body {([HsImportDecl],[HsDecl])};
+> body {x3}
+>         :  "{", bodyaux {x3}, "}";
+>      {x2}
+>         |  layout_on {_}, bodyaux {x2}, close {_};
+> 
+> bodyaux {([HsImportDecl],[HsDecl])};
+> bodyaux {(x1, x3)}
+>         :  impdecls {x1}, ";", topdecls {x3}, optsemi;
+>         {([], x1)}
+>         |  topdecls {x1}, optsemi;
+>         {(x1, [])}
+>         |  impdecls {x1}, optsemi;
+>         {([], [])}
+>         |  ;
+> 
+> optsemi;
+> optsemi
+>         :  ";";
+>         |  ;
+
+The Export List.
+
+> maybeexports {Maybe [HsExportSpec]};
+> maybeexports {Just x1}
+>         :  exports {x1};
+>              {Nothing}
+>         |  ;
+> 
+> exports {[HsExportSpec]};
+> exports {reverse x2}
+>         :  "(", exportlist {x2}, maybecomma, ")";
+>         {[]}
+>         |  "(", ")";
+> 
+> maybecomma;
+> maybecomma
+>         :  ",";
+>         |  ;
+> 
+> exportlist {[HsExportSpec]};
+> exportlist {x3 : x1}
+>         :  exportlist {x1}, ",", export {x3};
+>            {[x1]}
+>         |  export {x1};
+> 
+> export {HsExportSpec};
+> export {HsEVar x1}
+>         :  qvar {x1};
+>        {HsEAbs x1}
+>         |  qtyconorcls {x1};
+>        {HsEThingAll x1}
+>         |  qtyconorcls {x1}, "(", DotDot, ")";
+>        {HsEThingWith x1 []}
+>         |  qtyconorcls {x1}, "(", ")";
+>        {HsEThingWith x1 (reverse x3)}
+>         |  qtyconorcls {x1}, "(", qcnames {x3}, ")";
+>        {HsEModuleContents x2}
+>         |  KW_Module, modid {x2};
+> 
+> qcnames {[HsQName]};
+> qcnames {x3 : x1}
+>         :  qcnames {x1}, ",", qcname {x3};
+>         {[x1]}
+>         |  qcname {x1};
+> 
+> qcname {HsQName};
+> qcname {x1}
+>         :  qvar {x1};
+>        {x1}
+>         |  qcon {x1};
+
+Import Declarations.
+
+> impdecls {[HsImportDecl]};
+> impdecls {x3 : x1}
+>         :  impdecls {x1}, ";", impdecl {x3};
+>          {[x1]}
+>         |  impdecl {x1};
+> 
+> impdecl {HsImportDecl};
+> impdecl {HsImportDecl x2 x4 x3 x5 x6}
+>         :  KW_Import, srcloc {x2}, optqualified {x3}, modid {x4}, maybeas {x5}, maybeimpspec {x6};
+> 
+> optqualified {Bool};
+> optqualified {True}
+>         :  KW_Qualified;
+>              {False}
+>         |  ;
+> 
+> maybeas {Maybe Module};
+> maybeas {Just x2}
+>         :  KW_As, modid {x2};
+>         {Nothing}
+>         |  ;
+> 
+> maybeimpspec {Maybe (Bool, [HsImportSpec])};
+> maybeimpspec {Just x1}
+>         :  impspec {x1};
+>              {Nothing}
+>         |  ;
+> 
+> impspec {(Bool, [HsImportSpec])};
+> impspec {(False, reverse x2)}
+>         :  "(", importlist {x2}, maybecomma, ")";
+>         {(True,  reverse x3)}
+>         |  KW_Hiding, "(", importlist {x3}, maybecomma, ")";
+> 
+> importlist {[HsImportSpec]};
+> importlist {x3 : x1}
+>         :  importlist {x1}, ",", import {x3};
+>            {[x1]}
+>         |  import {x1};
+> 
+> import {HsImportSpec};
+> import {HsIVar x1}
+>         :  var {x1};
+>        {HsIAbs x1}
+>         |  tyconorcls {x1};
+>        {HsIThingAll x1}
+>         |  tyconorcls {x1}, "(", DotDot, ")";
+>        {HsIThingWith x1 []}
+>         |  tyconorcls {x1}, "(", ")";
+>        {HsIThingWith x1 (reverse x3)}
+>         |  tyconorcls {x1}, "(", cnames {x3}, ")";
+> 
+> cnames {[HsName]};
+> cnames {x3 : x1}
+>         :  cnames {x1}, ",", cname {x3};
+>        {[x1]}
+>         |  cname {x1};
+>
+> cname {HsName};
+> cname {x1}
+>         :  var {x1};
+>       {x1}
+>         |  con {x1};
+
+Fixity Declarations.
+
+> fixdecl {HsDecl};
+> fixdecl {HsInfixDecl x1 x2 x3 (reverse x4)}
+>         :  srcloc {x1}, infix {x2}, precedence {x3}, ops {x4};
+> 
+> precedence {Int};
+> precedence {9}
+>         :  ;
+>      {% checkPrec x1 >>= \p -> return (fromInteger (readInteger p))}
+>         |  IntTok {x1};
+> 
+> infix {HsAssoc};
+> infix {HsAssocNone}
+>         :  KW_Infix;
+>       {HsAssocLeft}
+>         |  KW_InfixL;
+>       {HsAssocRight}
+>         |  KW_InfixR;
+> 
+> ops {[HsName]};
+> ops {x3 : x1}
+>         :  ops {x1}, ",", op {x3};
+>     {[x1]}
+>         |  op {x1};
+
+Top-Level Declarations.
+
+Note: The report allows topdecls to be empty. This would result in
+another shift/reduce-conflict, so we don't handle this case here, but
+in bodyaux.
+
+> topdecls {[HsDecl]};
+> topdecls {x3 : x1}
+>         :  topdecls {x1}, ";", topdecl {x3};
+>          {[x1]}
+>         |  topdecl {x1};
+> 
+> topdecl {HsDecl};
+> topdecl {HsTypeDecl x3 (fst x2) (snd x2) x5}
+>         :  KW_Type, simpletype {x2}, srcloc {x3}, Equals, type {x5};
+>         {% checkDataHeader x2 >>= \(cs,c,t) -> return (HsDataDecl x3 cs c t (reverse x5) x6)}
+>         |  KW_Data, ctype {x2}, srcloc {x3}, Equals, constrs {x5}, deriving {x6};
+>         {% checkDataHeader x2 >>= \(cs,c,t) -> return (HsNewTypeDecl x3 cs c t x5 x6)}
+>         |  KW_NewType, ctype {x2}, srcloc {x3}, Equals, constr {x5}, deriving {x6};
+>         {HsClassDecl x2 x3 x4}
+>         |  KW_Class, srcloc {x2}, ctype {x3}, optcbody {x4};
+>         {HsInstDecl x2 x3 x4}
+>         |  KW_Instance, srcloc {x2}, ctype {x3}, optvaldefs {x4};
+>         {HsDefaultDecl x2 x3}
+>         |  KW_Default, srcloc {x2}, type {x3};
+>         {x1}
+>         |  decl {x1};
+> 
+> decls {[HsDecl]};
+> decls {reverse x1}
+>         :  decls1 {x1}, optsemi;
+>       {[]}
+>         |  optsemi;
+> 
+> decls1 {[HsDecl]};
+> decls1 {x3 : x1}
+>         :  decls1 {x1}, ";", decl {x3};
+>        {[x1]}
+>         |  decl {x1};
+> 
+> decl {HsDecl};
+> decl {x1}
+>         :  signdecl {x1};
+>      {x1}
+>         |  fixdecl {x1};
+>      {x1}
+>         |  valdef {x1};
+> 
+> decllist {[HsDecl]};
+> decllist {x3}
+>         :  "{", decls {x3}, "}";
+>          {x2}
+>         |  layout_on {_}, decls {x2}, close {_};
+> 
+> signdecl {HsDecl};
+> signdecl {HsTypeSig x2 (reverse x1) x4}
+>         :  vars {x1}, srcloc {x2}, DoubleColon, ctype {x4};
+
+ATTENTION: Dirty Hackery Ahead! If the second alternative of vars is
+var instead of qvar, we get another shift/reduce-conflict. Consider
+the following programs:
+
+   { (+) :: ... }          only var
+   { (+) x y  = ... }      could (incorrectly) be qvar
+
+We re-use expressions for patterns, so a qvar would be allowed in
+patterns instead of a var only (which would be correct). But deciding
+what the + is, would require more lookahead. So let's check for
+ourselves ...
+
+> vars {[HsName]};
+> vars {x3 : x1}
+>         :  vars {x1}, ",", var {x3};
+>      {% checkUnQual x1 >>= \n -> return [n]}
+>         |  qvar {x1};
+
+Types.
+
+> type {HsType};
+> type {HsTyFun x1 x3}
+>         :  btype {x1}, RightArrow, type {x3};
+>      {x1}
+>         |  btype {x1};
+> 
+> btype {HsType};
+> btype {HsTyApp x1 x2}
+>         :  btype {x1}, atype {x2};
+>       {x1}
+>         |  atype {x1};
+> 
+> atype {HsType};
+> atype {HsTyCon x1}
+>         :  gtycon {x1};
+>       {HsTyVar x1}
+>         |  tyvar {x1};
+>       {HsTyTuple (reverse x2)}
+>         |  "(", types {x2}, ")";
+>       {HsTyApp list_tycon x2}
+>         |  "[", type {x2}, "]";
+>       {x2}
+>         |  "(", type {x2}, ")";
+> 
+> gtycon {HsQName};
+> gtycon {x1}
+>         :  qconid {x1};
+>        {unit_tycon_name}
+>         |  "(", ")";
+>        {fun_tycon_name}
+>         |  "(", RightArrow, ")";
+>        {list_tycon_name}
+>         |  "[", "]";
+>        {tuple_tycon_name x2}
+>         |  "(", commas {x2}, ")";
+
+(Slightly edited) Comment from GHC's hsparser.y:
+"context => type" vs "type" is a problem, because you can't
+distinguish between
+
+	foo :: (Baz a, Baz a)
+	bar :: (Baz a, Baz a) => [a] -> [a] -> [a]
+
+with one token of lookahead.  The HACK is to parse the context as a
+btype (more specifically as a tuple type), then check that it has the
+right form C a, or (C1 a, C2 b, ... Cn z) and convert it into a
+context.  Blaach!
+
+> ctype {HsQualType};
+> ctype {% checkContext x1 >>= \c -> return (HsQualType c x3)}
+>         :  btype {x1}, DoubleArrow, type {x3};
+>       {HsUnQualType x1}
+>         |  type {x1};
+> 
+> types {[HsType]};
+> types {x3 : x1}
+>         :  types {x1}, ",", type {x3};
+>       {[x3, x1]}
+>         |  type {x1}, ",", type {x3};
+> 
+> simpletype {(HsName, [HsName])};
+> simpletype {(x1,reverse x2)}
+>         :  tycon {x1}, tyvars {x2};
+> 
+> tyvars {[HsName]};
+> tyvars {x2 : x1}
+>         :  tyvars {x1}, tyvar {x2};
+>        {[]}
+>         |  ;
+
+Datatype declarations.
+
+> constrs {[HsConDecl]};
+> constrs {x3 : x1}
+>         :  constrs {x1}, Bar, constr {x3};
+>         {[x1]}
+>         |  constr {x1};
+> 
+> constr {HsConDecl};
+> constr {HsConDecl x1 (fst x2) (snd x2)}
+>         :  srcloc {x1}, scontype {x2};
+>        {HsConDecl x1 x3 [x2,x4]}
+>         |  srcloc {x1}, sbtype {x2}, conop {x3}, sbtype {x4};
+>        {HsRecDecl x1 x2 (reverse x5)}
+>         |  srcloc {x1}, con {x2}, "{", fielddecls {x5}, "}";
+>
+> scontype {(HsName, [HsBangType])};
+> scontype {% splitTyConApp x1 >>= \(c,ts) -> return (c,map HsUnBangedTy ts)}
+>         :  btype {x1};
+>          {x1}
+>         |  scontype1 {x1};
+> 
+> scontype1 {(HsName, [HsBangType])};
+> scontype1 {% splitTyConApp x1 >>= \(c,ts) -> return (c,map HsUnBangedTy ts ++ [HsBangedTy x3])}
+>         :  btype {x1}, Exclamation, atype {x3};
+>           {(fst x1, snd x1 ++ [x2] )}
+>         |  scontype1 {x1}, satype {x2};
+> 
+> satype {HsBangType};
+> satype {HsUnBangedTy x1}
+>         :  atype {x1};
+>        {HsBangedTy   x2}
+>         |  Exclamation, atype {x2};
+> 
+> sbtype {HsBangType};
+> sbtype {HsUnBangedTy x1}
+>         :  btype {x1};
+>        {HsBangedTy   x2}
+>         |  Exclamation, atype {x2};
+> 
+> fielddecls {[([HsName],HsBangType)]};
+> fielddecls {x3 : x1}
+>         :  fielddecls {x1}, ",", fielddecl {x3};
+>            {[x1]}
+>         |  fielddecl {x1};
+> 
+> fielddecl {([HsName],HsBangType)};
+> fielddecl {(reverse x1, x3)}
+>         :  vars {x1}, DoubleColon, stype {x3};
+> 
+> stype {HsBangType};
+> stype {HsUnBangedTy x1}
+>         :  type {x1};
+>       {HsBangedTy   x2}
+>         |  Exclamation, atype {x2};
+> 
+> deriving {[HsQName]};
+> deriving {[]}
+>         :  ;
+>          {[x2]}
+>         |  KW_Deriving, qtycls {x2};
+>          {[]}
+>         |  KW_Deriving, "(", ")";
+>          {reverse x3}
+>         |  KW_Deriving, "(", dclasses {x3}, ")";
+> 
+> dclasses {[HsQName]};
+> dclasses {x3 : x1}
+>         :  dclasses {x1}, ",", qtycls {x3};
+>          {[x1]}
+>         |  qtycls {x1};
+
+Class declarations.
+
+> optcbody {[HsDecl]};
+> optcbody {x4}
+>         :  KW_Where, "{", cbody {x4}, "}";
+>          {x3}
+>         |  KW_Where, layout_on {_}, cbody {x3}, close {_};
+>          {[]}
+>         |  ;
+> 
+> cbody {[HsDecl]};
+> cbody {reverse x1 ++ reverse x3}
+>         :  cmethods {x1}, ";", cdefaults {x3}, optsemi;
+>       {reverse x1}
+>         |  cmethods {x1}, optsemi;
+>       {[]}
+>         |  optsemi;
+> 
+> cmethods {[HsDecl]};
+> cmethods {x3 : x1}
+>         :  cmethods {x1}, ";", signdecl {x3};
+>          {[x1]}
+>         |  signdecl {x1};
+> 
+> cdefaults {[HsDecl]};
+> cdefaults {x3 : x1}
+>         :  cdefaults {x1}, ";", valdef {x3};
+>           {[x1]}
+>         |  valdef {x1};
+
+Instance declarations.
+
+> optvaldefs {[HsDecl]}; 
+> optvaldefs {x4}
+>         :  KW_Where, "{", valdefs {x4}, "}";
+>            {x3}
+>         |  KW_Where, layout_on {_}, valdefs {x3}, close {_};
+>            {[]}
+>         |  ;
+
+Recycling ...
+
+> valdefs {[HsDecl]};
+> valdefs {reverse x1}
+>         :  cdefaults {x1}, optsemi;
+>         {[]}
+>         |  optsemi;
+
+Value definitions.
+
+> valdef {HsDecl};
+> valdef {% checkValDef (x2, x1, x3, [])}
+>         :  infixexp {x1}, srcloc {x2}, rhs {x3};
+>        {% checkValDef (x2, x1, x3, x5)}
+>         |  infixexp {x1}, srcloc {x2}, rhs {x3}, KW_Where, decllist {x5};
+> 
+> rhs {HsRhs};
+> rhs {% checkExpr x2 >>= \e -> return (HsUnGuardedRhs e)}
+>         :  Equals, exp {x2};
+>     {HsGuardedRhss  (reverse x1)}
+>         |  gdrhs {x1};
+> 
+> gdrhs {[HsGuardedRhs]};
+> gdrhs {x2 : x1}
+>         :  gdrhs {x1}, gdrh {x2};
+>       {[x1]}
+>         |  gdrh {x1};
+> 
+> gdrh {HsGuardedRhs};
+> gdrh {% checkExpr x2 >>= \g -> checkExpr x5 >>= \e -> return (HsGuardedRhs x3 g e)}
+>         :  Bar, exp {x2}, srcloc {x3}, Equals, exp {x5};
+
+Expressions.
+
+> exp {HsExp};
+> exp {HsExpTypeSig x3 x1 x4}
+>         :  infixexp {x1}, DoubleColon, srcloc {x3}, ctype {x4};
+>     {x1}
+>         |  infixexp {x1};
+> 
+> infixexp {HsExp};
+> infixexp {x1}
+>         :  exp10 {x1};
+>          {HsInfixApp x1 x2 x3}
+>         |  infixexp {x1}, qop {x2}, exp10 {x3};
+> 
+> exp10 {HsExp};
+> exp10 {% checkPatterns (reverse x2) >>= \ps -> return (HsLambda ps x4)}
+>         :  Backslash, aexps {x2}, RightArrow, exp {x4};
+>       {HsLet x2 x4}
+>         |  KW_Let, decllist {x2}, KW_In, exp {x4};
+>       {HsIf x2 x4 x6}
+>         |  KW_If, exp {x2}, KW_Then, exp {x4}, KW_Else, exp {x6};
+>       {HsCase x2 x4}
+>         |  KW_Case, exp {x2}, KW_Of, altslist {x4};
+>       {HsNegApp x2}
+>         |  Minus, fexp {x2};
+>       {HsDo x2}
+>         |  KW_Do, stmtlist {x2};
+>       {x1}
+>         |  fexp {x1};
+> 
+> fexp {HsExp};
+> fexp {HsApp x1 x2}
+>         :  fexp {x1}, aexp {x2};
+>      {x1}
+>         |  aexp {x1};
+> 
+> aexps {[HsExp]};
+> aexps {x2 : x1}
+>         :  aexps {x1}, aexp {x2};
+>       {[x1]}
+>         |  aexp {x1};
+
+UGLY: Because patterns and expressions are mixed, aexp has to be split
+into two rules: One left-recursive and one right-recursive. Otherwise
+we get two reduce/reduce-errors (for as-patterns and irrefutable
+patters).
+
+Note: The first alternative of aexp is not neccessarily a record
+update, it could be a labeled construction, too.
+
+> aexp {HsExp};
+> aexp {% mkRecConstrOrUpdate x1 (reverse x4)}
+>         :  aexp {x1}, "{", fbinds {x4}, "}";
+>      {x1}
+>         |  aexp1 {x1};
+
+Even though the variable in an as-pattern cannot be qualified, we use
+qvar here to avoid a shift/reduce conflict, and then check it
+ourselves (as for vars above).
+
+> aexp1 {HsExp};
+> aexp1 {HsVar x1}
+>         :  qvar {x1};
+>       {x1}
+>         |  gcon {x1};
+>       {x1}
+>         |  literal {x1};
+>       {HsParen x2}
+>         |  "(", exp {x2}, ")";
+>       {HsTuple (reverse x2)}
+>         |  "(", texps {x2}, ")";
+>       {x2}
+>         |  "[", listexp {x2}, "]";
+>       {HsLeftSection x3 x2}
+>         |  "(", infixexp {x2}, qop {x3}, ")";
+>       {HsRightSection x3 x2}
+>         |  "(", qopm {x2}, infixexp {x3}, ")";
+>       {% checkUnQual x1 >>= \n -> return (HsAsPat n x3)}
+>         |  qvar {x1}, At, aexp1 {x3};
+>       {HsWildCard}
+>         |  "_";
+>       {HsIrrPat x2}
+>         |  Tilde, aexp1 {x2};
+> 
+> commas {Int};
+> commas {x1 + 1}
+>         :  commas {x1}, ",";
+>        {1}
+>         |  ",";
+> 
+> texps {[HsExp]};
+> texps {x3 : x1}
+>         :  texps {x1}, ",", exp {x3};
+>       {[x3,x1]}
+>         |  exp {x1}, ",", exp {x3};
+
+List expressions
+
+The rules below are little bit contorted to keep lexps left-recursive
+while avoiding another shift/reduce-conflict.
+
+> listexp {HsExp};
+> listexp {HsList [x1]}
+>         :  exp {x1};
+>         {HsList (reverse x1)}
+>         |  lexps {x1};
+>         {HsEnumFrom x1}
+>         |  exp {x1}, DotDot;
+>         {HsEnumFromThen x1 x3}
+>         |  exp {x1}, ",", exp {x3}, DotDot;
+>         {HsEnumFromTo x1 x3}
+>         |  exp {x1}, DotDot, exp {x3};
+>         {HsEnumFromThenTo x1 x3 x5}
+>         |  exp {x1}, ",", exp {x3}, DotDot, exp {x5};
+>         {HsListComp x1 (reverse x3)}
+>         |  exp {x1}, Bar, quals {x3};
+> 
+> lexps {[HsExp]};
+> lexps {x3 : x1}
+>         :  lexps {x1}, ",", exp {x3};
+>       {[x3,x1]}
+>         |  exp {x1}, ",", exp {x3};
+
+List comprehensions.
+
+> quals {[HsStmt]};
+> quals {x3 : x1}
+>         :  quals {x1}, ",", qual {x3};
+>       {[x1]}
+>         |  qual {x1};
+> 
+> qual {HsStmt};
+> qual {% checkPattern x1 >>= \p -> return (HsGenerator p x3)}
+>         :  infixexp {x1}, LeftArrow, exp {x3};
+>      {HsQualifier x1}
+>         |  exp {x1};
+>      {HsLetStmt x2}
+>         |  KW_Let, decllist {x2};
+
+Case alternatives.
+
+> altslist {[HsAlt]};
+> altslist {reverse x3}
+>         :  "{", alts {x3}, optsemi, "}";
+>          {reverse x2}
+>         |  layout_on {_}, alts {x2}, optsemi, close {_};
+> 
+> alts {[HsAlt]};
+> alts {x3 : x1}
+>         :  alts {x1}, ";", alt {x3};
+>      {[x1]}
+>         |  alt {x1};
+> 
+> alt {HsAlt};
+> alt {% checkPattern x1 >>= \p -> return (HsAlt x2 p x3 [])}
+>         :  infixexp {x1}, srcloc {x2}, ralt {x3};
+>     {% checkPattern x1 >>= \p -> return (HsAlt x2 p x3 x5)}
+>         |  infixexp {x1}, srcloc {x2}, ralt {x3}, KW_Where, decllist {x5};
+> 
+> ralt {HsGuardedAlts};
+> ralt {HsUnGuardedAlt x2}
+>         :  RightArrow, exp {x2};
+>      {HsGuardedAlts (reverse x1)}
+>         |  gdpats {x1};
+> 
+> gdpats {[HsGuardedAlt]};
+> gdpats {x2 : x1}
+>         :  gdpats {x1}, gdpat {x2};
+>        {[x1]}
+>         |  gdpat {x1};
+> 
+> gdpat {HsGuardedAlt};
+> gdpat {HsGuardedAlt x3 x2 x5}
+>         :  Bar, exp {x2}, srcloc {x3}, RightArrow, exp {x5};
+
+Statement sequences.
+
+> stmtlist {[HsStmt]};
+> stmtlist {x3}
+>         :  "{", stmts {x3}, "}";
+>          {x2}
+>         |  layout_on {_}, stmts {x2}, close {_};
+> 
+> stmts {[HsStmt]};
+> stmts {reverse (HsQualifier x3 : x1)}
+>         :  stmts1 {x1}, ";", exp {x3};
+>       {[HsQualifier x1]}
+>         |  exp {x1};
+> 
+> stmts1 {[HsStmt]};
+> stmts1 {x3 : x1}
+>         :  stmts1 {x1}, ";", qual {x3};
+>        {[x1]}
+>         |  qual {x1};
+
+Record Field Update/Construction.
+
+> fbinds {[HsFieldUpdate]};
+> fbinds {x3 : x1}
+>         :  fbinds {x1}, ",", fbind {x3};
+>        {[x1]}
+>         |  fbind {x1};
+> 
+> fbind {HsFieldUpdate};
+> fbind {HsFieldUpdate x1 x3}
+>         :  qvar {x1}, Equals, exp {x3};
+
+Variables, Constructors and Operators.
+
+> gcon {HsExp};
+> gcon {unit_con}
+>         :  "(", ")";
+>      {HsList []}
+>         |  "[", "]";
+>      {tuple_con x2}
+>         |  "(", commas {x2}, ")";
+>      {HsCon x1}
+>         |  qcon {x1};
+> 
+> var {HsName};
+> var {x1}
+>         :  varid {x1};
+>     {x2}
+>         |  "(", varsym {x2}, ")";
+> 
+> qvar {HsQName};
+> qvar {x1}
+>         :  qvarid {x1};
+>      {x2}
+>         |  "(", qvarsym {x2}, ")";
+>
+> con {HsName};
+> con {x1}
+>         :  conid {x1};
+>     {x2}
+>         |  "(", consym {x2}, ")";
+> 
+> qcon {HsQName};
+> qcon {x1}
+>         :  qconid {x1};
+>      {x2}
+>         |  "(", qconsym {x2}, ")";
+> 
+> varop {HsName};
+> varop {x1}
+>         :  varsym {x1};
+>       {x2}
+>         |  "`", varid {x2}, "`";
+> 
+> qvarop {HsQName};
+> qvarop {x1}
+>         :  qvarsym {x1};
+>        {x2}
+>         |  "`", qvarid {x2}, "`";
+> 
+> qvaropm {HsQName};
+> qvaropm {x1}
+>         :  qvarsymm {x1};
+>         {x2}
+>         |  "`", qvarid {x2}, "`";
+> 
+> conop {HsName};
+> conop {x1}
+>         :  consym {x1};
+>       {x2}
+>         |  "`", conid {x2}, "`";
+> 
+> qconop {HsQName};
+> qconop {x1}
+>         :  qconsym {x1};
+>        {x2}
+>         |  "`", qconid {x2}, "`";
+> 
+> op {HsName};
+> op {x1}
+>         :  varop {x1};
+>    {x1}
+>         |  conop {x1};
+> 
+> qop {HsExp};
+> qop {HsVar x1}
+>         :  qvarop {x1};
+>     {HsCon x1}
+>         |  qconop {x1};
+> 
+> qopm {HsExp};
+> qopm {HsVar x1}
+>         :  qvaropm {x1};
+>      {HsCon x1}
+>         |  qconop {x1};
+>
+> qvarid {HsQName};
+> qvarid {UnQual x1}
+>         :  varid {x1};
+>        {Qual (Module (fst x1)) (HsIdent (snd x1))}
+>         |  QVarId {x1};
+>
+> varid {HsName};
+> varid {HsIdent x1}
+>         :  VarId {x1};
+>       {as_name}
+>         |  KW_As;
+>       {qualified_name}
+>         |  KW_Qualified;
+>       {hiding_name}
+>         |  KW_Hiding;
+>
+> qconid {HsQName};
+> qconid {UnQual x1}
+>         :  conid {x1};
+>        {Qual (Module (fst x1)) (HsIdent (snd x1))}
+>         |  QConId {x1};
+>
+> conid {HsName};
+> conid {HsIdent x1}
+>         :  ConId {x1};
+>
+> qconsym {HsQName};
+> qconsym {UnQual x1}
+>         :  consym {x1};
+>         {Qual (Module (fst x1)) (HsSymbol (snd x1))}
+>         |  QConSym {x1};
+>
+> consym {HsName};
+> consym {HsSymbol x1}
+>         :  ConSym {x1};
+> 
+> qvarsym {HsQName};
+> qvarsym {UnQual x1}
+>         :  varsym {x1};
+>         {x1}
+>         |  qvarsym1 {x1};
+> 
+> qvarsymm {HsQName};
+> qvarsymm {UnQual x1}
+>         :  varsymm {x1};
+>          {x1}
+>         |  qvarsym1 {x1};
+> 
+> varsym {HsName};
+> varsym {HsSymbol x1}
+>         :  VarSym {x1};
+>        {minus_name}
+>         |  Minus;
+>        {pling_name}
+>         |  Exclamation;
+> 
+> varsymm {HsName};
+> varsymm {HsSymbol x1} -- varsym not including '-'
+>         :  VarSym {x1};
+>         {pling_name}
+>         |  Exclamation;
+> 
+> qvarsym1 {HsQName};
+> qvarsym1 {Qual (Module (fst x1)) (HsSymbol (snd x1))}
+>         :  QVarSym {x1};
+> 
+> literal {HsExp};
+> literal {HsLit (HsInt (readInteger x1))}
+>         :  IntTok {x1};
+>         {HsLit (HsChar x1)}
+>         |  Character {x1};
+>         {HsLit (HsFrac (readRational x1))}
+>         |  FloatTok {x1};
+>         {HsLit (HsString x1)}
+>         |  StringTok {x1};
+> 
+> srcloc {SrcLoc};
+> srcloc {% getSrcLoc}
+>         :  ;
+
+Layout.
+
+> close {()};
+> close {()}
+>         :  "virtual }";
+>       {% popContext}
+>         |  insert "virtual }";
+> 
+> layout_on {()};
+> layout_on {% getSrcLoc >>= \(SrcLoc r c) -> pushContext (Layout c)}
+>         :  ;
+
+Miscellaneous (mostly renamings).
+
+> modid {Module};
+> modid {Module x1}
+>         :  ConId {x1};
+> 
+> tyconorcls {HsName};
+> tyconorcls {x1}
+>         :  conid {x1};
+> 
+> tycon {HsName};
+> tycon {x1}
+>         :  conid {x1};
+> 
+> qtyconorcls {HsQName};
+> qtyconorcls {x1}
+>         :  qconid {x1};
+> 
+> qtycls {HsQName};
+> qtycls {x1}
+>         :  qconid {x1};
+> 
+> tyvar {HsName};
+> tyvar {x1}
+>         :  varid {x1};
+> 
+> }%

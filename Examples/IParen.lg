@@ -1,0 +1,31 @@
+{-
+
+Demonstrates the use of `insert'.
+
+	frown IParen.g
+
+-}
+
+> module IParen
+> where
+>
+> newtype Tree                  =  Node [Tree]
+>                                  deriving (Show)
+>
+> type Terminal                 =  Char
+>
+> type Result                   =  Maybe
+>
+> %{
+>
+> Terminal                      =  '(' | ')';
+>
+> Nonterminal                   =  pars {Tree};
+>
+> pars {Node []}                :  ;
+>      {Node (x : xs)}          |  '(', pars {x}, ')', pars {Node xs};
+>      {Node (x : xs)}          |  '(', pars {x}, insert ')', pars {Node xs};
+>
+> }%
+>
+> frown ts                      =  fail "syntax error"

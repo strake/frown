@@ -1,0 +1,30 @@
+__   __ __  __  ____   ___      _________________________________________
+||   || ||  || ||  || ||__      Hugs 98: Based on the Haskell 98 standard
+||___|| ||__|| ||__||  __||     Copyright (c) 1994-2005
+||---||         ___||           World Wide Web: http://haskell.org/hugs
+||   ||                         Report bugs to: hugs-bugs@haskell.org
+||   || Version: March 2005     _________________________________________
+
+Hugs mode: Restart with command line option +98 for Haskell 98 mode
+
+Type :? for help
+Let5> Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1)
+Let5> Let ("a" :=: Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1)) (Bin (Var "a") Times (Var "a"))
+Let5> 
+Program error: user error (
+*** lexical error at (line 2, column 13):
+    a = 4 * [7 + 1 - 1)
+            ^
+ in a * a
+<end of input>
+)
+
+Let5> 
+Program error: user error (
+*** syntax error at (line 3, column 3):
+ in a * a
+  ^
+<end of input>
+)
+
+Let5> [Leaving Hugs]

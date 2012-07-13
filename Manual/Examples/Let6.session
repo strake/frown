@@ -1,0 +1,52 @@
+> Let6>> run expr "let\n    a = 4 * [7 + 1 - 1)\n in a * a" :: IO Expr
+> 
+> 'Program error: user error ('
+> '*** lexical error at (line 2, column 13):'
+> '    a = 4 * [7 + 1 - 1)'
+> '            ^'
+> ' in a * a'
+> '<end of input>'
+> ')'
+> Let6>> run expr "let\n    a = 4 * (7 + 1 - 1\n in a * a" :: IO Expr
+> 
+> 'Program error: user error ('
+> '*** syntax error at (line 3, column 3):'
+> ' in a * a'
+> '  ^'
+> '<end of input>'
+> '* expected: + or -, * or /, ))'
+> Let6>> run expr "let\n    a = 4 * (7 + 1 - 1)\n a * a" :: IO Expr
+> 
+> 'Program error: user error ('
+> '*** syntax error at (line 3, column 2):'
+> ' a * a'
+> ' ^'
+> '<end of input>'
+> '* expected: + or -, * or /, in)'
+> Let6>> run expr "\n    a = 4 * (7 + 1 - 1)\n in a * a" :: IO Expr
+> 
+> 'Program error: user error ('
+> '*** syntax error at (line 2, column 7):'
+> '    a = 4 * (7 + 1 - 1)'
+> '      ^'
+> ' in a * a'
+> '<end of input>'
+> '* expected: + or -, * or /, <end of input>)'
+> Let6>> run expr "let\n    a = 4 * (7 + - 1)\n in a * a" :: IO Expr
+> 
+> 'Program error: user error ('
+> '*** syntax error at (line 2, column 18):'
+> '    a = 4 * (7 + - 1)'
+> '                 ^'
+> ' in a * a'
+> '<end of input>'
+> '* expected: <numeral>, <identifier>, let, ()'
+> Let6>> run expr "let\n    a = 4  (7 + 1 - 1)\n in a * a" :: IO Expr
+> 
+> 'Program error: user error ('
+> '*** syntax error at (line 2, column 12):'
+> '    a = 4  (7 + 1 - 1)'
+> '           ^'
+> ' in a * a'
+> '<end of input>'
+> '* expected: + or -, * or /, in)'

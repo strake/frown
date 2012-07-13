@@ -1,0 +1,72 @@
+This example demonstrates rule schemata.
+
+	frown Schemes.lg
+
+Try
+
+	expr (lexer "a (b c, d) e (f, g)") :: Maybe Expr
+
+> module Schemes
+> where
+> import Char
+>
+> data Expr                     =  Id String
+>                               |  Call String [Expr]
+>                               |  Tuple [Expr]
+>                                  deriving (Show)
+>
+> type Result                   =  Maybe
+>
+> %{
+>
+> Terminal                      =         Ident {String}
+>                               |  "(" =  LPar
+>                               |  ")" =  RPar
+>                               |  "," =  Comma;
+>
+> :: expr {Expr};
+> expr {Call s es}              :  Ident {s}, many aexpr {es};
+>
+> :: aexpr {Expr};
+> aexpr {Id s}                  :  Ident {s};
+>       {Tuple es}              |  "(", sepBy expr comma {es}, ")";
+>
+> :: comma;
+> comma                         :  ",";
+
+Schemes (predefined).
+
+> {-
+> :: many x {[a]}               <- x {a};
+> many x {s []}                 :  many' x {s};
+>
+> :: many' x {[a] -> [a]}       <- x {a};
+> many' x {\ as -> as}          :  ;
+>         {\ as -> s (a : as)}  |  many' x {s}, x {a};
+>
+> :: sepBy x sep {[a]}          <- x {a}, sep;
+> sepBy x sep {[]}              :  ;
+>             {as}              |  sepBy1 x sep {as};
+>
+> :: sepBy1 x sep {[a]}         <- x {a}, sep;
+> sepBy1 x sep {[a]}            :  x {a};
+>              {a : as}         |  x {a}, sep, sepBy1 x sep {as};
+> -}
+
+> }%
+>
+> frown ts                      =  fail "syntax error"
+> 
+
+> data Terminal                 =  Ident String | LPar | RPar | Comma
+>                                  deriving (Show)
+>
+> lexer                         :: String -> [Terminal]
+> lexer []                      =  []
+> lexer ('(' : cs)              =  LPar  : lexer cs
+> lexer (')' : cs)              =  RPar  : lexer cs
+> lexer (',' : cs)              =  Comma : lexer cs
+> lexer (c : cs)
+>     | isAlpha c               =  let (n, cs') = span isAlphaNum cs
+>                                  in  Ident (c : n) : lexer cs'
+>     | otherwise               =  lexer cs

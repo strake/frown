@@ -1,0 +1,11 @@
+> Let4>> run expr "4 * (7 + 1) - 1" :: IO Expr
+> Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1)
+> Let4>> run expr "let\n    a = 4 * (7 + 1) - 1\n in a * a" :: IO Expr
+> Let ("a" :=: Bin (Bin (Const 4) Times (Bin (Const 7) Plus (Const 1))) Minus (Const 1)) (Bin (Var "a") Times (Var "a"))
+> Let4>> run expr "let\n    a = 4 * (7 + 1 - 1\n in a * a" :: IO Expr
+> 
+> 'Program error: user error ('
+> '*** syntax error:'
+> ' a * a'
+> '<end of input>'
+> ')'

@@ -1,0 +1,2 @@
+tType [Int, LPAR, RPAR] >>= print
+tType [Int, LPAR, Num, RPAR] >>= print

@@ -1,0 +1,105 @@
+A grammar file consists of two parts: the specification of the
+grammar, enclosed in special curly braces, and Haskell source code.
+The source file typically starts with a Haskell module header.
+
+> module Tiger where
+> import Lexer
+> import Syntax
+> import Prelude hiding (exp)
+>
+> %{
+
+The grammar part begins here.  A context-free grammar consists of sets
+of terminal and nonterminal symbols, a set of start symbols, and set
+of productions or grammar rules. The declaration below introduces the
+terminal symbols. Each terminal is given by a Haskell pattern of type
+|Terminal|.
+
+> Terminal  =  DO  |  ELSE  |  END   |  FUNCTION  |  IF
+>           |  IN  |  LET   |  THEN  |  VAR       |  WHILE
+>           |  ASSIGN  as ":="  |  COLON   as ":"  |  COMMA   as ","   |  CPAREN  as ")"
+>           |  DIV     as "/"   |  EQU     as "="  |  LST     as "<="  |  MINUS   as "-"
+>           |  NEG     as "~"   |  OPAREN  as "("  |  PLUS    as "+"   |  SEMI    as ";"
+>           |  TIMES   as "*"
+>           |  ID   {String}    |  INT  {String};
+
+A terminal symbol may carry a semantic value or attribute. The Haskell
+type of the semantic value is given in curly braces. As a rule,
+Haskell source code is always enclosed in curly braces within the
+grammar part. The as-clauses define shortcuts for terminals, which may
+then be used in the productions.
+
+The declaration below introduces a nonterminal symbol called |exp|
+followed by sixteen productions for that symbol. The asterix marks
+|exp| as a start symbol; |exp| has a single attribute of type |Expr|.
+
+>*exp  {Expr};
+> exp  {Var v}           :  ID {v};
+>      {Block es}        |  "(", sepBy exp ";" {es}, ")";
+>      {Int i   }        |  INT {i};
+>      {Un Neg e}        |  "-", exp {e}, prec "~";
+>      {Call f es}       |  ID {f}, "(", sepBy exp "," {es}, ")";
+>      {Bin e1 Eq  e2}   |  exp {e1}, "=",  exp {e2};
+>      {Bin e1 Leq e2}   |  exp {e1}, "<=", exp {e2};
+>      {Bin e1 Add e2}   |  exp {e1}, "+",  exp {e2};
+>      {Bin e1 Sub e2}   |  exp {e1}, "-",  exp {e2};
+>      {Bin e1 Mul e2}   |  exp {e1}, "*",  exp {e2};
+>      {Bin e1 Div e2}   |  exp {e1}, "/",  exp {e2};
+>      {Assign v e}      |  ID {v}, ":=",  exp {e};
+>      {IfThen e e1}     |  IF, exp {e}, THEN, exp {e1};
+>      {IfElse e e1 e2}  |  IF, exp {e}, THEN, exp {e1}, ELSE, exp {e2};
+>      {While e e1}      |  WHILE, exp {e}, DO, exp {e1};
+>      {Let ds es}       |  LET, many dec {ds}, IN, sepBy exp ";" {es}, END;
+
+Left-hand and right-hand side of a production are separated by a
+colon; symbols on the right are separated by commas and terminated by
+a semicolon.  Alternative right-hand sides are separated by a vertical
+bar. 
+
+The pieces in curly braces constitute Haskell source code. Each rule
+can be seen as a function from the right-hand to the left-hand
+side. On the right-hand side, Haskell variables are used to name the
+values of attributes. The values of the attributes on the left-hand
+side are given by Haskell expressions, in which the variables of the
+right-hand side occur free.
+
+The last production makes use of two (predefined) rule schemes: |many x|
+implements the repetition of the symbol |x|, and |sepBy x sep|
+denotes a repetition of |x| symbols separated by |sep| symbols.
+
+The above productions are ambiguous as, for instance, |1 + 2 * 3| has
+two derivations.  The ambiguity can be resolved by assigning
+precedences to terminal symbols.
+
+> left      7  "~";   left      6  "*";   left      6  "/";  left      5  "+";  left      5  "-";
+> right     0  THEN;  right     0  ELSE;  
+> nonassoc  4  "<=";  nonassoc  4  "=";   nonassoc  0  DO;   nonassoc  0  ":=";
+
+The following declarations define the nonterminal |dec| and three
+further nonterminals.
+
+> dec  {Decl};
+> dec  {d}  :  vardec {d};
+>      {d}  |  fundec {d};
+>
+> vardec  {Decl};
+> vardec  {Variable v e}  :  VAR, ID {v}, ":=", exp {e};
+>
+> fundec  {Decl};
+> fundec  {Function f xs e}  :  FUNCTION, ID {f}, "(", sepBy (ID {}) "," {xs}, ")", "=", exp {e};
+>
+> formal  {(Ident, TyIdent)};
+> formal  {(v, t)}  :  ID {v}, ":", ID {t};
+>
+> }%
+
+The grammar part ends here.  The source file typically includes a
+couple of Haskell declarations.  The user-defined function |frown| is
+the error routine invoked by the parser in case of a syntax error; its
+definition is mandatory.
+
+> frown _  =  error "syntax error"
+>
+> tc f  =  do {  putStrLn "*** reading ...";  s <- readFile f;     print s;
+>                putStrLn "*** lexing  ...";  let {ts = lexer s};  print ts;
+>                putStrLn "*** parsing ...";  e <- exp ts;         print e }

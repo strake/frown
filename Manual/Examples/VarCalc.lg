@@ -1,0 +1,33 @@
+> module Calc where
+> import Result
+> import Char
+>
+> type Terminal                 =  Char
+>
+> %{
+>
+> Terminal                      =  guard {isDigit}  as "digit"
+>                               |  '+'
+>                               |  '*'
+>                               |  '('
+>                               |  ')';
+>
+> Nonterminal                   =  expr     {Integer}
+>                               |  term     {Integer}
+>                               |  factor   {Integer}
+>                               |  numeral  {Integer};
+>
+> expr     {v1 + v2}            :  expr {v1},  '+',  term {v2};
+>          {e}                  |  term {e};
+> term     {v1 * v2}            :  term {v1},  '*',  factor {v2};
+>          {e}                  |  factor {e};
+> factor   {n}                  :  numeral {n};
+>          {e}                  |  '(', expr {e}, ')';
+> numeral  {encode c}           :  "digit" {c};
+>          {n * 10 + encode c}  |  numeral {n}, "digit" {c}; 
+>
+> }%
+>
+> encode c                      =  toInteger (fromEnum  c - fromEnum '0')
+>
+> frown _                       =  fail "syntax error"

@@ -1,0 +1,3 @@
+s "abd" >>= print
+s "cg" >>= print
+s "cd" >>= print

@@ -1,0 +1,63 @@
+The standard example: arithmetic expressions (see dragon book p222).
+Missing mutiplication signs are inserted.
+
+	frown --expected IExpr.lg
+
+Try
+	expr (lexer "a+b*c+d") :: [Expr]
+	expr (lexer "a+b c+d") :: [Expr]
+
+> module IExpr
+> where
+> import Char
+>
+> data Expr                     =  Id String
+>                               |  Add Expr Expr
+>                               |  Mul Expr Expr
+>                                  deriving (Show)
+>
+> type Result                   =  []
+>
+> %{
+>
+> Terminal                      =  Ident {String} as "<identifier>"
+>                               |  Addop as "+"
+>                               |  Mulop as "*"
+>                               |  LPar  as "("
+>                               |  RPar  as ")";
+> 
+>*expr {Expr};
+> expr {Add e1 e2}              :  expr {e1}, "+", term {e2};
+>--      {Add e1 e2}              |  expr {e1}, insert "+", term {e2};
+>      {e}                      |  term {e};
+>
+> term {Expr};
+> term {Mul e1 e2}              :  term {e1}, "*", factor {e2};
+>      {Mul e1 e2}              |  term {e1}, insert "*", factor {e2};
+>      {e}                      |  factor {e};
+>
+> factor {Expr};
+> factor {e}                    :  "(", expr {e}, ")";
+>        {Id s}                 |  Ident {s};
+>
+> }%
+>
+> frown la ts                   =  fail "syntax error"
+> 
+> data Terminal                 =  Ident String
+>                               |  Addop
+>                               |  Mulop
+>                               |  LPar
+>                               |  RPar
+>                                  deriving (Show)
+>
+> lexer                         :: String -> [Terminal]
+> lexer []                      =  []
+> lexer ('+' : cs)              =  Addop : lexer cs
+> lexer ('*' : cs)              =  Mulop : lexer cs
+> lexer ('(' : cs)              =  LPar  : lexer cs
+> lexer (')' : cs)              =  RPar  : lexer cs
+> lexer (c : cs)
+>     | isAlpha c               =  let (n, cs') = span isAlphaNum cs
+>                                  in  Ident (c : n) : lexer cs'
+>     | otherwise               =  lexer cs

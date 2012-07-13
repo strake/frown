@@ -1,0 +1,29 @@
+> module RepMin where
+>
+> data Tree a    =  Leaf a | Fork (Tree a) (Tree a)
+>                   deriving (Show)
+>
+> data Terminal  =  Num Integer | LPar | RPar
+>
+> %{
+>
+> Terminal      =  Num {Integer}
+>               |  LPar  as "("
+>               |  RPar  as ")";
+>
+> Nonterminal   =  *  start  {Tree Integer}
+>               |     expr   {Integer -> (Tree Integer, Integer)};
+>
+> start { let (t, m) = f m in t }
+>   : expr {f};
+>
+> expr { \ m -> (Leaf m, i) }
+>   :  Num {i};
+> expr { \ m -> let  { (tl, ml)  =  l m
+>                    ; (tr, mr)  =  r m }
+>               in (Fork tl tr, ml `min` mr) }
+>   :  expr {l}, "(", expr {r}, ")";
+>
+> }%
+>
+> frown ts                      =  fail "syntax error"

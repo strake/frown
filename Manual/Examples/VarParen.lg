@@ -1,0 +1,18 @@
+> module VarParen where
+> import Result
+>
+> newtype Tree                  =  Node [Tree]
+>                                  deriving (Show)
+>
+> %{
+>
+> Terminal                      =  '(' | ')';
+>
+> Nonterminal                   =  paren {Tree};
+>
+> paren  {Node []}              :  ;
+>        {Node (x : xs)}        |  paren {x}, '(', paren {Node xs}, ')';
+>
+> }%
+>
+> frown ts                      =  fail "syntax error"

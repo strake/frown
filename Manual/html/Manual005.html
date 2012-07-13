@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+
+
+
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.08">
+<LINK rel="stylesheet" type="text/css" href="Manual.css">
+<TITLE>
+Tips and tricks
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="Manual004.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="Manual006.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+<HR>
+
+<H1 CLASS="chapter"><A NAME="htoc29">Chapter&nbsp;4</A>&nbsp;&nbsp;Tips and tricks</H1>
+
+<A NAME="toc9"></A>
+<H2 CLASS="section"><A NAME="htoc30">4.1</A>&nbsp;&nbsp;Irrefutable patterns</H2>
+<A NAME="sec:irrefutable"></A>
+
+Irrefutable patterns on the RHS (<TT>VarParen.lg</TT>):
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>module</B>&nbsp;<I>VarParen</I></TT><TT>&nbsp;<B>where</B></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>import</B>&nbsp;<I>Result</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>newtype</B>&nbsp;<I>Tree</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<I>Node</I></TT><TT>&nbsp;[<I>Tree</I></TT><TT>]</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>deriving</B>&nbsp;(<I>Show</I></TT><TT>)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;%{</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<I>Terminal</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;'('</TT><TT>&nbsp;|&nbsp;')'</TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<I>Nonterminal</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;paren&nbsp;{<I>Tree</I></TT><TT>};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;paren&nbsp;&nbsp;{<I>Node</I></TT><TT>&nbsp;[]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Node</I></TT><TT>&nbsp;(x&nbsp;:&nbsp;xs)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;paren&nbsp;{x},&nbsp;'('</TT><TT>,&nbsp;paren&nbsp;{<I>Node</I></TT><TT>&nbsp;xs},&nbsp;')'</TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;}%</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;frown&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;fail&nbsp;"syntax&nbsp;error"</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+<BR>
+<BR>
+<A NAME="toc10"></A>
+<H2 CLASS="section"><A NAME="htoc31">4.2</A>&nbsp;&nbsp;Inherited attributes</H2>
+<A NAME="sec:inherited"></A>
+
+Shows how to simulate inherited attributes: <TT>expr</TT> has type <TT><I>Integer</I></TT><TT>&nbsp;-&gt;&nbsp;(<I>Tree</I></TT><TT>&nbsp;<I>Integer</I></TT><TT>,&nbsp;<I>Integer</I></TT><TT>)</TT>, it takes the global minimum to the
+rep-min tree (with all elements replaced by the minimum) and the local
+minimum (<TT>RepMin.lg</TT>).
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>module</B>&nbsp;<I>RepMin</I></TT><TT>&nbsp;<B>where</B></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>data</B>&nbsp;<I>Tree</I></TT><TT>&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<I>Leaf</I></TT><TT>&nbsp;a&nbsp;|&nbsp;<I>Fork</I></TT><TT>&nbsp;(<I>Tree</I></TT><TT>&nbsp;a)&nbsp;(<I>Tree</I></TT><TT>&nbsp;a)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>deriving</B>&nbsp;(<I>Show</I></TT><TT>)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>data</B>&nbsp;<I>Terminal</I></TT><TT>&nbsp;&nbsp;=&nbsp;&nbsp;<I>Num</I></TT><TT>&nbsp;<I>Integer</I></TT><TT>&nbsp;|&nbsp;<I>LPar</I></TT><TT>&nbsp;|&nbsp;<I>RPar</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;%{</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<I>Terminal</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<I>Num</I></TT><TT>&nbsp;{<I>Integer</I></TT><TT>}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>LPar</I></TT><TT>&nbsp;&nbsp;as&nbsp;"("</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>RPar</I></TT><TT>&nbsp;&nbsp;as&nbsp;")";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<I>Nonterminal</I></TT><TT>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;*&nbsp;&nbsp;start&nbsp;&nbsp;{<I>Tree</I></TT><TT>&nbsp;<I>Integer</I></TT><TT>}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expr&nbsp;&nbsp;&nbsp;{<I>Integer</I></TT><TT>&nbsp;-&gt;&nbsp;(<I>Tree</I></TT><TT>&nbsp;<I>Integer</I></TT><TT>,&nbsp;<I>Integer</I></TT><TT>)};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;start&nbsp;{&nbsp;<B>let</B>&nbsp;(t,&nbsp;m)&nbsp;=&nbsp;f&nbsp;m&nbsp;<B>in</B>&nbsp;t&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;expr&nbsp;{f};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;expr&nbsp;{&nbsp;\&nbsp;m&nbsp;-&gt;&nbsp;(<I>Leaf</I></TT><TT>&nbsp;m,&nbsp;i)&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;<I>Num</I></TT><TT>&nbsp;{i};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;expr&nbsp;{&nbsp;\&nbsp;m&nbsp;-&gt;&nbsp;<B>let</B>&nbsp;&nbsp;{&nbsp;(tl,&nbsp;ml)&nbsp;&nbsp;=&nbsp;&nbsp;l&nbsp;m</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;(tr,&nbsp;mr)&nbsp;&nbsp;=&nbsp;&nbsp;r&nbsp;m&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>in</B>&nbsp;(<I>Fork</I></TT><TT>&nbsp;tl&nbsp;tr,&nbsp;ml&nbsp;`min`&nbsp;mr)&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;expr&nbsp;{l},&nbsp;"(",&nbsp;expr&nbsp;{r},&nbsp;")";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;}%</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;frown&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;fail&nbsp;"syntax&nbsp;error"</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+!avoid layout-sensitive code!<BR>
+<BR>
+<A NAME="toc11"></A>
+<H2 CLASS="section"><A NAME="htoc32">4.3</A>&nbsp;&nbsp;Dealing with conflicts</H2>
+<A NAME="sec:conflicts"></A>
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many'&nbsp;x&nbsp;:&nbsp;many&nbsp;x;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+<A NAME="toc12"></A>
+<H2 CLASS="section"><A NAME="htoc33">4.4</A>&nbsp;&nbsp;Multiple attributes</H2>
+<A NAME="sec:multattr"></A>
+
+<HR>
+<A HREF="Manual004.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="Manual006.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+</BODY>
+</HTML>

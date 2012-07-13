@@ -1,0 +1,360 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%   Frown --- An LALR(k) parser generator for Haskell 98                      %
+%   Copyright (C) 2001-2005 Ralf Hinze                                        %
+%                                                                             %
+%   This program is free software; you can redistribute it and/or modify      %
+%   it under the terms of the GNU General Public License (version 2) as       %
+%   published by the Free Software Foundation.                                %
+%                                                                             %
+%   This program is distributed in the hope that it will be useful,           %
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of            %
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             %
+%   GNU General Public License for more details.                              %
+%                                                                             %
+%   You should have received a copy of the GNU General Public License         %
+%   along with this program; see the file COPYING.  If not, write to          %
+%   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,          %
+%   Boston, MA 02111-1307, USA.                                               %
+%                                                                             %
+%   Contact information                                                       %
+%   Email:      Ralf Hinze <ralf@cs.uni-bonn.de>                              %
+%   Homepage:   http://www.informatik.uni-bonn.de/~ralf/                      %
+%   Paper mail: Dr. Ralf Hinze                                                %
+%               Institut für Informatik III                                   %
+%               Universität Bonn                                              %
+%               Römerstraße 164                                               %
+%               53117 Bonn, Germany                                           %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compile me with
+
+	frown --lexer --expected --signature --optimize GParser.lg
+	frown --lexer --expected --signature --code=stackless --optimize GParser.lg
+
+> module GParser                (  Term, Nonterm, grammar, Sym(..), Decl(..)  )
+> where
+> import Lexer
+> import Grammar
+> import Haskell                hiding (  Decl, guard  )
+> import Base                   hiding (  Result  )
+> import qualified Base
+> import Prettier               (  Pretty  )
+> import Data.List
+> --import Monad                  hiding (  guard  )
+> import System.IO
+> import Options
+
+> type Term                     =  Pat
+>
+> type Nonterm                  =  (Expr, [Quoted])
+>
+> data Sym                      =  Term Term | Nonterm Nonterm
+>                                  deriving (Show)
+>
+> type AnnTerm                  =  (Term, Bool, Assoc, Maybe String)
+>
+> data Decl                     =  Terminals    [AnnTerm]
+>                               |  Nonterminals [(Nonterm, Bool)]
+>                               |  Fixity       Assoc Term
+>                               |  TypeSig      Nonterm [Nonterm] Bool
+>                               |  Production   Nonterm [(Modifier, Sym)]
+>                                  deriving (Show)
+>
+> instance Pretty Decl
+>
+> type Terminal                 =  Token
+>
+> type Result                   =  Lex Base.Result
+
+Final result type of the parser.
+
+> type Answer                   =  ([Token], [Decl], [Token])
+>
+> --file                          :: Result Answer
+>
+> %{
+>
+> Terminal                      =  Conid   "Terminal"    as "Terminal"
+>                               |  Conid   "Nonterminal" as "Nonterminal"
+>                               |  Conid   {String}      as "<constructor>"
+>                               |  Varid   "insert"      as "insert"
+>                               |  Varid   "delete"      as "delete"
+>                               |  Varid   "guard"       as "guard"
+>                               |  Varid   "prec"        as "prec"
+>                               |  Varid   "left"        as "left"
+>                               |  Varid   "right"       as "right"
+>                               |  Varid   "nonassoc"    as "nonassoc"
+>                               |  Varid   "as"          as "as"
+>                               |  Varid   {String}      as "<variable>"
+>                               |  Consym  ":"           as ":"
+>                               |  Consym  "::"          as "::"
+>                               |  Varsym  "="           as "="
+>                               |  Varsym  "*"           as "*"
+>                               |  Varsym  "|"           as "|"
+>                               |  Varsym  "<-"          as "<-"
+>                               |  Numeral {String}      as "<numeral>"
+>                               |  Char    {String}      as "<char literal>"
+>                               |  String  {String}      as "<string literal>"
+>                               |  Special '('           as "("
+>                               |  Special ')'           as ")"
+>                               |  Special '['           as "[" 
+>                               |  Special ']'           as "]"
+>                               |  Special '{'           as "{" 
+>                               |  Special '}'           as "}"
+>                               |  Special ','           as ","
+>                               |  Special ';'           as ";"
+>                               |  LQuote                as "%{"
+>                               |  RQuote                as "}%"
+>--                               |  Unquote {[Token]}     as "{..}"
+>                               |  guard {isWhite}       as "white"
+>                               |  guard {notQuote}      as "not quote"
+>                               |  guard {notBrace}      as "not brace"
+>                               | *EOF                   as "<end of input>";
+
+Grammar file.
+
+>*file {Answer};
+> file {(ts, ds, us)}           :  many "not quote" {ts},
+>                                  open {_}, opt "white" {_},
+>                                  declarations {ds},
+>                                  close {_},
+>                                  many "not quote" {us};
+>
+> open  {()};
+> open  {% skipWhite True}      : "%{";
+> close {()};
+> close {% skipWhite False}     : "}%";
+
+Subtle: the effect of |skipWhite True| only takes place after the
+lookahead token has been read, so we have to consume one token of
+white space manually.
+
+Declarations.
+
+> declarations {[Decl]};
+> declarations {concat dss}     :  many decl {dss};
+>
+> decl {[Decl]};
+> decl {[d]}                    :  terminals    {d};
+>      {[d]}                    |  nonterminals {d};
+>      {[d]}                    |  fixity       {d};
+>      {[d]}                    |  signature    {d};
+>      {ds}                     |  productions  {ds};
+
+Terminal declaration.
+
+> terminals {Decl};
+> terminals {Terminals cs}      :  "Terminal", "=", sepBy term "|" {cs}, ";";
+>
+> term {AnnTerm};
+> term {(p, m, a, Nothing)}     :  mark {m}, assoc{a}, terminal {p};
+>      {(p, m, a, Just s)}      |  mark {m}, assoc{a}, String {s}, "=", terminal {p}; -- deprecated
+>      {(p, m, a, Just s)}      |  mark {m}, assoc{a}, terminal {p}, "as", String {s};
+>      {(guard q, m, a, Just s)}|  mark {m}, assoc{a}, "guard", haskell {q}, "as", String {s};
+>
+> mark {Bool};
+> mark {False}                  :  ;
+>      {True}                   |  "*";
+>
+> assoc {Assoc};
+> assoc {Unspecified}           :  ;
+>       {left n}                |  "left",     Numeral {n}; 
+>       {right n}               |  "right",    Numeral {n};
+>       {nonassoc n}            |  "nonassoc", Numeral {n};
+
+Nonterminal declaration.
+
+> nonterminals {Decl};
+> nonterminals {Nonterminals cs}:  "Nonterminal", "=", sepBy nonterm "|" {cs}, ";";
+>
+> nonterm {(Nonterm, Bool)};
+> nonterm {(p, m)}              :  mark {m}, nonterminal {p};
+
+Fixity declaration.
+
+> fixity {Decl};
+> fixity {Fixity (left n) t}    : "left",     Numeral {n}, terminal {t}, ";";
+>        {Fixity (right n) t}   | "right",    Numeral {n}, terminal {t}, ";";
+>        {Fixity (nonassoc n) t}| "nonassoc", Numeral {n}, terminal {t}, ";";
+
+Type signature.
+
+> signature {Decl};
+> signature {TypeSig n ns False}:  "::", nonterminal {n}, premise {ns}, ";";
+>           {TypeSig n ns False}|  nonterminal {n}, premise {ns}, ";";
+>           {TypeSig n [] True} |  "::", "*", nonterminal {n}, ";";
+>           {TypeSig n [] True} |  "*", nonterminal {n}, ";";
+>
+> premise {[Nonterm]};
+> premise {[]}                  :  ;
+>         {ns}                  |  "<-", sepBy1 nonterminal "," {ns};
+
+Productions.
+
+> productions {[Decl]};
+> productions {prods c ((us, vs) : alts)}
+>                               :  expr {c}, attributes {us}, ":", sepBy symbol "," {vs}, ";", alts {alts};
+>
+> alts {[([Quoted], [(Modifier, Sym)])]};
+> alts {[]}                     :  ;
+>      {(us, vs) : alts}        |  attributes {us}, "|", sepBy symbol "," {vs}, ";", alts {alts};
+>
+> symbol {(Modifier, Sym)};
+> symbol {(Insert, Term p)}     :  "insert", terminal {p};
+>        {(Delete, Term p)}     |  "delete", terminal {p};
+>        {(Prec,   Term p)}     |  "prec",   terminal {p};
+>        {(Copy,   Term p)}     |  terminal {p};
+>        {(Copy,   Nonterm n)}  |  nonterminal {n};
+
+Nonterminal symbols.
+
+> nonterminal {Nonterm};
+> nonterminal {(e, qs)}         :  expr {e}, attributes {qs};
+>
+> expr {Expr};
+> expr {Var n <$> es}           :  Varid {n}, many aexpr {es};
+>
+> aexpr {Expr};
+> aexpr {Var n}                 :  Varid {n};
+>       {Con k}                 |  Conid {k};
+>       {Literal n}             |  Numeral {n};
+>       {Literal c}             |  Char {c};
+>       {Literal s}             |  String {s};
+>       {tuple ps}              |  "(", sepBy pat "," {ps}, ")";
+>       {List ps}               |  "[", sepBy pat "," {ps}, "]";
+>       {e}                     |  "(", expr {e}, ")";
+
+Terminal symbols.
+
+> terminal {Term};
+> terminal {p}                  :  pat {p};
+>          {Literal s <$> map Quoted (q : qs)}
+>                               |  String {s}, haskell {q}, attributes {qs}; -- shortcut
+>
+> pat {Pat};
+> pat {p}                       :  apat {p};
+>     {Con k <$> ps}            |  Conid {k}, many1 apat {ps};
+>
+> apat {Pat};
+> apat {Con k}                  :  Conid {k};
+>      {Literal n}              |  Numeral {n};
+>      {Literal c}              |  Char {c};
+>      {Literal s}              |  String {s}; -- either string literal or shortcut
+>      {tuple ps}               |  "(", sepBy pat "," {ps}, ")";
+>      {List ps}                |  "[", sepBy pat "," {ps}, "]";
+>      {Quoted ts}              |  haskell {ts};
+
+Embedded Haskell (types, patterns, and expressions).
+
+> attributes {[Quoted]};
+> attributes {[]}               :  ;
+>            {q : qs}           |  haskell {q}, attributes {qs};
+
+> haskell {[Token]};
+> haskell {conc ts []}          :  hsOpen {_}, many hs {ts}, hsClose {_}, opt "white" {_};
+>
+> hs {[Token] -> [Token]};
+> hs {single t}                 :  "not brace" {t};
+>    {single (Special '{') . conc ts . single (Special '}')}
+>                               |  "{", many hs {ts}, "}";
+>
+> hsOpen  {()};
+> hsOpen  {% skipWhite False}    : "{";
+> hsClose {()};
+> hsClose {% skipWhite True}     : "}";
+>
+> }%
+
+Helper functions.
+
+> notQuote, notBrace            :: Token -> Bool
+> notQuote LQuote               =  False
+> notQuote RQuote               =  False
+> notQuote EOF                  =  False  -- important to ensure termination!
+> notQuote _                    =  True
+>
+> notBrace (Special '{')        =  False
+> notBrace (Special '}')        =  False
+> notBrace EOF                  =  False
+> notBrace _                    =  True
+
+> single a                      =  \ x -> a : x
+> conc                          =  foldr (.) id
+
+> prods                         :: Expr -> [([Quoted], [(Modifier, Sym)])] -> [Decl]
+> prods e alts                  =  [ Production (e, us) vs | (us, vs) <- alts ]
+>
+> guard                         :: Quoted -> Pat
+> guard q                       =  Guard (Quoted [Conid "Terminal"]) (Quoted q) -- HACK
+>
+> left, right, nonassoc         :: String -> Assoc
+> left s                        =  LeftAssoc  (read s)
+> right s                       =  RightAssoc (read s)
+> nonassoc s                    =  NonAssoc   (read s)
+
+Main function.
+
+> grammar                       :: [Flag] -> [Token] -> IO Answer
+> grammar opts ts               =  do verb "* Parsing ..."
+>-- IO                                     (l, ds, r) <- parse 1 ts
+>                                     (l, ds, r) <- case parse 1 ts of
+>                                                       Fail s   -> panic s
+>                                                       Return x -> return x
+>                                     verb ("  " ++ show (length ds) ++ " declarations")
+>                                     return (l, ds, r)
+>     where verb                =  verbose opts
+
+> {-
+> grammar'                      :: Int -> [Token] -> IO ([Token], [Decl], [Token])
+> grammar' _n []                =  return ([], [], [])
+> grammar' n (Quote ts : us)    =  case parse n ts of
+>                                      Fail s    -> panic s
+>                                      Return ds -> return ([], ds, us)
+> grammar' n (t : ts)           =  do let n' = if isWhite t then newlines t + n else n
+>                                     (l, ds, r) <- grammar' n' ts
+>                                     return (t : l, ds, r)
+> -}
+
+Lexer monad (input, line number, skip white space).
+
+> data Lex m a                  =  Lex { unLex :: (a -> [Token] -> Int -> Bool -> m Answer)
+>                                                    -> [Token] -> Int -> Bool -> m Answer }
+>
+> instance Monad (Lex m) where
+>     return a                  =  Lex (\ cont -> cont a)
+>     m >>= k                   =  Lex (\ cont -> unLex m (\ a -> unLex (k a) cont))
+>
+> frown                         :: [String] -> Token -> Result a
+> frown la t                    =  Lex (\ _cont inp n _skip ->
+>                                       fail (lineNo n ++ "syntax error"
+>                                             ++ "\nexpected: " ++ concat (intersperse ", " (map wrap la))
+>                                             ++ "\nfound   : " ++ next 3 (concatMap toString (t : inp))))
+>
+> skipWhite                     :: Bool -> Result ()
+> skipWhite flag                =  Lex (\ cont inp n _skip -> cont () inp n flag)
+>
+> get                           :: Result Token
+> get                           =  Lex (\ cont inp n skip ->
+>                                       case inp of
+>                                           []              -> cont EOF inp n skip
+>--                                           Error s : _     -> fail (lineNo n ++ s)
+>                                           t : ts
+>                                               | isWhite t -> (if skip then unLex get cont else cont t)
+>                                                                  ts (newlines t + n) skip
+>                                               | otherwise -> cont t ts n skip)
+>
+> lineNo                        :: Int -> String
+> lineNo n                      =  show n ++ ": "
+>
+> parse                         :: Int -> [Token] -> Base.Result Answer
+> parse n inp                   =  unLex file (\a _ _ _ -> return a) inp n False
+>
+> newlines                      :: Token -> Int
+> newlines t		        =  length [ c | c <- toString t, c == '\n' ]
+>
+> wrap                          :: String -> String
+> wrap ""                       =  ""
+> wrap s@('<' : _)              =  s
+> wrap s                        =  "`" ++ s ++ "'"

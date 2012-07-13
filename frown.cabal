@@ -1,0 +1,10 @@
+Name:			Frown
+Version:		0.6
+License:		GPL
+Author:			Ralf Hinze
+Build-Depends:		base, directory
+Synopsis:		A parser generator for Haskell
+
+Executable:		frown
+Main-Is:		Main.lhs
+Hs-Source-Dirs:		.,./Lib

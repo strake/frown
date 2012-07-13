@@ -1,0 +1,2 @@
+decls [LBRACE, Var, EQU, Var, EOF] :: Maybe ()
+expr [Var, LPAR, LET, LBRACE, Var, EQU, Var, IN, Var, RPAR, EOF] :: Maybe ()

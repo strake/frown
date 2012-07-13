@@ -1,0 +1,7 @@
+fmap unparse $ expr (lexer "a+b+c+d") :: Maybe String
+fmap unparse $ expr (lexer "a+b*c+d") :: Maybe String
+fmap unparse $ expr (lexer "a+b*c*d") :: Maybe String
+fmap unparse $ expr (lexer "a+b+-c+d") :: Maybe String
+fmap unparse $ expr (lexer "a+-b*c+d") :: Maybe String
+fmap unparse $ expr (lexer "a=b") :: Maybe String
+fmap unparse $ expr (lexer "a=b=c") :: Maybe String

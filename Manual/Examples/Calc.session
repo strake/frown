@@ -1,0 +1,8 @@
+> Calc>> lexer "4 * (7 + 1)"
+> [Numeral 4,Mulop Times,LParen,Numeral 7,Addop Plus,Numeral 1,RParen]
+> Calc>> expr (lexer "4711") :: Result Int
+> Return 4711
+> Calc>> expr (lexer "4 * (7 + 1) - 1") :: Result Int
+> Return 31
+> Calc>> expr (lexer "4 * (7 + 1 - 1") :: Result Int
+> Fail "syntax error"

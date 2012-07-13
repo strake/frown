@@ -1,0 +1,116 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%   Frown --- An LALR(k) parser generator for Haskell 98                      %
+%   Copyright (C) 2001-2005 Ralf Hinze                                        %
+%                                                                             %
+%   This program is free software; you can redistribute it and/or modify      %
+%   it under the terms of the GNU General Public License (version 2) as       %
+%   published by the Free Software Foundation.                                %
+%                                                                             %
+%   This program is distributed in the hope that it will be useful,           %
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of            %
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             %
+%   GNU General Public License for more details.                              %
+%                                                                             %
+%   You should have received a copy of the GNU General Public License         %
+%   along with this program; see the file COPYING.  If not, write to          %
+%   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,          %
+%   Boston, MA 02111-1307, USA.                                               %
+%                                                                             %
+%   Contact information                                                       %
+%   Email:      Ralf Hinze <ralf@cs.uni-bonn.de>                              %
+%   Homepage:   http://www.informatik.uni-bonn.de/~ralf/                      %
+%   Paper mail: Dr. Ralf Hinze                                                %
+%               Institut für Informatik III                                   %
+%               Universität Bonn                                              %
+%               Römerstraße 164                                               %
+%               53117 Bonn, Germany                                           %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%options hugs -h4000000 -P$HOME/FuncMP:
+
+\newcommand{\technical}[1]{\textsl{#1}}
+\newcommand{\explain}[1]{\quad\{\;\text{#1}\;\}}
+
+% html
+%if html
+% html
+
+%let spacePreserving		=  True
+%let standardsymbols            =  True
+%include lhs2TeX.sty
+%include lhs2TeX.fmt
+%include polycode.fmt
+%subst code a    = "\begin{rawhtml}'n<TABLE BORDER='d2'd BGCOLOR='d#E0E0E0'd WIDTH='d100%'d><TR><TD>'n\end{rawhtml}'n\begin{tabbing}\tt'n>" a "'n\end{tabbing}'n\begin{rawhtml}'n</TD></TR></TABLE><P>'n\end{rawhtml}'n"
+%subst newline   = "\\'n\tt>"
+%subst inline a  = "{\tt " a "}"
+%subst thinspace = "~"
+%format .        =  "."
+%format \        = "\backslash "
+%subst verb a    = "\mbox{\tt " a "}"
+
+% html
+%else
+% html
+
+%let meta                       = True
+%let array                      = True
+%include lhs2TeX.sty
+%include lhs2TeX.fmt
+% \setlength{\cwidth}{0cm}
+% \setlength{\lwidth}{0cm}
+
+% the `doubleequals' macro is due to Jeremy Gibbons
+\def\doubleequals{\mathrel{\unitlength 0.01em
+  \begin{picture}(78,40)
+    \put(7,34){\line(1,0){25}} \put(45,34){\line(1,0){25}}
+    \put(7,14){\line(1,0){25}} \put(45,14){\line(1,0){25}}
+  \end{picture}}}
+
+%format ^			=  " "
+%format cdots			=  "\cdots "
+%format ldots			=  "\ldots "
+%format `elem`			=  "\in "
+%format `o`			=  "\mathrel{\cdot}"
+%format ==                      =  "\doubleequals "
+%format /=                      =  "\not\doubleequals "
+%format forall (a)              =  "\forall " a
+%format .                       =  "\,.\,"
+%format >>>                     =  "\mathord{\rangle}\enskip "
+% format error msg               =  msg
+
+%format e1
+%format e2
+%format m1
+%format m2
+%format v1
+%format v2
+%format v_1                     =  v "_1"
+%format v_k                     =  v "_k"
+
+%format left            =  "\mathbf{left}"
+%format right           =  "\mathbf{right}"
+%format nonassoc        =  "\mathbf{nonassoc}"
+
+% html
+%endif
+% html
+
+%format Paren1                  =  Paren
+%format Paren2                  =  Paren
+%format Paren3                  =  Paren
+%format Let1                    =  Let
+%format Let2                    =  Let
+%format Let3                    =  Let
+%format Let4                    =  Let
+%format Let5                    =  Let
+%format Let6                    =  Let
+%format Let7                    =  Let
+%format Let8                    =  Let
+%format MLexer1                 =  MLexer
+%format MLexer2                 =  MLexer
+%format MLexer3                 =  MLexer
+%format Terminal1               =  Terminal
+
+% subst comment a        =  "\mbox{" a "}"

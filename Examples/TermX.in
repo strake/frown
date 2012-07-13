@@ -1,0 +1,1 @@
+start (lexer "87-(8+23)") :: IO (Int,Expr)

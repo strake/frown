@@ -1,0 +1,152 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%   Frown --- An LALR(k) parser generator for Haskell 98                      %
+%   Copyright (C) 2001-2005 Ralf Hinze                                        %
+%                                                                             %
+%   This program is free software; you can redistribute it and/or modify      %
+%   it under the terms of the GNU General Public License (version 2) as       %
+%   published by the Free Software Foundation.                                %
+%                                                                             %
+%   This program is distributed in the hope that it will be useful,           %
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of            %
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             %
+%   GNU General Public License for more details.                              %
+%                                                                             %
+%   You should have received a copy of the GNU General Public License         %
+%   along with this program; see the file COPYING.  If not, write to          %
+%   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,          %
+%   Boston, MA 02111-1307, USA.                                               %
+%                                                                             %
+%   Contact information                                                       %
+%   Email:      Ralf Hinze <ralf@cs.uni-bonn.de>                              %
+%   Homepage:   http://www.informatik.uni-bonn.de/~ralf/                      %
+%   Paper mail: Dr. Ralf Hinze                                                %
+%               Institut für Informatik III                                   %
+%               Universität Bonn                                              %
+%               Römerstraße 164                                               %
+%               53117 Bonn, Germany                                           %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Grammar file.
+
+> file                          :  many "not special",
+>                                  "%{",
+>                                  many decl;
+>                                  "}%",
+>                                  many "not special";
+
+Note that |"not special"| matches every token except the special curly
+braces |"%{"| and |"}%"|.
+
+Declaration.
+
+> decl                          :  terminals;
+>                               |  nonterminals;
+>                               |  fixity;
+>                               |  signature;
+>                               |  productions;
+
+Terminal declaration.
+
+> terminals                     :  "Terminal", "=", sepBy term "|", ";";
+>
+> term                          :  opt "*", assoc, terminal;
+>                               |  opt "*", assoc, literal, "=", terminal; -- deprecated
+>                               |  opt "*", assoc, terminal,          "as", literal;
+>                               |  opt "*", assoc, "guard", haskell,  "as", literal;
+>
+> assoc                         :  ;
+>                               |  "left",      Numeral;
+>                               |  "right",     Numeral;
+>                               |  "nonassoc",  Numeral;
+
+Nonterminal declaration.
+
+> nonterminals                  :  "Nonterminal", "=", sepBy nonterm "|", ";";
+>
+> nonterm                       :  opt "*", nonterminal;
+
+Fixity declaration.
+
+> fixity                        : "left",      Numeral, terminal, ";";
+>                               | "right",     Numeral, terminal, ";";
+>                               | "nonassoc",  Numeral, terminal, ";";
+
+Type signature.
+
+> signature                     :  "::", nonterminal, premise, ";";  -- deprecated
+>                               |  nonterminal, premise, ";";
+>                               |  "::", "*", nonterminal, ";";      -- deprecated
+>                               |  "*", nonterminal, ";";
+>
+> premise                       :  ;
+>                               |  "<-", sepBy1 nonterminal ",";
+
+Productions.
+
+> productions                   :  nonterminal, ":", sepBy symbol ",", ";", alts;
+>
+> alts                          :  ;
+>                               |  attributes, "|", sepBy symbol ",", ";", alts;
+>
+> symbol                        :  "insert",  terminal;
+>                               |  "delete",  terminal;
+>                               |  "prec",    terminal;
+>                               |  terminal;
+>                               |  nonterminal;
+
+Nonterminal symbols (|expr0| is a variant of |expr| lacking the
+embedded Haskell production).
+
+> nonterminal                   :  expr0, attributes;
+>
+> expr0                         :  Varid, many aexpr0;
+>
+> aexpr0                        :  Varid;
+>                               |  Conid;
+>                               |  literal;
+>                               |  "(", sepBy expr ",", ")";
+>                               |  "[", sepBy expr ",", "]";
+>
+> expr                          :  aexpr;
+>                               |  Varid, many1 aexpr;
+>                               |  Conid, many1 aexpr;
+>
+> aexpr                         :  Varid;
+>                               |  Conid;
+>                               |  literal;
+>                               |  "(", sepBy expr ",", ")";
+>                               |  "[", sepBy expr ",", "]";
+>                               |  haskell;                       -- embedded Haskell
+
+Terminal symbols.
+
+> terminal                      :  pat;
+>                               |  literal, haskell, attributes;  -- shortcut
+>
+> pat                           :  apat;
+>                               |  Conid, many1 apat;
+>
+> apat                          :  Conid;
+>                               |  literal;                       -- either literal or shortcut
+>                               |  "(", sepBy pat ",", ")";
+>                               |  "[", sepBy pat ",", "]";
+>                               |  haskell;
+>
+> literal                       :  String;
+>                               |  Numeral;
+>                               |  Char;
+
+Embedded Haskell (types, patterns, and expressions).
+
+> attributes                    :  ;
+>                               |  haskell, attributes;
+>
+> haskell                       :  "{", many hs, "}";
+>
+> hs                            :  "not brace";
+>                               |  "{", many hs, "}";
+
+Note that |"not brace"| matches every token except the curly braces
+|"{"| and |"}"|.

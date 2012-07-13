@@ -1,0 +1,15 @@
+__   __ __  __  ____   ___      _________________________________________
+||   || ||  || ||  || ||__      Hugs 98: Based on the Haskell 98 standard
+||___|| ||__|| ||__||  __||     Copyright (c) 1994-2005
+||---||         ___||           World Wide Web: http://haskell.org/hugs
+||   ||                         Report bugs to: hugs-bugs@haskell.org
+||   || Version: March 2005     _________________________________________
+
+Hugs mode: Restart with command line option +98 for Haskell 98 mode
+
+Type :? for help
+Schemes> Just (Call "a" [])
+Schemes> Just (Call "a" [Tuple [Call "b" [],Call "c" [],Call "d" []]])
+Schemes> Just (Call "a" [Tuple [Call "b" [Id "c"],Call "d" [Id "e",Id "f"]]])
+Schemes> Just (Call "a" [Tuple [Call "b" [Id "c"],Call "d" []],Id "e",Tuple [Call "f" [],Call "g" []]])
+Schemes> [Leaving Hugs]

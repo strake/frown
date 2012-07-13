@@ -1,0 +1,15 @@
+> module Paren1 where
+> import Result
+>
+> %{
+>
+> Terminal                      =  '(' | ')';
+>
+> Nonterminal                   =  paren;
+>
+> paren                         :  ;
+> paren                         :  paren, '(', paren, ')';
+>
+> }%
+>
+> frown _                       =  fail "syntax error"

@@ -1,0 +1,6 @@
+pars "()()" :: Maybe Tree
+pars "()()()" :: Maybe Tree
+pars "(())((()))()" :: Maybe Tree
+pars "()(" :: Maybe Tree
+pars "(((" :: Maybe Tree
+pars "(())((())()" :: Maybe Tree

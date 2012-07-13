@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+
+
+
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.08">
+<LINK rel="stylesheet" type="text/css" href="Manual.css">
+<TITLE>
+Quick start
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="Manual002.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="Manual004.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+<HR>
+
+<H1 CLASS="chapter"><A NAME="htoc6">Chapter&nbsp;2</A>&nbsp;&nbsp;Quick start</H1>
+
+First install <FONT COLOR=purple>Frown</FONT> as described in Sec.&nbsp;<A HREF="Manual002.html#sec:install">1.1</A>. Then enter
+the directory <TT>QuickStart</TT>.
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;cd&nbsp;QuickStart
+</TT></TD>
+</TR></TABLE>
+The file <TT>Tiger.lg</TT>, listed in Fig.&nbsp;<A HREF="#fig:tiger">2.1</A>, contains a
+medium-sized grammar for an imperative language.
+<BLOCKQUOTE CLASS="figure"><DIV CLASS="center"><HR WIDTH="80%" SIZE=2></DIV>
+<FONT SIZE=2>A grammar file consists of two parts: the specification of the
+grammar, enclosed in special curly braces, and Haskell source code.
+The source file typically starts with a Haskell module header.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+</FONT><TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;<B>module</B>&nbsp;<I>Tiger</I></TT></FONT><FONT SIZE=2><TT>&nbsp;<B>where</B></TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;<B>import</B>&nbsp;<I>Lexer</I></TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;<B>import</B>&nbsp;<I>Syntax</I></TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;<B>import</B>&nbsp;<I>Prelude</I></TT></FONT><FONT SIZE=2><TT>&nbsp;hiding&nbsp;(exp)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;%{</TT></FONT></TD>
+</TR></TABLE><FONT SIZE=2>
+
+</TD></TR></TABLE><P>
+The grammar part begins here. A context-free grammar consists of sets
+of terminal and nonterminal symbols, a set of start symbols, and set
+of productions or grammar rules. The declaration below introduces the
+terminal symbols. Each terminal is given by a Haskell pattern of type
+<TT><I>Terminal</I></TT></FONT><FONT SIZE=2>.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+</FONT><TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;<I>Terminal</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;=&nbsp;&nbsp;<I>DO</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;|&nbsp;&nbsp;<I>ELSE</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;|&nbsp;&nbsp;<I>END</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>FUNCTION</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;|&nbsp;&nbsp;<I>IF</I></TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>IN</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;|&nbsp;&nbsp;<I>LET</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>THEN</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;|&nbsp;&nbsp;<I>VAR</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>WHILE</I></TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>ASSIGN</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;as&nbsp;":="&nbsp;&nbsp;|&nbsp;&nbsp;<I>COLON</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;as&nbsp;":"&nbsp;&nbsp;|&nbsp;&nbsp;<I>COMMA</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;as&nbsp;","&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>CPAREN</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;as&nbsp;")"</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>DIV</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;"/"&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>EQU</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;"="&nbsp;&nbsp;|&nbsp;&nbsp;<I>LST</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;"&lt;="&nbsp;&nbsp;|&nbsp;&nbsp;<I>MINUS</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;as&nbsp;"-"</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>NEG</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;"~"&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>OPAREN</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;as&nbsp;"("&nbsp;&nbsp;|&nbsp;&nbsp;<I>PLUS</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;"+"&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>SEMI</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;";"</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>TIMES</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;as&nbsp;"*"</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>ID</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;&nbsp;{<I>String</I></TT></FONT><FONT SIZE=2><TT>}&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>INT</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;{<I>String</I></TT></FONT><FONT SIZE=2><TT>};
+</TT></FONT></TD>
+</TR></TABLE><FONT SIZE=2>
+
+</TD></TR></TABLE><P>
+A terminal symbol may carry a semantic value or attribute. The Haskell
+type of the semantic value is given in curly braces. As a rule,
+Haskell source code is always enclosed in curly braces within the
+grammar part. The as-clauses define shortcuts for terminals, which may
+then be used in the productions.<BR>
+<BR>
+The declaration below introduces a nonterminal symbol called <TT>exp</TT>
+followed by sixteen productions for that symbol. The asterix marks
+<TT>exp</TT> as a start symbol; <TT>exp</TT> has a single attribute of type <TT><I>Expr</I></TT></FONT><FONT SIZE=2>.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+</FONT><TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;*exp&nbsp;&nbsp;{<I>Expr</I></TT></FONT><FONT SIZE=2><TT>};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;exp&nbsp;&nbsp;{<I>Var</I></TT></FONT><FONT SIZE=2><TT>&nbsp;v}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;<I>ID</I></TT></FONT><FONT SIZE=2><TT>&nbsp;{v};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Block</I></TT></FONT><FONT SIZE=2><TT>&nbsp;es}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"(",&nbsp;sepBy&nbsp;exp&nbsp;";"&nbsp;{es},&nbsp;")";</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Int</I></TT></FONT><FONT SIZE=2><TT>&nbsp;i&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>INT</I></TT></FONT><FONT SIZE=2><TT>&nbsp;{i};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Un</I></TT></FONT><FONT SIZE=2><TT>&nbsp;<I>Neg</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"-",&nbsp;exp&nbsp;{e},&nbsp;prec&nbsp;"~";</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Call</I></TT></FONT><FONT SIZE=2><TT>&nbsp;f&nbsp;es}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>ID</I></TT></FONT><FONT SIZE=2><TT>&nbsp;{f},&nbsp;"(",&nbsp;sepBy&nbsp;exp&nbsp;","&nbsp;{es},&nbsp;")";</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Bin</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e1&nbsp;<I>Eq</I></TT></FONT><FONT SIZE=2><TT>&nbsp;&nbsp;e2}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;exp&nbsp;{e1},&nbsp;"=",&nbsp;&nbsp;exp&nbsp;{e2};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Bin</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e1&nbsp;<I>Leq</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e2}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;exp&nbsp;{e1},&nbsp;"&lt;=",&nbsp;exp&nbsp;{e2};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Bin</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e1&nbsp;<I>Add</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e2}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;exp&nbsp;{e1},&nbsp;"+",&nbsp;&nbsp;exp&nbsp;{e2};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Bin</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e1&nbsp;<I>Sub</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e2}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;exp&nbsp;{e1},&nbsp;"-",&nbsp;&nbsp;exp&nbsp;{e2};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Bin</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e1&nbsp;<I>Mul</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e2}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;exp&nbsp;{e1},&nbsp;"*",&nbsp;&nbsp;exp&nbsp;{e2};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Bin</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e1&nbsp;<I>Div</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e2}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;exp&nbsp;{e1},&nbsp;"/",&nbsp;&nbsp;exp&nbsp;{e2};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Assign</I></TT></FONT><FONT SIZE=2><TT>&nbsp;v&nbsp;e}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>ID</I></TT></FONT><FONT SIZE=2><TT>&nbsp;{v},&nbsp;":=",&nbsp;&nbsp;exp&nbsp;{e};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>IfThen</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e&nbsp;e1}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>IF</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;exp&nbsp;{e},&nbsp;<I>THEN</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;exp&nbsp;{e1};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>IfElse</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e&nbsp;e1&nbsp;e2}&nbsp;&nbsp;|&nbsp;&nbsp;<I>IF</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;exp&nbsp;{e},&nbsp;<I>THEN</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;exp&nbsp;{e1},&nbsp;<I>ELSE</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;exp&nbsp;{e2};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>While</I></TT></FONT><FONT SIZE=2><TT>&nbsp;e&nbsp;e1}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>WHILE</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;exp&nbsp;{e},&nbsp;<I>DO</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;exp&nbsp;{e1};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Let</I></TT></FONT><FONT SIZE=2><TT>&nbsp;ds&nbsp;es}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>LET</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;many&nbsp;dec&nbsp;{ds},&nbsp;<I>IN</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;sepBy&nbsp;exp&nbsp;";"&nbsp;{es},&nbsp;<I>END</I></TT></FONT><FONT SIZE=2><TT>;
+</TT></FONT></TD>
+</TR></TABLE><FONT SIZE=2>
+
+</TD></TR></TABLE><P>
+Left-hand and right-hand side of a production are separated by a
+colon; symbols on the right are separated by commas and terminated by
+a semicolon. Alternative right-hand sides are separated by a vertical
+bar. <BR>
+<BR>
+The pieces in curly braces constitute Haskell source code. Each rule
+can be seen as a function from the right-hand to the left-hand
+side. On the right-hand side, Haskell variables are used to name the
+values of attributes. The values of the attributes on the left-hand
+side are given by Haskell expressions, in which the variables of the
+right-hand side occur free.<BR>
+<BR>
+The last production makes use of two (predefined) rule schemes: <TT>many&nbsp;x</TT>
+implements the repetition of the symbol <TT>x</TT>, and <TT>sepBy&nbsp;x&nbsp;sep</TT>
+denotes a repetition of <TT>x</TT> symbols separated by <TT>sep</TT> symbols.<BR>
+<BR>
+The above productions are ambiguous as, for instance, <TT>1&nbsp;+&nbsp;2&nbsp;*&nbsp;3</TT> has
+two derivations. The ambiguity can be resolved by assigning
+precedences to terminal symbols.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+</FONT><TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;"~";&nbsp;&nbsp;&nbsp;left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;"*";&nbsp;&nbsp;&nbsp;left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;"/";&nbsp;&nbsp;left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;"+";&nbsp;&nbsp;left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;"-";</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;right&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;<I>THEN</I></TT></FONT><FONT SIZE=2><TT>;&nbsp;&nbsp;right&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;<I>ELSE</I></TT></FONT><FONT SIZE=2><TT>;&nbsp;&nbsp;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;nonassoc&nbsp;&nbsp;4&nbsp;&nbsp;"&lt;=";&nbsp;&nbsp;nonassoc&nbsp;&nbsp;4&nbsp;&nbsp;"=";&nbsp;&nbsp;&nbsp;nonassoc&nbsp;&nbsp;0&nbsp;&nbsp;<I>DO</I></TT></FONT><FONT SIZE=2><TT>;&nbsp;&nbsp;&nbsp;nonassoc&nbsp;&nbsp;0&nbsp;&nbsp;":=";
+</TT></FONT></TD>
+</TR></TABLE><FONT SIZE=2>
+
+</TD></TR></TABLE><P>
+The following declarations define the nonterminal <TT>dec</TT> and three
+further nonterminals.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+</FONT><TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;dec&nbsp;&nbsp;{<I>Decl</I></TT></FONT><FONT SIZE=2><TT>};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;dec&nbsp;&nbsp;{d}&nbsp;&nbsp;:&nbsp;&nbsp;vardec&nbsp;{d};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{d}&nbsp;&nbsp;|&nbsp;&nbsp;fundec&nbsp;{d};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;vardec&nbsp;&nbsp;{<I>Decl</I></TT></FONT><FONT SIZE=2><TT>};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;vardec&nbsp;&nbsp;{<I>Variable</I></TT></FONT><FONT SIZE=2><TT>&nbsp;v&nbsp;e}&nbsp;&nbsp;:&nbsp;&nbsp;<I>VAR</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;<I>ID</I></TT></FONT><FONT SIZE=2><TT>&nbsp;{v},&nbsp;":=",&nbsp;exp&nbsp;{e};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;fundec&nbsp;&nbsp;{<I>Decl</I></TT></FONT><FONT SIZE=2><TT>};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;fundec&nbsp;&nbsp;{<I>Function</I></TT></FONT><FONT SIZE=2><TT>&nbsp;f&nbsp;xs&nbsp;e}&nbsp;&nbsp;:&nbsp;&nbsp;<I>FUNCTION</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;<I>ID</I></TT></FONT><FONT SIZE=2><TT>&nbsp;{f},&nbsp;"(",&nbsp;sepBy&nbsp;(<I>ID</I></TT></FONT><FONT SIZE=2><TT>&nbsp;{})&nbsp;","&nbsp;{xs},&nbsp;")",&nbsp;"=",&nbsp;exp&nbsp;{e};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;formal&nbsp;&nbsp;{(<I>Ident</I></TT></FONT><FONT SIZE=2><TT>,&nbsp;<I>TyIdent</I></TT></FONT><FONT SIZE=2><TT>)};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;formal&nbsp;&nbsp;{(v,&nbsp;t)}&nbsp;&nbsp;:&nbsp;&nbsp;<I>ID</I></TT></FONT><FONT SIZE=2><TT>&nbsp;{v},&nbsp;":",&nbsp;<I>ID</I></TT></FONT><FONT SIZE=2><TT>&nbsp;{t};</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;}%
+</TT></FONT></TD>
+</TR></TABLE><FONT SIZE=2>
+
+</TD></TR></TABLE><P>
+The grammar part ends here. The source file typically includes a
+couple of Haskell declarations. The user-defined function <TT>frown</TT> is
+the error routine invoked by the parser in case of a syntax error; its
+definition is mandatory.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+</FONT><TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;frown&nbsp;_&nbsp;&nbsp;=&nbsp;&nbsp;error&nbsp;"syntax&nbsp;error"</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;tc&nbsp;f&nbsp;&nbsp;=&nbsp;&nbsp;<B>do</B>&nbsp;{&nbsp;&nbsp;putStrLn&nbsp;"***&nbsp;reading&nbsp;...";&nbsp;&nbsp;s&nbsp;&lt;-&nbsp;readFile&nbsp;f;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;s;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;putStrLn&nbsp;"***&nbsp;lexing&nbsp;&nbsp;...";&nbsp;&nbsp;<B>let</B>&nbsp;{ts&nbsp;=&nbsp;lexer&nbsp;s};&nbsp;&nbsp;print&nbsp;ts;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT SIZE=2><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;putStrLn&nbsp;"***&nbsp;parsing&nbsp;...";&nbsp;&nbsp;e&nbsp;&lt;-&nbsp;exp&nbsp;ts;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;e&nbsp;}</TT></FONT></TD>
+</TR></TABLE><FONT SIZE=2>
+
+</TD></TR></TABLE><P>
+<BR>
+<BR>
+</FONT><DIV CLASS="center"><FONT SIZE=2>Figure 2.1: </FONT><A NAME="fig:tiger"></A><FONT SIZE=2>A sample <FONT COLOR=purple>Frown</FONT></FONT><FONT SIZE=2> grammar file.</FONT></DIV><BR>
+<BR>
+<FONT SIZE=2>
+</FONT><DIV CLASS="center"><HR WIDTH="80%" SIZE=2></DIV></BLOCKQUOTE>
+Now, type
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown/QuickStart&gt;&nbsp;frown&nbsp;-v&nbsp;Tiger.lg</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown/QuickStart&gt;&nbsp;hugs&nbsp;Tiger.hs</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;...</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;Tiger&gt;&nbsp;exp&nbsp;[ID&nbsp;"a",&nbsp;PLUS,&nbsp;ID&nbsp;"b",&nbsp;TIMES,&nbsp;INT&nbsp;"2"]&nbsp;&gt;&gt;=&nbsp;print</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;Bin&nbsp;(Var&nbsp;"a")&nbsp;Add&nbsp;(Bin&nbsp;(Var&nbsp;"b")&nbsp;Mul&nbsp;(Int&nbsp;"2"))</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;Tiger&gt;&nbsp;tc&nbsp;"fib.tig"</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;...
+</TT></TD>
+</TR></TABLE>
+The call <TT>frown&nbsp;-v&nbsp;Tiger.lg</TT> generates a Haskell parser which can then
+be loaded into <TT>hugs</TT> (or <TT>ghci</TT>). The parser has type <TT>exp&nbsp;::&nbsp;(<I>Monad</I></TT><TT>&nbsp;m)&nbsp;=&gt;&nbsp;[<I>Terminal</I></TT><TT>]&nbsp;-&gt;&nbsp;m&nbsp;<I>Expr</I></TT>, that is, the parser is a computation that
+takes a list of terminals as input and returns an expression.<BR>
+<BR>
+<BR>
+
+More examples can be found in the directory <TT>Manual/Examples</TT>:
+<DL CLASS="description" COMPACT=compact><DT CLASS="dt-description">
+<B><TT>Paren1.lg</TT></B><DD CLASS="dd-description"><BR>
+well-balanced parentheses: a pure grammar (see Sec.&nbsp;<A HREF="Manual004.html#sec:pure">3.2.1</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Paren2.lg</TT></B><DD CLASS="dd-description"><BR>
+an extension of <TT>Paren1.lg</TT> illustrating the definition of attributes
+(see Sec.&nbsp;<A HREF="Manual004.html#sec:attributes">3.2.2</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Calc.lg</TT></B><DD CLASS="dd-description"><BR>
+a simple evaluator for arithmetic expressions: a parser that
+interfaces with a separate lexer (see Sec.&nbsp;<A HREF="Manual004.html#sec:lexer">3.2.3</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>MCalc.lg</TT></B><DD CLASS="dd-description"><BR>
+a variant of the desktop calculator (<TT>Calc.lg</TT>) that prints all
+intermediate results: illustrates monadic actions (see
+Sec.&nbsp;<A HREF="Manual004.html#sec:monadicactions">3.2.4</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Let1.lg</TT></B><DD CLASS="dd-description"><BR>
+an ambiguous expression grammar: illustrates backtracking parsers (see
+Sec.&nbsp;<A HREF="Manual004.html#sec:backtracking">3.2.5</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Let2.lg</TT></B><DD CLASS="dd-description"><BR>
+an expression grammar: illustrates the use of precedences and
+associativity (see Sec.&nbsp;<A HREF="Manual004.html#sec:prec">3.2.6</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Let3.lg</TT></B><DD CLASS="dd-description"><BR>
+a variant of the expression grammar: shows how to simulate inherited
+attributes using a reader monad (see Sec.&nbsp;<A HREF="Manual004.html#sec:reader">3.2.8</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Let4.lg</TT></B><DD CLASS="dd-description"><BR>
+an expression grammar: illustrates a parser
+that interfaces with a monadic lexer (see Sec.&nbsp;<A HREF="Manual004.html#sec:mlexer">3.3.1</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Let5.lg</TT></B><DD CLASS="dd-description"><BR>
+a variant of <TT>Let4.lg</TT> with better error reporting (see
+Sec.&nbsp;<A HREF="Manual004.html#sec:reporting">3.3.2</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Let6.lg</TT></B><DD CLASS="dd-description"><BR>
+a variant of <TT>Let5.lg</TT> with even better error reporting: prints a
+list of expected tokens upon error (see Sec.&nbsp;<A HREF="Manual004.html#sec:expected">3.3.3</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Let7.lg</TT></B><DD CLASS="dd-description"><BR>
+yet another variant of the expression grammar: illustrates a simple
+form of error correction (see Sec.&nbsp;<A HREF="Manual004.html#sec:errorcorrection">3.3.4</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Let8.lg</TT></B><DD CLASS="dd-description"><BR>
+variant of <TT>Let7.lg</TT> that notifies the user of corrections (see
+Sec.&nbsp;<A HREF="Manual004.html#sec:errorcorrection">3.3.4</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>VarCalc.lg</TT></B><DD CLASS="dd-description"><BR>
+a variant of the desktop calculator (<TT>Calc.lg</TT>) that works without a
+separate lexer: illustrates guards (see Sec.&nbsp;<A HREF="Manual004.html#sec:terminal2">3.4.2</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>Paren3.lg</TT></B><DD CLASS="dd-description"><BR>
+illustrates the tracing facilities (see Sec.&nbsp;<A HREF="Manual004.html#sec:tracing">3.4.4</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>VarParen.lg</TT></B><DD CLASS="dd-description"><BR>
+illustrates irrefutable patterns on the right-hand side of productions
+(see Sec.&nbsp;<A HREF="Manual005.html#sec:irrefutable">4.1</A>);<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>RepMin.lg</TT></B><DD CLASS="dd-description"><BR>
+a solution to the rep-min problem: illustrates how to simulate
+inherited attributes using functional attributes (see
+Sec.&nbsp;<A HREF="Manual005.html#sec:inherited">4.2</A>).
+</DL>
+<HR>
+<A HREF="Manual002.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="Manual004.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+</BODY>
+</HTML>

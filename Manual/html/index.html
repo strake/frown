@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+
+<HEAD>
+
+
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.08">
+<LINK rel="stylesheet" type="text/css" href="Manual.css">
+</HEAD>
+
+<BODY >
+<!--HEVEA command line is: hevea -fix Manual.tex -->
+<!--HACHA command line is: hacha Manual.html -->
+
+<BR>
+<TABLE CLASS="title">
+<TR><TD></TD>
+</TR></TABLE>
+<BLOCKQUOTE CLASS="quote"><B>Abstract: </B>
+<FONT COLOR=purple>Frown</FONT> is an LALR(<I>k</I>) parser generator for Haskell&nbsp;98 written in
+Haskell&nbsp;98.<BR>
+<BR>
+<BR>
+
+Its salient features are:
+<UL CLASS="itemize"><LI CLASS="li-itemize">
+The generated parsers are time and space efficient. On the downside,
+ the parsers are quite large.<BR>
+<BR>
+<LI CLASS="li-itemize"><FONT COLOR=purple>Frown</FONT> generates four different types of parsers. As a common
+ characteristic, the parsers are <EM>genuinely functional</EM> (ie
+ `table-free'); the states of the underlying LR automaton are encoded
+ as mutually recursive functions. Three output formats use a typed
+ stack representation, one format due to Ross Paterson
+ (<TT>code=stackless</TT>) works even without a stack.<BR>
+<BR>
+<LI CLASS="li-itemize">Encoding states as functions means that each state can be
+ treated individually as opposed to a table driven-approach, which
+ necessitates a uniform treatment of states. For instance, look-ahead
+ is only used when necessary to resolve conflicts.<BR>
+<BR>
+<LI CLASS="li-itemize"><FONT COLOR=purple>Frown</FONT> comes with debugging and tracing facilities; the standard
+ output format due to Doaitse Swierstra (<TT>code=standard</TT>) may be
+ useful for teaching LR parsing.<BR>
+<BR>
+<LI CLASS="li-itemize">Common grammatical patterns such as repetition of symbols can
+ be captured using <EM>rule schemata</EM>. There are several predefined
+ rule schemata.<BR>
+<BR>
+<LI CLASS="li-itemize">Terminal symbols are arbitrary variable-free Haskell patterns
+ or guards. Both terminal and nonterminal symbols may have an
+ arbitrary number of synthesized attributes.<BR>
+<BR>
+<LI CLASS="li-itemize"><FONT COLOR=purple>Frown</FONT> comes with extensive documentation; several example
+ grammars are included.
+</UL>
+Furthermore, <FONT COLOR=purple>Frown</FONT> supports the use of monadic lexers, monadic
+semantic actions, precedences and associativity, the generation of
+backtracking parsers, multiple start symbols, error reporting and a
+weak form of error correction.
+</BLOCKQUOTE>
+<UL>
+<LI><A HREF="Manual001.html">Contents</A>
+<LI><A HREF="Manual002.html">Introduction</A>
+<UL>
+<LI><A HREF="Manual002.html#toc1">Obtaining and installing <FONT COLOR=purple>Frown</FONT></A>
+<LI><A HREF="Manual002.html#toc2">Reporting bugs</A>
+<LI><A HREF="Manual002.html#toc3">License</A>
+<LI><A HREF="Manual002.html#toc4">Credits</A>
+</UL>
+<LI><A HREF="Manual003.html">Quick start</A>
+<LI><A HREF="Manual004.html">Tour de <FONT COLOR=purple>Frown</FONT></A>
+<UL>
+<LI><A HREF="Manual004.html#toc5">Preliminaries: monads</A>
+<LI><A HREF="Manual004.html#toc6">Basic features</A>
+<LI><A HREF="Manual004.html#toc7">Error reporting and correction</A>
+<LI><A HREF="Manual004.html#toc8">Advanced features</A>
+</UL>
+<LI><A HREF="Manual005.html">Tips and tricks</A>
+<UL>
+<LI><A HREF="Manual005.html#toc9">Irrefutable patterns</A>
+<LI><A HREF="Manual005.html#toc10">Inherited attributes</A>
+<LI><A HREF="Manual005.html#toc11">Dealing with conflicts</A>
+<LI><A HREF="Manual005.html#toc12">Multiple attributes</A>
+</UL>
+<LI><A HREF="Manual006.html">Reference manual</A>
+<UL>
+<LI><A HREF="Manual006.html#toc13">Lexical syntax of <FONT COLOR=purple>Frown</FONT></A>
+<LI><A HREF="Manual006.html#toc14">Syntax of <FONT COLOR=purple>Frown</FONT></A>
+<LI><A HREF="Manual006.html#toc15">Predefined schemes</A>
+<LI><A HREF="Manual006.html#toc16">Output formats</A>
+<LI><A HREF="Manual006.html#toc17">Invocation and options</A>
+</UL>
+<LI><A HREF="Manual007.html">References</A>
+</UL>
+<!--FOOTER-->
+<HR SIZE=2><BLOCKQUOTE CLASS="quote"><EM>This document was translated from L<sup>A</sup>T<sub>E</sub>X by
+</EM><A HREF="http://pauillac.inria.fr/~maranget/hevea/index.html"><EM>H<FONT SIZE=2><sup>E</sup></FONT>V<FONT SIZE=2><sup>E</sup></FONT>A</EM></A><EM>.</EM></BLOCKQUOTE></BODY>
+</HTML>

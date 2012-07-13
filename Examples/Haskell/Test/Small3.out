@@ -1,0 +1,2 @@
+module Main where
+f2 x = do x

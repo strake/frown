@@ -1,0 +1,6 @@
+append
+    = \ x y . case x of
+                nil      : y;
+                cons a z : cons a (append z y)
+              end
+

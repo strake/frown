@@ -1,0 +1,1 @@
+expr (lexer "1+2*4") :: [Int]

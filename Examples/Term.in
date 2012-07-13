@@ -1,0 +1,2 @@
+expr (lexer "1+5") :: IO Expr
+term (lexer "(1+5)") :: IO Expr

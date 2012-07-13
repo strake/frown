@@ -1,0 +1,4 @@
+expr (lexer "a") :: Maybe Expr
+expr (lexer "if") :: Maybe Expr
+expr (lexer "iff") :: Maybe Expr
+expr (lexer "if a then b else c") :: Maybe Expr

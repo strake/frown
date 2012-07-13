@@ -1,0 +1,48 @@
+#! /bin/csh -f
+
+set version = 0.5
+
+cp ../frown-$version-src.tar.gz .
+cp ../frown-$version-i386.tar.gz .
+
+echo '########################################################################'
+echo '# source bundle, ghc                                                   #'
+echo '########################################################################'
+
+tar xzf frown-$version-src.tar.gz
+mv Frown Frown-ghc-src
+cd Frown-ghc-src
+make all
+cd ..
+
+echo '########################################################################'
+echo '# binary bundle, ghc                                                   #'
+echo '########################################################################'
+
+tar xzf frown-$version-i386.tar.gz
+mv Frown Frown-ghc-i386
+cd Frown-ghc-i386
+#make install
+make test
+cd ..
+
+echo '########################################################################'
+echo '# source bundle, nhc98                                                 #'
+echo '########################################################################'
+
+tar xzf frown-$version-src.tar.gz
+mv Frown Frown-nhc98-src
+cd Frown-nhc98-src
+make all hc=nhc98
+cd ..
+
+echo '########################################################################'
+echo '# binary bundle, nhc98                                                 #'
+echo '########################################################################'
+
+tar xzf frown-$version-i386.tar.gz
+mv Frown Frown-nhc98-i386
+cd Frown-nhc98-i386
+#make install
+make test
+cd ..

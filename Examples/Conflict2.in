@@ -1,0 +1,4 @@
+s "agc" >>= print
+s "bgd" >>= print
+s "agd" >>= print
+s "bgc" >>= print

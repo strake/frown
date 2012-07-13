@@ -1,0 +1,4 @@
+> Paren2>> paren "(())()" :: Result Tree
+> Return (Fork (Fork Leaf (Fork Leaf Leaf)) Leaf)
+> Paren2>> paren "(())(" :: Result Tree
+> Fail "syntax error"

@@ -1,0 +1,1 @@
+bindings [Var, Var, Special '=', Var, Special ';'] :: [()]

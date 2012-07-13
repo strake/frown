@@ -1,0 +1,1 @@
+fmap (\ s -> s "") (s "abba" :: IO ShowS) >>= putStrLn

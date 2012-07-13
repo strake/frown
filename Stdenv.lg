@@ -1,0 +1,147 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%   Frown --- An LALR(k) parser generator for Haskell 98                      %
+%   Copyright (C) 2001-2005 Ralf Hinze                                        %
+%                                                                             %
+%   This program is free software; you can redistribute it and/or modify      %
+%   it under the terms of the GNU General Public License (version 2) as       %
+%   published by the Free Software Foundation.                                %
+%                                                                             %
+%   This program is distributed in the hope that it will be useful,           %
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of            %
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             %
+%   GNU General Public License for more details.                              %
+%                                                                             %
+%   You should have received a copy of the GNU General Public License         %
+%   along with this program; see the file COPYING.  If not, write to          %
+%   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,          %
+%   Boston, MA 02111-1307, USA.                                               %
+%                                                                             %
+%   Contact information                                                       %
+%   Email:      Ralf Hinze <ralf@cs.uni-bonn.de>                              %
+%   Homepage:   http://www.informatik.uni-bonn.de/~ralf/                      %
+%   Paper mail: Dr. Ralf Hinze                                                %
+%               Institut für Informatik III                                   %
+%               Universität Bonn                                              %
+%               Römerstraße 164                                               %
+%               53117 Bonn, Germany                                           %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%if False
+
+> %{
+
+start;
+start : many start;
+
+%endif
+
+Note that the predefined rules are left-recursive and `run' using
+constant stack space. Also note that we define rules for arity zero
+and arity one (the arity specifies the number of attributes/semantic
+values). The primed versions of the rules work on Hughes's efficient
+sequence type (a sequence of |a|'s is represented by a function of
+type |[a] -> [a]|).
+
+% - - - - - - - - - - - - - - - = - - - - - - - - - - - - - - - - - - - - - - -
+\subsection{Optional elements}
+% - - - - - - - - - - - - - - - = - - - - - - - - - - - - - - - - - - - - - - -
+
+Arity zero.
+
+> opt x                         <-  x;
+> opt x                         :   ;
+>                               |   x;
+
+Arity one.
+
+> opt x  {Maybe a}              <-  x {a};
+> opt x  {Nothing}              :   ;
+>        {Just a}               |   x {a};
+
+% - - - - - - - - - - - - - - - = - - - - - - - - - - - - - - - - - - - - - - -
+\subsection{Repetition of elements}
+% - - - - - - - - - - - - - - - = - - - - - - - - - - - - - - - - - - - - - - -
+
+Arity zero.
+
+> many x                        <-  x;
+> many x                        :   ;
+>                               |   many x, x;
+>
+> many1 x                       <-  x;
+> many1 x                       :   x, many x;
+
+Arity one.
+
+> many x  {[a]}                  <-  x {a};
+> many x  {s []}                 :   many' x {s};
+>
+> many' x  {[a] -> [a]}          <-  x {a};
+> many' x  {\ as -> as}          :   ;
+>          {\ as -> s (a : as)}  |   many' x {s}, x {a};
+>
+> many1 x  {[a]}                 <-  x {a};
+> many1 x  {a : as}              :   x {a}, many x {as};
+
+% - - - - - - - - - - - - - - - = - - - - - - - - - - - - - - - - - - - - - - -
+\subsection{Repetition of elements separated by a second element}
+% - - - - - - - - - - - - - - - = - - - - - - - - - - - - - - - - - - - - - - -
+
+Arity zero.
+
+> sepBy x sep                   <-  x, sep;
+> sepBy x sep                   :   ;
+>                               |   sepBy1 x sep;
+>
+> sepBy1 x sep                  <-  x, sep;
+> sepBy1 x sep                  :   x;
+>                               |   sepBy1 x sep, sep, x;
+
+Arity one.
+
+> sepBy x sep  {[a]}            <-  x {a}, sep;
+> sepBy x sep  {[]}             :   ;
+>              {as}             |   sepBy1 x sep {as};
+>
+> sepBy1 x sep  {[a]}           <-  x {a}, sep;
+> sepBy1 x sep  {s []}          :   sepBy1' x sep {s};
+>
+> sepBy1' x sep  {[a] -> [a]}   <-  x {a}, sep;
+> sepBy1' x sep
+>     {\ as -> a : as}          :   x {a};
+>     {\ as -> s (a : as)}      |   sepBy1' x sep {s}, sep, x {a};
+
+TODO: also versions where |sep| has arity one.
+
+% - - - - - - - - - - - - - - - = - - - - - - - - - - - - - - - - - - - - - - -
+\subsection{Repetition of possibly empty elements separated by a second element}
+% - - - - - - - - - - - - - - - = - - - - - - - - - - - - - - - - - - - - - - -
+
+\Todo{better name.}
+
+Arity zero.
+
+> optSepBy x sep                <-  x, sep;
+> optSepBy x sep                :   ;
+>                               |   x;
+>                               |   optSepBy x sep, sep;
+>                               |   optSepBy x sep, sep, x;
+
+Arity one.
+
+> optSepBy x sep  {[a]}          <-  x {a}, sep;
+> optSepBy x sep  {s []}         :   optSepBy' x sep {s};
+>
+> optSepBy' x sep  {[a] -> [a]}  <-  x {a}, sep;
+> optSepBy' x sep
+>     {\ as -> as}               :   ;
+>     {\ as -> a : as}           |   x {a};
+>     {\ as -> s as}             |   optSepBy' x sep {s}, sep;
+>     {\ as -> s (a : as)}       |   optSepBy' x sep {s}, sep, x {a};
+
+%if False
+
+> }%
+
+%endif

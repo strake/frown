@@ -1,0 +1,12 @@
+let
+ function fib(n) =
+  if n = 0 then 0
+  else if n = 1 then 1
+  else fib(n - 2) + fib(n - 1)
+ var i := 0
+in
+ while i <= 42 do
+  (print(showint(fib(i)));
+   newline();
+   i := i + 1)
+end

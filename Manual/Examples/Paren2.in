@@ -1,0 +1,2 @@
+paren "(())()" :: Result Tree
+paren "(())(" :: Result Tree

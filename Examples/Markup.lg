@@ -1,0 +1,39 @@
+{-
+
+This example illustrates the use of guards.
+
+	frown Markup.lg
+
+Try
+
+	doc "aaa<ccc<>ddd<fff<iii>ggg<hhh>>eee>bbb" :: Maybe Doc
+
+-}
+
+> module Markup
+> where
+>
+> type Doc                      =  [Elem]
+> data Elem                     =  Text Char | Markup Doc
+>                                  deriving (Show)
+>
+> type Terminal                 =  Char
+>
+> type Result                   =  Maybe
+>
+> %{
+>
+> Terminal                      =  '<'
+>                               |  '>'
+>                               |  guard {\ c -> c /= '<' && c /= '>'} as "char";
+>
+> doc {Doc};
+> doc {d}                       :  many elem {d};
+>
+> elem {Elem};
+> elem {Text c}                 :  "char" {c};
+>      {Markup d}               |  '<', doc {d}, '>';
+>
+> }%
+>
+> frown ts                      =  fail "syntax error"

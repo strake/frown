@@ -1,0 +1,4 @@
+> VarParen>> paren "(())()" :: Result Tree
+> Return (Node [Node [Node [],Node []]])
+> VarParen>> paren "(())("  :: Result Tree
+> Fail "syntax error"

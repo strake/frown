@@ -1,0 +1,3 @@
+do cmd <- paren "()(())" :: IO (IO ()); cmd
+do cmd <- paren "(())((())())" :: IO (IO ()); cmd
+do cmd <- paren "(())((())()" :: IO (IO ()); cmd

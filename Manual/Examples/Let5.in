@@ -1,0 +1,4 @@
+run expr "4 * (7 + 1) - 1" :: IO Expr
+run expr "let\n    a = 4 * (7 + 1) - 1\n in a * a" :: IO Expr
+run expr "let\n    a = 4 * [7 + 1 - 1)\n in a * a" :: IO Expr
+run expr "let\n    a = 4 * (7 + 1 - 1\n in a * a" :: IO Expr

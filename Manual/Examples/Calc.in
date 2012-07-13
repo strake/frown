@@ -1,0 +1,4 @@
+lexer "4 * (7 + 1)"
+expr (lexer "4711") :: Result Int
+expr (lexer "4 * (7 + 1) - 1") :: Result Int
+expr (lexer "4 * (7 + 1 - 1") :: Result Int

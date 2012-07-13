@@ -1,0 +1,53 @@
+ANNOUNCE: Frown - an LALR(k) Parser Generator for Haskell (version 0.6, beta)
+-----------------------------------------------------------------------------
+
+I'm pleased to announce the first release of Frown (version 0.6,
+andromeda release), an LALR(k) Parser Generator for Haskell 98. 
+This is a beta quality release.
+
+Frown's salient features are:
+
+o  The generated parsers are time and space efficient. On the downside,
+   the parsers are quite large.
+
+o  Frown generates four different types of parsers. As a common
+   characteristic, the parsers are genuinely functional (ie `table-free');
+   the states of the underlying LR automaton are encoded as mutually
+   recursive functions. Three output formats use a typed stack
+   representation, one format due to Ross Paterson (code=stackless)
+   works even without a stack.
+
+o  Encoding states as functions means that each state can be treated
+   individually as opposed to a table driven-approach, which
+   necessitates a uniform treatment of states. For instance,
+   look-ahead is only used when necessary to resolve conflicts.
+
+o  Frown comes with debugging and tracing facilities; the standard
+   output format due to Doaitse Swierstra (code=standard) may be
+   useful for teaching LR parsing.
+
+o  Common grammatical patterns such as repetition of symbols can be
+   captured using rule schemata. There are several predefined rule
+   schemata.
+
+o  Terminal symbols are arbitrary variable-free Haskell patterns or
+   guards. Both terminal and nonterminal symbols may have an arbitrary
+   number of synthesized attributes.
+
+o  Frown comes with extensive documentation; several example grammars
+   are included.
+
+Furthermore, Frown supports the use of monadic lexers, monadic
+semantic actions, precedences and associativity, the generation of
+backtracking parsers, multiple start symbols, error reporting and a
+weak form of error correction.
+
+Frown is available in source form, which can be compiled with GHC
+version 5.02+. The source code and further information is available
+on the Frown home page
+
+        http://www.informatik.uni-bonn.de/~ralf/frown/index.html
+
+Please send any bug reports and comments to ralf@informatik.uni-bonn.de.
+
+Happy frowning, Ralf

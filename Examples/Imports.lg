@@ -1,0 +1,25 @@
+> type Terminal                 =  Char
+>
+> type Result                   =  Maybe
+>
+> %{
+>
+> Terminal = 'I'
+>          | 'D'
+>          | ';'
+>          | '|';
+>
+> root {String};
+> root {(xs . ys) []}  : sepBy1' i ';' {xs}, ';', sepBy1' d ';' {ys};
+>      {xs []}         | sepBy1' i ';' {xs};
+>      {ys []}         | sepBy1' d '|' {ys};
+>
+> i {Char};
+> i {'I'}          : 'I';
+>
+> d {Char};
+> d {'D'}          : 'D';
+>
+> }%
+>
+> frown _          = error "syntax error"

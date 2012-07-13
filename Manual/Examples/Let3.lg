@@ -1,0 +1,68 @@
+%if False
+
+> module Let3 where
+> import Lexer
+> import Maybe
+> import Reader
+> import Monad
+
+%endif
+We need some additional helper functions for accessing and
+extending environments
+
+> type Binding                  =   (String, Int)
+>
+> type Result                   =   Reader [Binding]
+>
+> extend                        ::  Binding -> Result a -> Result a
+> extend b m                    =   getenv >>= \ env -> withenv (b : env) m
+>
+> access                        ::  String -> Result Int
+> access s                      =   getenv >>= \ env -> return (fromMaybe 0 (lookup s env))
+
+%if False
+
+> %{
+>
+> Terminal                      =  Numeral {Int}
+>                               |  Ident {String}
+>                               |  Addop {Op}
+>                               |  Mulop {Op}
+>                               |  KWLet   as "let"
+>                               |  KWIn    as "in"
+>                               |  Equal   as "="
+>                               |  LParen  as "("
+>                               |  RParen  as ")";
+>
+> left     6 Addop {Op};
+> left     7 Mulop {Op};
+> nonassoc 0 "in";
+
+%endif
+The following grammar implements the desired evaluator.
+
+> expr  {Result Int};
+> expr  {do {b <- d; extend b m}}  :  "let", decl {d}, "in", expr {m};
+>       {liftM2 (app op) m1 m2}    |  expr {m1}, Addop {op}, expr {m2};
+>       {liftM2 (app op) m1 m2}    |  expr {m1}, Mulop {op}, expr {m2};
+>       {return n}                 |  Numeral {n};
+>       {access s}                 |  Ident {s};
+>       {m}                        |  "(", expr {m}, ")";
+>
+> decl  {Result Binding};
+> decl  {do {v <- m; return (s,v)}}  :  Ident {s}, "=", expr {m};
+
+%if False
+
+> }%
+>
+> frown _                       =  fail "syntax error"
+
+%endif
+Note that there are two monads around: the parsing monad (in fact,
+|expr| is parametric in this monad) and the reader monad, which is
+embedded in the attributes. The parser returns a value of type |Reader
+Int|, to which we pass an empty initial environment.
+
+> eval                          :: (Monad m) => [Char] -> m Int
+> eval inp                      =  do {f <- expr (lexer inp); return (apply f [])}

@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+
+
+
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.08">
+<LINK rel="stylesheet" type="text/css" href="Manual.css">
+<TITLE>
+Introduction
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="Manual001.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="Manual003.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+<HR>
+
+<H1 CLASS="chapter"><A NAME="htoc1">Chapter&nbsp;1</A>&nbsp;&nbsp;Introduction</H1>
+<A NAME="sec:introduction"></A>
+
+<FONT COLOR=purple>Frown</FONT> is an LALR(<I>k</I>) parser generator for Haskell&nbsp;98 written in
+Haskell&nbsp;98.<BR>
+<BR>
+The work on <FONT COLOR=purple>Frown</FONT> started as an experiment in generating genuinely
+functional LR parsers. The first version was written within three
+days&mdash;yes, Haskell is a wonderful language for rapid prototyping.
+Since then <FONT COLOR=purple>Frown</FONT> has gone through several cycles of reorganization
+and rewriting. It also grew considerably: dozens of features were
+added, examples were conceived and tested, and this manual was
+written. In the end, <FONT COLOR=purple>Frown</FONT> has become a useable tool. I hope you
+will find it useful, too.<BR>
+<BR>
+<A NAME="toc1"></A>
+<H2 CLASS="section"><A NAME="htoc2">1.1</A>&nbsp;&nbsp;Obtaining and installing <FONT COLOR=purple>Frown</FONT></H2>
+<A NAME="sec:install"></A>
+
+
+<H5 CLASS="paragraph">Obtaining <FONT COLOR=purple>Frown</FONT></H5>
+The parser generator is available from
+<BLOCKQUOTE CLASS="quote">
+<TT>http://www.informatik.uni-bonn.de/~ralf/frown</TT>.
+</BLOCKQUOTE>
+The bundle includes the sources and the complete documentation (dvi,
+ps, PDF, and HTML).<BR>
+<BR>
+
+<H5 CLASS="paragraph">Requirements</H5>
+You should be able to build <FONT COLOR=purple>Frown</FONT> with every Haskell&nbsp;98-compliant
+compiler. You have to use a not too ancient compiler as there have
+been some changes to the Haskell language in Sep.&nbsp;2001 (GHC 5.02 and
+later versions will do).<BR>
+<BR>
+The Haskell interpreter Hugs&nbsp;98 is needed for running the testsuite.<BR>
+<BR>
+Various tools are required to generate the documentation from scratch:
+<TT>lhs2TeX</TT>, L<sup>A</sup>T<sub>E</sub>X, functional , H<FONT SIZE=2><sup>E</sup></FONT>V<FONT SIZE=2><sup>E</sup></FONT>A and H<FONT SIZE=2><sup>A</sup></FONT>C<FONT SIZE=2><sup>H</sup></FONT>A. Note, however, that
+the bundle already includes the complete documentation.<BR>
+<BR>
+
+<H5 CLASS="paragraph">Installation</H5>
+Unzip and untar the bundle. This creates a directory called <TT>Frown</TT>.
+Enter this directory.
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf&gt;&nbsp;tar&nbsp;xzf&nbsp;frown.tar.gz</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf&gt;&nbsp;cd&nbsp;Frown
+</TT></TD>
+</TR></TABLE>
+The documentation resides in the directory <TT>Manual</TT>; example grammars
+can be found in <TT>Examples</TT> and <TT>Manual/Examples</TT> (the files ending in
+<TT>.g</TT> and <TT>.lg</TT>).<BR>
+<BR>
+You can install <FONT COLOR=purple>Frown</FONT> using either traditional makefiles or Cabal.<BR>
+<BR>
+
+<H5 CLASS="paragraph">Using makefiles</H5>
+Optionally, edit the <TT>Makefile</TT> to specify destinations for the binary
+and the documentation (this information is only used by <TT>make&nbsp;install</TT>). Now, you can trigger
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;make
+</TT></TD>
+</TR></TABLE>
+which compiles <FONT COLOR=purple>Frown</FONT> generating an executable called <TT>frown</TT> (to use
+<FONT COLOR=purple>Frown</FONT> you only need this executable). Optionally, continue with
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;make&nbsp;install
+</TT></TD>
+</TR></TABLE>
+to install the executable and the documentation.<BR>
+<BR>
+For reference, here is a list of possible targets:
+<DL CLASS="description" COMPACT=compact><DT CLASS="dt-description">
+<B><TT>make</TT></B><DD CLASS="dd-description"><BR>
+Compiles <FONT COLOR=purple>Frown</FONT> generating an executable called <TT>frown</TT> (to use <FONT COLOR=purple>Frown</FONT> 
+ you only need this executable).<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>make&nbsp;install</TT></B><DD CLASS="dd-description"><BR>
+Compiles <FONT COLOR=purple>Frown</FONT> and installs the executable and the documentation.<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>make&nbsp;test</TT></B><DD CLASS="dd-description"><BR>
+Runs the testsuite.<SUP><A NAME="text1" HREF="#note1">1</A></SUP><BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>make&nbsp;man</TT></B><DD CLASS="dd-description"><BR>
+Generates the documentation in various formats (dvi, ps, PDF, and
+ HTML).<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>make&nbsp;clean</TT></B><DD CLASS="dd-description"><BR>
+Removes some temporary files.<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>make&nbsp;distclean</TT></B><DD CLASS="dd-description"><BR>
+Removes all files except the ones that are included in the distribution.
+</DL>
+
+<H5 CLASS="paragraph">Using Cabal</H5>
+Alternatively, you can build <FONT COLOR=purple>Frown</FONT> using Cabal (version 1.1.3 or
+later), Haskell's Common Architecture for Building Applications and
+Libraries.<BR>
+<BR>
+For a global install, type:
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;runhaskell&nbsp;Setup.hs&nbsp;configure&nbsp;--ghc</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;runhaskell&nbsp;Setup.hs&nbsp;build</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;runhaskell&nbsp;Setup.hs&nbsp;install
+</TT></TD>
+</TR></TABLE>
+If you want to install <FONT COLOR=purple>Frown</FONT> locally, use (you may wish to replace
+<TT>$HOME</TT> by a directory of your choice):
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;runhaskell&nbsp;Setup.hs&nbsp;configure&nbsp;--ghc&nbsp;--prefix=$HOME</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;runhaskell&nbsp;Setup.hs&nbsp;build</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;runhaskell&nbsp;Setup.hs&nbsp;install&nbsp;--user
+</TT></TD>
+</TR></TABLE><BR>
+
+<H5 CLASS="paragraph">Usage</H5>
+The call
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&nbsp;ralf/Frown&gt;&nbsp;frown&nbsp;-h
+</TT></TD>
+</TR></TABLE>
+displays the various options. For more information consult this
+manual.<BR>
+<BR>
+<A NAME="toc2"></A>
+<H2 CLASS="section"><A NAME="htoc3">1.2</A>&nbsp;&nbsp;Reporting bugs</H2>
+
+Bug reports should be send to Ralf Hinze (<TT>ralf@cs.uni-bonn.de</TT>).
+The report should include all information necessary to reproduce the
+bug: the compiler used to compile <FONT COLOR=purple>Frown</FONT>, the grammar source file (and
+possibly auxiliary Haskell source files), and the command-line
+invocation of <FONT COLOR=purple>Frown</FONT>.<BR>
+<BR>
+Suggestions for improvements or request for features should also be
+sent to the above address.<BR>
+<BR>
+<A NAME="toc3"></A>
+<H2 CLASS="section"><A NAME="htoc4">1.3</A>&nbsp;&nbsp;License</H2>
+
+<FONT COLOR=purple>Frown</FONT> is distributed under the GNU general public licence
+(version&nbsp;2).
+<PRE CLASS="verbatim">
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%   Frown --- An LALR(k) parser generator for Haskell 98                      %
+%   Copyright (C) 2001-2005 Ralf Hinze                                        %
+%                                                                             %
+%   This program is free software; you can redistribute it and/or modify      %
+%   it under the terms of the GNU General Public License (version 2) as       %
+%   published by the Free Software Foundation.                                %
+%                                                                             %
+%   This program is distributed in the hope that it will be useful,           %
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of            %
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             %
+%   GNU General Public License for more details.                              %
+%                                                                             %
+%   You should have received a copy of the GNU General Public License         %
+%   along with this program; see the file COPYING.  If not, write to          %
+%   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,          %
+%   Boston, MA 02111-1307, USA.                                               %
+%                                                                             %
+%   Contact information                                                       %
+%   Email:      Ralf Hinze &lt;ralf@cs.uni-bonn.de&gt;                              %
+%   Homepage:   http://www.informatik.uni-bonn.de/~ralf/                      %
+%   Paper mail: Dr. Ralf Hinze                                                %
+%               Institut für Informatik III                                   %
+%               Universität Bonn                                              %
+%               Römerstraße 164                                               %
+%               53117 Bonn, Germany                                           %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+</PRE>
+<A NAME="toc4"></A>
+<H2 CLASS="section"><A NAME="htoc5">1.4</A>&nbsp;&nbsp;Credits</H2>
+
+<FONT COLOR=purple>Frown</FONT> wouldn't have seen the light of day without the work of Ross
+Paterson and Doaitse Swierstra. Ross invoked my interest in LR parsing
+and he devised the <TT>--code=stackless</TT> and <TT>--code=gvstack</TT> output
+formats. Doaitse invented the <TT>--code=standard</TT> format, which was
+historically the first format <FONT COLOR=purple>Frown</FONT> supported.<BR>
+<BR>
+A big thank you goes to Andres Löh and Ross Paterson for various bug
+reports and suggestions for improvement.<BR>
+<BR>
+<HR WIDTH="50%" SIZE=1><DL CLASS="list"><DT CLASS="dt-list"><A NAME="note1" HREF="#text1"><FONT SIZE=5>1</FONT></A><DD CLASS="dd-list">There are some known problems. The
+ format <TT>code=stackless</TT> behaves differently for <TT>Loop.g</TT> (the
+ generated parser is less strict than the standard one). Also,
+ <TT>Empty.g</TT> does not work yet. Finally, error reports may differ for
+ different formats and for optimized and unoptimized versions (as some
+ parsers perform additional reductions before an error is
+ reported).
+</DL>
+<HR>
+<A HREF="Manual001.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="Manual003.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+</BODY>
+</HTML>

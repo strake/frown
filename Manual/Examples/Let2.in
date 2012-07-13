@@ -1,0 +1,4 @@
+expr (lexer "4 * (7 + 1) - 1") :: Result Expr
+expr (lexer "4 * 7 + 1 - 1") :: Result Expr
+expr (lexer "let\n    a = 4 * (7 + 1) - 1\n in a * a") :: Result Expr
+expr (lexer "let\n    a = 4 * (7 + 1 - 1\n in a * a") :: Result Expr

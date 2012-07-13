@@ -1,0 +1,22 @@
+> module Paren2
+> where
+>
+> %{
+>
+> Terminal                      =  '(' | ')';
+>
+> paren {IO ()};
+> paren {reduce "p : ;"}
+>     :  ;
+> paren {do t1; shift '('; t2; shift ')'; reduce "p : p, '(', p, ')';"}
+>     :  paren {t1}, '(', paren {t2}, ')';
+>
+> }%
+>
+> frown _                       =   fail "*** syntax error"
+>
+> shift                         ::  Char -> IO ()
+> shift c                       =   putStrLn ("shift " ++ show c)
+>
+> reduce                        ::  String -> IO ()
+> reduce p                      =   putStrLn ("reduce by " ++ p)

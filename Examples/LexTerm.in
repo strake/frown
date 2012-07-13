@@ -1,0 +1,2 @@
+parse "(2+3)+4" :: IO Expr
+parse "2\n+3\n)+4" :: IO Expr

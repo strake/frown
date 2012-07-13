@@ -1,0 +1,20 @@
+__   __ __  __  ____   ___      _________________________________________
+||   || ||  || ||  || ||__      Hugs 98: Based on the Haskell 98 standard
+||___|| ||__|| ||__||  __||     Copyright (c) 1994-2005
+||---||         ___||           World Wide Web: http://haskell.org/hugs
+||   ||                         Report bugs to: hugs-bugs@haskell.org
+||   || Version: March 2005     _________________________________________
+
+Hugs mode: Restart with command line option +98 for Haskell 98 mode
+
+Type :? for help
+MCalc> 4711
+MCalc> 7+1=8
+4*8=32
+32-1=31
+31
+MCalc> 7+1=8
+
+Program error: user error (syntax error)
+
+MCalc> [Leaving Hugs]

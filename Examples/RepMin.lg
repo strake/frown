@@ -1,0 +1,50 @@
+{-
+
+The Rep-Min problem: the example demonstrates how to simulate
+inherited attributes using functional (synthesized) attributes.
+
+	frown -s RepMin.lg
+
+Try
+
+	start [Num 47, LPar, Num 11, RPar]
+
+
+-}
+
+> module RepMin
+> where
+>
+> data Tree     =  Leaf Integer
+>               |  Fork Tree Tree
+>                  deriving (Show)
+>
+> data Terminal =  Num Integer
+>               |  LPar
+>               |  RPar
+>
+> type Result   =  Maybe
+>
+> %{
+>
+> Terminal      =         Num {Integer}
+>               |  "(" =  LPar
+>               |  ")" =  RPar;
+>
+> Nonterminal   = *start {Tree}
+>               |  expr {Integer -> (Tree, Integer)};
+>
+> start { let (t, m) = f m in t }
+> : expr {f};
+>
+> expr { \ m -> (Leaf m, i) }
+> :  Num {i};
+> expr { \ m -> let { (tl, ml) = l m
+>                   ; (tr, mr) = r m }
+>               in (Fork tl tr, ml `min` mr) }
+> :  expr {l}, "(", expr {r}, ")";
+>      
+>
+> }%
+>
+> frown ts                      =  fail "syntax error"

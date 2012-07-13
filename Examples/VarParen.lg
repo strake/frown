@@ -1,0 +1,39 @@
+{-
+
+	frown VarParen.lg
+
+Try
+
+
+Right-recursive definition.	
+
+Expr                          :  Expr, '(', Expr, ')';
+                              |  ;
+
+-}
+
+> module Paren
+> where
+>
+> data Tree                     =  Node [Tree]
+>                                  deriving (Show)
+>
+> empty                         =  Node []
+> join t (Node us)              =  Node (t : us)
+>
+> type Terminal                 =  Char
+>
+> type Result                   =  []
+>
+> %{
+>
+> Terminal                      =  '(' | ')';
+>
+> Nonterminal                   =  expr {Tree};
+>
+> expr {join t u}               :  '(', expr {t}, ')', expr {u};
+>      {empty}                  |  ;
+>
+> }%
+>
+> frown ts                      =  fail "syntax error"

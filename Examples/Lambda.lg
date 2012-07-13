@@ -1,0 +1,59 @@
+{-
+
+	frown Lambda.lg
+
+-}
+
+> module Lambda
+> where
+> import Char
+>
+> type Var   =  String
+>
+> data Expr  =  Var Var
+>            |  App Expr Expr
+>            |  Abs Var Expr
+>               deriving (Show)
+>
+> %{
+>
+> Terminal     =  Ident {String}
+>              |  Dot   as "."
+>              |  LPar  as "("
+>              |  RPar  as ")"
+>              |  Backslash  as "fun";
+>
+> Nonterminal  =  expr {Expr}
+>              |  aexprs {[Expr]}
+>              |  aexpr  {Expr};
+>
+> expr {Abs x e}        :  "fun", Ident {x}, ".", expr {e};
+>      {foldl1 App es}  |  aexprs {es};
+>
+> aexprs {[e]}        :  aexpr {e};
+>        {es ++ [e]}  |  aexprs {es}, aexpr {e};
+>
+> aexpr {Var x}  :  Ident {x};
+>       {e}      |  "(", expr {e}, ")";
+>
+> }%
+>
+> frown ts  =  fail "syntax error"
+>
+> data Terminal  =  Ident String 
+>                |  Dot 
+>                |  LPar 
+>                |  RPar
+>                |  Backslash
+>                   deriving (Show)
+>
+> lexer              ::  String -> [Terminal]
+> lexer []           =   []
+> lexer ('.'  : cs)  =   Dot        : lexer cs
+> lexer ('('  : cs)  =   LPar       : lexer cs
+> lexer (')'  : cs)  =   RPar       : lexer cs
+> lexer ('\\' : cs)  =   Backslash  : lexer cs
+> lexer (c : cs)
+>     | isAlpha c    =   Ident (c : n) : lexer cs'
+>     | otherwise    =   lexer cs
+>     where (n, cs') = span isAlphaNum cs

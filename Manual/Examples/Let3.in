@@ -1,0 +1,5 @@
+eval "2 + 7" :: IO Int
+eval "a + b" :: IO Int
+eval "let x = 4 in x * x" :: IO Int
+eval "let x = 4 in x * x + x" :: IO Int
+eval "(let x = 4 in x * x) + x" :: IO Int

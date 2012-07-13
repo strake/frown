@@ -1,0 +1,1 @@
+expr (lexer "a+b+c+d") :: [Expr]

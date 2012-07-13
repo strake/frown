@@ -1,0 +1,4 @@
+> Paren1>> paren "(())()" :: Result ()
+> Return ()
+> Paren1>> paren "(())("  :: Result ()
+> Fail "syntax error"

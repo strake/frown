@@ -1,0 +1,890 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+
+
+
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.08">
+<LINK rel="stylesheet" type="text/css" href="Manual.css">
+<TITLE>
+Reference manual
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="Manual005.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="Manual007.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+<HR>
+
+<H1 CLASS="chapter"><A NAME="htoc34">Chapter&nbsp;5</A>&nbsp;&nbsp;Reference manual</H1>
+
+<A NAME="toc13"></A>
+<H2 CLASS="section"><A NAME="htoc35">5.1</A>&nbsp;&nbsp;Lexical syntax of <FONT COLOR=purple>Frown</FONT></H2>
+
+&lang;<B>To do:</B>&nbsp;that of Haskell including comments.&rang;<BR>
+<BR>
+&lang;<B>To do:</B>&nbsp;Literate grammar file (Bird tracks)&rang;.<BR>
+<BR>
+<A NAME="toc14"></A>
+<H2 CLASS="section"><A NAME="htoc36">5.2</A>&nbsp;&nbsp;Syntax of <FONT COLOR=purple>Frown</FONT></H2>
+
+Grammar file.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;many&nbsp;"not&nbsp;special",</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"%{",</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;many&nbsp;decl;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}%",</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;many&nbsp;"not&nbsp;special";
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Note that <TT>"not&nbsp;special"</TT> matches every token except the special curly
+braces <TT>"%{"</TT> and <TT>"}%"</TT>.<BR>
+<BR>
+Declaration.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;decl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;terminals;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;nonterminals;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;fixity;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;signature;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;productions;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Terminal declaration.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;terminals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"Terminal",&nbsp;"=",&nbsp;sepBy&nbsp;term&nbsp;"|",&nbsp;";";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;term&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;opt&nbsp;"*",&nbsp;assoc,&nbsp;terminal;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;opt&nbsp;"*",&nbsp;assoc,&nbsp;literal,&nbsp;"=",&nbsp;terminal;&nbsp;</TT>-- deprecated</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;opt&nbsp;"*",&nbsp;assoc,&nbsp;terminal,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"as",&nbsp;literal;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;opt&nbsp;"*",&nbsp;assoc,&nbsp;"guard",&nbsp;haskell,&nbsp;&nbsp;"as",&nbsp;literal;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;assoc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"left",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Numeral</I></TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"right",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Numeral</I></TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"nonassoc",&nbsp;&nbsp;<I>Numeral</I></TT><TT>;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Nonterminal declaration.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;nonterminals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"Nonterminal",&nbsp;"=",&nbsp;sepBy&nbsp;nonterm&nbsp;"|",&nbsp;";";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;nonterm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;opt&nbsp;"*",&nbsp;nonterminal;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Fixity declaration.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;fixity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;"left",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Numeral</I></TT><TT>,&nbsp;terminal,&nbsp;";";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;"right",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Numeral</I></TT><TT>,&nbsp;terminal,&nbsp;";";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;"nonassoc",&nbsp;&nbsp;<I>Numeral</I></TT><TT>,&nbsp;terminal,&nbsp;";";
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Type signature.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;signature&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"::",&nbsp;nonterminal,&nbsp;premise,&nbsp;";";&nbsp;&nbsp;</TT>-- deprecated</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;nonterminal,&nbsp;premise,&nbsp;";";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"::",&nbsp;"*",&nbsp;nonterminal,&nbsp;";";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TT>-- deprecated</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"*",&nbsp;nonterminal,&nbsp;";";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;premise&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"&lt;-",&nbsp;sepBy1&nbsp;nonterminal&nbsp;",";
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Productions.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;productions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;nonterminal,&nbsp;":",&nbsp;sepBy&nbsp;symbol&nbsp;",",&nbsp;";",&nbsp;alts;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;alts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;attributes,&nbsp;"|",&nbsp;sepBy&nbsp;symbol&nbsp;",",&nbsp;";",&nbsp;alts;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;symbol&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"insert",&nbsp;&nbsp;terminal;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"delete",&nbsp;&nbsp;terminal;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"prec",&nbsp;&nbsp;&nbsp;&nbsp;terminal;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;terminal;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;nonterminal;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Nonterminal symbols (<TT>expr0</TT> is a variant of <TT>expr</TT> lacking the
+embedded Haskell production).
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;nonterminal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;expr0,&nbsp;attributes;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;expr0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;<I>Varid</I></TT><TT>,&nbsp;many&nbsp;aexpr0;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;aexpr0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;<I>Varid</I></TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>Conid</I></TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;literal;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"(",&nbsp;sepBy&nbsp;expr&nbsp;",",&nbsp;")";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"[",&nbsp;sepBy&nbsp;expr&nbsp;",",&nbsp;"]";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;expr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;aexpr;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>Varid</I></TT><TT>,&nbsp;many1&nbsp;aexpr;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>Conid</I></TT><TT>,&nbsp;many1&nbsp;aexpr;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;aexpr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;<I>Varid</I></TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>Conid</I></TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;literal;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"(",&nbsp;sepBy&nbsp;expr&nbsp;",",&nbsp;")";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"[",&nbsp;sepBy&nbsp;expr&nbsp;",",&nbsp;"]";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;haskell;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TT>-- embedded Haskell<TT>
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Terminal symbols.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;terminal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;pat;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;literal,&nbsp;haskell,&nbsp;attributes;&nbsp;&nbsp;</TT>-- shortcut</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;pat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;apat;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>Conid</I></TT><TT>,&nbsp;many1&nbsp;apat;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;apat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;<I>Conid</I></TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;literal;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TT>-- either literal or shortcut</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"(",&nbsp;sepBy&nbsp;pat&nbsp;",",&nbsp;")";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"[",&nbsp;sepBy&nbsp;pat&nbsp;",",&nbsp;"]";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;haskell;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;literal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;<I>String</I></TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>Numeral</I></TT><TT>;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<I>Char</I></TT><TT>;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Embedded Haskell (types, patterns, and expressions).
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;attributes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;haskell,&nbsp;attributes;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;haskell&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"{",&nbsp;many&nbsp;hs,&nbsp;"}";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;hs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"not&nbsp;brace";</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;"{",&nbsp;many&nbsp;hs,&nbsp;"}";
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Note that <TT>"not&nbsp;brace"</TT> matches every token except the curly braces
+<TT>"{"</TT> and <TT>"}"</TT>.
+<BR>
+<BR>
+<A NAME="toc15"></A>
+<H2 CLASS="section"><A NAME="htoc37">5.3</A>&nbsp;&nbsp;Predefined schemes</H2>
+<A NAME="sec:stdenv"></A>
+
+Note that the predefined rules are left-recursive and `run' using
+constant stack space. Also note that we define rules for arity zero
+and arity one (the arity specifies the number of attributes/semantic
+values). The primed versions of the rules work on Hughes's efficient
+sequence type (a sequence of <TT>a</TT>'s is represented by a function of
+type <TT>[a]&nbsp;-&gt;&nbsp;[a]</TT>).<BR>
+<BR>
+
+<H3 CLASS="subsection"><A NAME="htoc38">5.3.1</A>&nbsp;&nbsp;Optional elements</H3>
+
+Arity zero.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;opt&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;opt&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;x;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Arity one.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;opt&nbsp;x&nbsp;&nbsp;{<I>Maybe</I></TT><TT>&nbsp;a}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x&nbsp;{a};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;opt&nbsp;x&nbsp;&nbsp;{<I>Nothing</I></TT><TT>}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<I>Just</I></TT><TT>&nbsp;a}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;x&nbsp;{a};
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+
+<H3 CLASS="subsection"><A NAME="htoc39">5.3.2</A>&nbsp;&nbsp;Repetition of elements</H3>
+
+Arity zero.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;many&nbsp;x,&nbsp;x;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many1&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many1&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;x,&nbsp;many&nbsp;x;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Arity one.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many&nbsp;x&nbsp;&nbsp;{[a]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x&nbsp;{a};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many&nbsp;x&nbsp;&nbsp;{s&nbsp;[]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;many'&nbsp;x&nbsp;{s};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many'&nbsp;x&nbsp;&nbsp;{[a]&nbsp;-&gt;&nbsp;[a]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x&nbsp;{a};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many'&nbsp;x&nbsp;&nbsp;{\&nbsp;as&nbsp;-&gt;&nbsp;as}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\&nbsp;as&nbsp;-&gt;&nbsp;s&nbsp;(a&nbsp;:&nbsp;as)}&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;many'&nbsp;x&nbsp;{s},&nbsp;x&nbsp;{a};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many1&nbsp;x&nbsp;&nbsp;{[a]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x&nbsp;{a};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;many1&nbsp;x&nbsp;&nbsp;{a&nbsp;:&nbsp;as}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;x&nbsp;{a},&nbsp;many&nbsp;x&nbsp;{as};
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+
+<H3 CLASS="subsection"><A NAME="htoc40">5.3.3</A>&nbsp;&nbsp;Repetition of elements separated by a second element</H3>
+
+Arity zero.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy&nbsp;x&nbsp;sep&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x,&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy&nbsp;x&nbsp;sep&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;sepBy1&nbsp;x&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy1&nbsp;x&nbsp;sep&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x,&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy1&nbsp;x&nbsp;sep&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;x;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;sepBy1&nbsp;x&nbsp;sep,&nbsp;sep,&nbsp;x;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Arity one.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy&nbsp;x&nbsp;sep&nbsp;&nbsp;{[a]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x&nbsp;{a},&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy&nbsp;x&nbsp;sep&nbsp;&nbsp;{[]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{as}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;sepBy1&nbsp;x&nbsp;sep&nbsp;{as};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy1&nbsp;x&nbsp;sep&nbsp;&nbsp;{[a]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x&nbsp;{a},&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy1&nbsp;x&nbsp;sep&nbsp;&nbsp;{s&nbsp;[]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;sepBy1'&nbsp;x&nbsp;sep&nbsp;{s};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy1'&nbsp;x&nbsp;sep&nbsp;&nbsp;{[a]&nbsp;-&gt;&nbsp;[a]}&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x&nbsp;{a},&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;sepBy1'&nbsp;x&nbsp;sep</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\&nbsp;as&nbsp;-&gt;&nbsp;a&nbsp;:&nbsp;as}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;x&nbsp;{a};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\&nbsp;as&nbsp;-&gt;&nbsp;s&nbsp;(a&nbsp;:&nbsp;as)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;sepBy1'&nbsp;x&nbsp;sep&nbsp;{s},&nbsp;sep,&nbsp;x&nbsp;{a};
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+TODO: also versions where <TT>sep</TT> has arity one.<BR>
+<BR>
+
+<H3 CLASS="subsection"><A NAME="htoc41">5.3.4</A>&nbsp;&nbsp;Repetition of possibly empty elements separated by a second element</H3>
+
+&lang;<B>To do:</B>&nbsp;better name.&rang;<BR>
+<BR>
+Arity zero.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;optSepBy&nbsp;x&nbsp;sep&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x,&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;optSepBy&nbsp;x&nbsp;sep&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;x;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;optSepBy&nbsp;x&nbsp;sep,&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;optSepBy&nbsp;x&nbsp;sep,&nbsp;sep,&nbsp;x;
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+Arity one.
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;optSepBy&nbsp;x&nbsp;sep&nbsp;&nbsp;{[a]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x&nbsp;{a},&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;optSepBy&nbsp;x&nbsp;sep&nbsp;&nbsp;{s&nbsp;[]}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;optSepBy'&nbsp;x&nbsp;sep&nbsp;{s};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;optSepBy'&nbsp;x&nbsp;sep&nbsp;&nbsp;{[a]&nbsp;-&gt;&nbsp;[a]}&nbsp;&nbsp;&lt;-&nbsp;&nbsp;x&nbsp;{a},&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;optSepBy'&nbsp;x&nbsp;sep</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\&nbsp;as&nbsp;-&gt;&nbsp;as}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\&nbsp;as&nbsp;-&gt;&nbsp;a&nbsp;:&nbsp;as}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;x&nbsp;{a};</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\&nbsp;as&nbsp;-&gt;&nbsp;s&nbsp;as}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;optSepBy'&nbsp;x&nbsp;sep&nbsp;{s},&nbsp;sep;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\&nbsp;as&nbsp;-&gt;&nbsp;s&nbsp;(a&nbsp;:&nbsp;as)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;optSepBy'&nbsp;x&nbsp;sep&nbsp;{s},&nbsp;sep,&nbsp;x&nbsp;{a};
+</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+<BR>
+<BR>
+<A NAME="toc16"></A>
+<H2 CLASS="section"><A NAME="htoc42">5.4</A>&nbsp;&nbsp;Output formats</H2>
+<A NAME="sec:formats"></A>
+
+&lang;<B>To do:</B>&nbsp;Used type names: <TT><I>Result</I></TT> and <TT><I>Terminal</I></TT>.&rang;<BR>
+<BR>
+&lang;<B>To do:</B>&nbsp;Used function names: <TT>frown</TT>. For each start symbol a parser.&rang;<BR>
+<BR>
+The <TT>code=standard</TT> format is due to Doaitse Swierstra [<A HREF="Manual007.html#DuS00Fun"><CITE>1</CITE></A>].<BR>
+<BR>
+The <TT>code=stackless</TT> format is due to Ross Paterson [<A HREF="Manual007.html#HiP05Typ"><CITE>2</CITE></A>].<BR>
+<BR>
+The <TT>code=gvstack</TT> format is also due to Ross Paterson.
+<BLOCKQUOTE CLASS="figure"><DIV CLASS="center"><HR WIDTH="80%" SIZE=2></DIV>
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>module</B>&nbsp;<I>Paren</I></TT><TT>&nbsp;<B>where</B></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>import</B>&nbsp;<I>Result</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT>{- frown :-( -}</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>data</B>&nbsp;<I>Stack</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<I>Empty</I></TT><TT>&nbsp;|&nbsp;<I>T_1</I></TT><TT>&nbsp;<I>State</I></TT><TT>&nbsp;<I>Stack</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>data</B>&nbsp;<I>State</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<I>S_1</I></TT><TT>&nbsp;|&nbsp;<I>S_2</I></TT><TT>&nbsp;|&nbsp;<I>S_3</I></TT><TT>&nbsp;|&nbsp;<I>S_4</I></TT><TT>&nbsp;|&nbsp;<I>S_5</I></TT><TT>&nbsp;|&nbsp;<I>S_6</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>data</B>&nbsp;<I>Nonterminal</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<I>Paren</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;paren&nbsp;tr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;parse_1&nbsp;tr&nbsp;<I>Empty</I></TT><TT>&nbsp;&gt;&gt;=&nbsp;(\&nbsp;<I>Paren</I></TT><TT>&nbsp;-&gt;&nbsp;return&nbsp;())</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_1&nbsp;ts&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;reduce_2&nbsp;ts&nbsp;<I>S_1</I></TT><TT>&nbsp;st</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_2&nbsp;tr@[]&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;parse_3&nbsp;tr&nbsp;(<I>T_1</I></TT><TT>&nbsp;<I>S_2</I></TT><TT>&nbsp;st)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_2&nbsp;('('</TT><TT>&nbsp;:&nbsp;tr)&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;parse_5&nbsp;tr&nbsp;(<I>T_1</I></TT><TT>&nbsp;<I>S_2</I></TT><TT>&nbsp;st)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_2&nbsp;ts&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;frown&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_3&nbsp;ts&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;reduce_1&nbsp;ts&nbsp;st</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_4&nbsp;('('</TT><TT>&nbsp;:&nbsp;tr)&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;parse_5&nbsp;tr&nbsp;(<I>T_1</I></TT><TT>&nbsp;<I>S_4</I></TT><TT>&nbsp;st)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_4&nbsp;(')'</TT><TT>&nbsp;:&nbsp;tr)&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;parse_6&nbsp;tr&nbsp;(<I>T_1</I></TT><TT>&nbsp;<I>S_4</I></TT><TT>&nbsp;st)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_4&nbsp;ts&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;frown&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_5&nbsp;ts&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;reduce_2&nbsp;ts&nbsp;<I>S_5</I></TT><TT>&nbsp;st</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;parse_6&nbsp;ts&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;reduce_3&nbsp;ts&nbsp;st</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;reduce_1&nbsp;ts&nbsp;(<I>T_1</I></TT><TT>&nbsp;_&nbsp;(<I>T_1</I></TT><TT>&nbsp;s&nbsp;st))&nbsp;&nbsp;=&nbsp;&nbsp;return&nbsp;<I>Paren</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;reduce_2&nbsp;ts&nbsp;s&nbsp;st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;goto_5&nbsp;s&nbsp;ts&nbsp;(<I>T_1</I></TT><TT>&nbsp;s&nbsp;st)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;reduce_3&nbsp;ts&nbsp;(<I>T_1</I></TT><TT>&nbsp;_&nbsp;(<I>T_1</I></TT><TT>&nbsp;_&nbsp;(<I>T_1</I></TT><TT>&nbsp;_&nbsp;(<I>T_1</I></TT><TT>&nbsp;s&nbsp;st))))</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;goto_5&nbsp;s&nbsp;ts&nbsp;(<I>T_1</I></TT><TT>&nbsp;s&nbsp;st)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;goto_5&nbsp;<I>S_1</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;parse_2</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;goto_5&nbsp;<I>S_5</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;parse_4</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT>{- )-: frown -}</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;frown&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;fail&nbsp;"syntax&nbsp;error"</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+<BR>
+<BR>
+<DIV CLASS="center">Figure 5.1: <A NAME="fig:ex1cc"></A><TT>frown&nbsp;--code=compact&nbsp;Paren.g</TT>.</DIV><BR>
+<BR>
+
+<DIV CLASS="center"><HR WIDTH="80%" SIZE=2></DIV></BLOCKQUOTE>
+<BLOCKQUOTE CLASS="figure"><DIV CLASS="center"><HR WIDTH="80%" SIZE=2></DIV>
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>module</B>&nbsp;<I>Paren</I></TT><TT>&nbsp;<B>where</B></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>import</B>&nbsp;<I>Result</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT>{- frown :-( -}</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;paren&nbsp;tr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;state_1&nbsp;(\&nbsp;_&nbsp;-&gt;&nbsp;return&nbsp;())&nbsp;tr</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_1&nbsp;k_1_0&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<B>let</B>&nbsp;{&nbsp;goto_paren&nbsp;=&nbsp;state_2&nbsp;k_1_0&nbsp;(reduce_3&nbsp;goto_paren)&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>in</B>&nbsp;reduce_2&nbsp;goto_paren&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_2&nbsp;k_1_1&nbsp;k_3_1&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<B>case</B>&nbsp;ts&nbsp;<B>of</B>&nbsp;{&nbsp;&nbsp;tr@[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;state_3&nbsp;k_1_1&nbsp;tr;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'('</TT><TT>&nbsp;:&nbsp;tr&nbsp;&nbsp;-&gt;&nbsp;state_5&nbsp;k_3_1&nbsp;tr;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;frown&nbsp;ts&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_3&nbsp;k_1_2&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;k_1_2&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_4&nbsp;k_3_1&nbsp;k_3_3&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<B>case</B>&nbsp;ts&nbsp;<B>of</B>&nbsp;{&nbsp;&nbsp;'('</TT><TT>&nbsp;:&nbsp;tr&nbsp;&nbsp;-&gt;&nbsp;state_5&nbsp;k_3_1&nbsp;tr;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')'</TT><TT>&nbsp;:&nbsp;tr&nbsp;&nbsp;-&gt;&nbsp;state_6&nbsp;k_3_3&nbsp;tr;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;frown&nbsp;ts&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_5&nbsp;k_3_2&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<B>let</B>&nbsp;{&nbsp;goto_paren&nbsp;=&nbsp;state_4&nbsp;(reduce_3&nbsp;goto_paren)&nbsp;k_3_2&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>in</B>&nbsp;reduce_2&nbsp;goto_paren&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_6&nbsp;k_3_4&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;k_3_4&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;reduce_2&nbsp;g&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;g&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;reduce_3&nbsp;g&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;g&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT>{- )-: frown -}</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;frown&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;fail&nbsp;"syntax&nbsp;error"</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+<BR>
+<BR>
+<DIV CLASS="center">Figure 5.2: <A NAME="fig:ex1cs"></A><TT>frown&nbsp;--code=stackless&nbsp;Paren.g</TT>.</DIV><BR>
+<BR>
+
+<DIV CLASS="center"><HR WIDTH="80%" SIZE=2></DIV></BLOCKQUOTE>
+<BLOCKQUOTE CLASS="figure"><DIV CLASS="center"><HR WIDTH="80%" SIZE=2></DIV>
+
+<TABLE BORDER="2" BGCOLOR="#E0E0E0" WIDTH="100%"><TR><TD>
+<TABLE border=0 cellspacing=0 cellpadding=0>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>module</B>&nbsp;<I>Paren</I></TT><TT>&nbsp;<B>where</B></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>import</B>&nbsp;<I>Result</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT>{- frown :-( -}</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>data</B>&nbsp;<I>Nonterminal</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;<I>Paren'</I></TT><TT>&nbsp;|&nbsp;<I>Paren</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>type</B>&nbsp;<I>Parser</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;[<I>Terminal</I></TT><TT>]&nbsp;-&gt;&nbsp;<I>Result</I></TT><TT>&nbsp;<I>Nonterminal</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;<B>type</B>&nbsp;<I>VStack</I></TT><TT>&nbsp;vs&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;((vs,&nbsp;<I>Nonterminal</I></TT><TT>&nbsp;-&gt;&nbsp;<I>Parser</I></TT><TT>),&nbsp;v)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;paren&nbsp;tr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;state_1&nbsp;()&nbsp;tr&nbsp;&gt;&gt;=&nbsp;(\&nbsp;<I>Paren'</I></TT><TT>&nbsp;-&gt;&nbsp;return&nbsp;())</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;&nbsp;vs&nbsp;-&gt;&nbsp;<I>Parser</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;state&nbsp;action_1&nbsp;goto_1</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;action_1&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;reduce_2</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;goto_1&nbsp;<I>Paren</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;goto&nbsp;state_2&nbsp;()</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;&nbsp;<I>VStack</I></TT><TT>&nbsp;vs&nbsp;()&nbsp;-&gt;&nbsp;<I>Parser</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;state&nbsp;action_2&nbsp;undefined</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;action_2&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<B>case</B>&nbsp;t&nbsp;<B>of</B>&nbsp;{&nbsp;&nbsp;'('</TT><TT>&nbsp;&nbsp;-&gt;&nbsp;shift&nbsp;state_5&nbsp;();</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'$'</TT><TT>&nbsp;&nbsp;-&gt;&nbsp;shift&nbsp;state_3&nbsp;();</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;error&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;&nbsp;<I>VStack</I></TT><TT>&nbsp;(<I>VStack</I></TT><TT>&nbsp;vs&nbsp;())&nbsp;()&nbsp;-&gt;&nbsp;<I>Parser</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;state&nbsp;action_3&nbsp;undefined</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;action_3&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;reduce_1</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;&nbsp;<I>VStack</I></TT><TT>&nbsp;(<I>VStack</I></TT><TT>&nbsp;(<I>VStack</I></TT><TT>&nbsp;vs&nbsp;())&nbsp;())&nbsp;()&nbsp;-&gt;&nbsp;<I>Parser</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;state&nbsp;action_4&nbsp;undefined</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;action_4&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;<B>case</B>&nbsp;t&nbsp;<B>of</B>&nbsp;{&nbsp;&nbsp;'('</TT><TT>&nbsp;&nbsp;-&gt;&nbsp;shift&nbsp;state_5&nbsp;();</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')'</TT><TT>&nbsp;&nbsp;-&gt;&nbsp;shift&nbsp;state_6&nbsp;();</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;error&nbsp;}</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;&nbsp;<I>VStack</I></TT><TT>&nbsp;(<I>VStack</I></TT><TT>&nbsp;vs&nbsp;())&nbsp;()&nbsp;-&gt;&nbsp;<I>Parser</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;state&nbsp;action_5&nbsp;goto_5</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;action_5&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;reduce_2</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;goto_5&nbsp;<I>Paren</I></TT><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;goto&nbsp;state_4&nbsp;()</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;&nbsp;<I>VStack</I></TT><TT>&nbsp;(<I>VStack</I></TT><TT>&nbsp;(<I>VStack</I></TT><TT>&nbsp;(<I>VStack</I></TT><TT>&nbsp;vs&nbsp;())&nbsp;())&nbsp;())&nbsp;()&nbsp;-&gt;&nbsp;<I>Parser</I></TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state_6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;state&nbsp;action_6&nbsp;undefined</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;action_6&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;reduce_3</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;reduce_1&nbsp;(((((_,&nbsp;g),&nbsp;()),&nbsp;_),&nbsp;()),&nbsp;_)&nbsp;ts&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;accept&nbsp;<I>Paren'</I></TT><TT>&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;reduce_2&nbsp;(_,&nbsp;g)&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;g&nbsp;<I>Paren</I></TT><TT>&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;reduce_3&nbsp;(((((((((_,&nbsp;g),&nbsp;()),&nbsp;_),&nbsp;()),&nbsp;_),&nbsp;()),&nbsp;_),&nbsp;()),&nbsp;_)&nbsp;ts&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;g&nbsp;<I>Paren</I></TT><TT>&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;state&nbsp;action&nbsp;goto&nbsp;vs&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;<B>let</B>&nbsp;{&nbsp;gs&nbsp;=&nbsp;(vs,&nbsp;g);&nbsp;g&nbsp;v&nbsp;=&nbsp;goto&nbsp;v&nbsp;gs&nbsp;}&nbsp;<B>in</B>&nbsp;action&nbsp;(head&nbsp;ts)&nbsp;gs&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;shift&nbsp;state&nbsp;v&nbsp;vs&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;state&nbsp;(vs,&nbsp;v)&nbsp;(tail&nbsp;ts)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;shift'&nbsp;state&nbsp;v&nbsp;vs&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;state&nbsp;(vs,&nbsp;v)&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;accept&nbsp;v&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;return&nbsp;v</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;goto&nbsp;state&nbsp;v&nbsp;vs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;state&nbsp;(vs,&nbsp;v)</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;error&nbsp;gs&nbsp;ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;frown&nbsp;ts</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT>{- )-: frown -}</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;</TT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><TT>&gt;&nbsp;&nbsp;frown&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;fail&nbsp;"syntax&nbsp;error"</TT></TD>
+</TR></TABLE>
+
+</TD></TR></TABLE><P>
+<BR>
+<BR>
+<DIV CLASS="center">Figure 5.3: <A NAME="fig:ex1cg"></A><TT>frown&nbsp;--code=gvstack&nbsp;Paren.g</TT> (requires an explicit EOF symbol).</DIV><BR>
+<BR>
+
+<DIV CLASS="center"><HR WIDTH="80%" SIZE=2></DIV></BLOCKQUOTE>
+<A NAME="toc17"></A>
+<H2 CLASS="section"><A NAME="htoc43">5.5</A>&nbsp;&nbsp;Invocation and options</H2>
+<A NAME="sec:options"></A>
+
+<TT>Usage:&nbsp;frown&nbsp;[option&nbsp;...]&nbsp;file.g&nbsp;...</TT>
+<DL CLASS="description" COMPACT=compact><DT CLASS="dt-description">
+<B><TT>-b</TT> or <TT>--backtrack</TT></B><DD CLASS="dd-description"><BR>
+generate a backtracking parser (see Sec.&nbsp;<A HREF="Manual004.html#sec:backtracking">3.2.5</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-cc</TT>, <TT>-ccompact</TT> or <TT>--code=compact</TT></B><DD CLASS="dd-description"><BR>
+(see Sec.&nbsp;<A HREF="Manual004.html#sec:optimizations">3.4.5</A> and&nbsp;<A HREF="#sec:formats">5.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-cg</TT>, <TT>-cgvstack</TT> or <TT>--code=gvstack</TT></B><DD CLASS="dd-description"><BR>
+(see Sec.&nbsp;<A HREF="Manual004.html#sec:optimizations">3.4.5</A> and&nbsp;<A HREF="#sec:formats">5.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-cs</TT>, <TT>-cstackless</TT> or <TT>--code=stackless</TT></B><DD CLASS="dd-description"><BR>
+(see Sec.&nbsp;<A HREF="Manual004.html#sec:optimizations">3.4.5</A> and&nbsp;<A HREF="#sec:formats">5.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-cstandard</TT> or <TT>--code=standard</TT></B><DD CLASS="dd-description"><BR>
+(see Sec.&nbsp;<A HREF="Manual004.html#sec:optimizations">3.4.5</A> and&nbsp;<A HREF="#sec:formats">5.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>--copying</TT></B><DD CLASS="dd-description"><BR>
+display details of copying<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-d</TT> or <TT>--debug</TT></B><DD CLASS="dd-description"><BR>
+emit debugging information (see Sec.&nbsp;<A HREF="Manual004.html#sec:tracing">3.4.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-e</TT> or <TT>--expected</TT></B><DD CLASS="dd-description"><BR>
+pass a list of expected terminals to `<TT>frown</TT>' (see Sec.&nbsp;<A HREF="Manual004.html#sec:expected">3.3.3</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-g</TT> or <TT>--ghc</TT></B><DD CLASS="dd-description"><BR>
+use GHC extensions (see Sec.&nbsp;<A HREF="Manual004.html#sec:optimizations">3.4.5</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-h</TT>, <TT>-?</TT> or <TT>--help</TT></B><DD CLASS="dd-description"><BR>
+<DT CLASS="dt-description"><B><TT>-i</TT> or <TT>--info</TT></B><DD CLASS="dd-description"><BR>
+put additional information into generated file (see Sec.&nbsp;<A HREF="Manual004.html#sec:tracing">3.4.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-k[nat]</TT> or <TT>--lookahead[=nat]</TT></B><DD CLASS="dd-description"><BR>
+use <I>k</I> tokens of look-ahead (see Sec.&nbsp;<A HREF="Manual004.html#sec:look-ahead">3.4.3</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-l</TT> or <TT>--lexer</TT></B><DD CLASS="dd-description"><BR>
+use a monadic lexer (<TT>get&nbsp;::&nbsp;<I>M</I></TT><TT>&nbsp;<I>Terminal</I></TT>) (see Sec.&nbsp;<A HREF="Manual004.html#sec:mlexer">3.3.1</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-n</TT> or <TT>--noinline</TT></B><DD CLASS="dd-description"><BR>
+generate <TT>NOINLINE</TT> pragmas (see Sec.&nbsp;<A HREF="Manual004.html#sec:optimizations">3.4.5</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-O</TT> or <TT>--optimize&nbsp;</TT></B><DD CLASS="dd-description"><BR>
+optimize parser (see Sec.&nbsp;<A HREF="Manual004.html#sec:optimizations">3.4.5</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-p[nat]</TT> or <TT>--pagewidth[=nat]</TT></B><DD CLASS="dd-description"><BR>
+use the specified pagewidth for pretty printing (see Sec.&nbsp;<A HREF="Manual004.html#sec:tracing">3.4.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>--prefix[=string]</TT></B><DD CLASS="dd-description"><BR>
+use prefix for <FONT COLOR=purple>Frown</FONT>-generated variables (see Sec.&nbsp;<A HREF="Manual004.html#sec:tracing">3.4.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-sm</TT>, <TT>-smono</TT> or <TT>--signature=mono</TT></B><DD CLASS="dd-description"><BR>
+add monomorphic type signatures (see Sec.&nbsp;<A HREF="Manual004.html#sec:optimizations">3.4.5</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-sp</TT>, <TT>-spoly</TT> or <TT>--signature=poly</TT></B><DD CLASS="dd-description"><BR>
+add polymorphic type signatures (see Sec.&nbsp;<A HREF="Manual004.html#sec:optimizations">3.4.5</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>--suffix[=string]</TT></B><DD CLASS="dd-description"><BR>
+use suffix for frown generated variables (see Sec.&nbsp;<A HREF="Manual004.html#sec:tracing">3.4.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-t</TT> or <TT>--trace</TT></B><DD CLASS="dd-description"><BR>
+insert calls to tracing routines (`<TT>shift</TT>', `<TT>reduce</TT>' and `<TT>accept</TT>')
+ (see Sec.&nbsp;<A HREF="Manual004.html#sec:tracing">3.4.4</A>)<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>-v</TT> or <TT>--verbose</TT></B><DD CLASS="dd-description"><BR>
+be verbose<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>--version</TT></B><DD CLASS="dd-description"><BR>
+print version information<BR>
+<BR>
+<DT CLASS="dt-description"><B><TT>--warranty</TT></B><DD CLASS="dd-description"><BR>
+display details of warranty
+</DL>
+
+<HR>
+<A HREF="Manual005.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="Manual007.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+</BODY>
+</HTML>

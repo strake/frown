@@ -1,0 +1,2 @@
+stat (lexer "a=b") :: IO Stat
+expr (lexer "a") :: IO Expr

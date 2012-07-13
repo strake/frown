@@ -1,0 +1,4 @@
+s "ace" :: Maybe ()
+s "acd" :: Maybe ()
+s "bcd" :: Maybe ()
+s "bce" :: Maybe ()

@@ -1,0 +1,2 @@
+stat [Star, Star, Id, Eq, Star, Id] :: Maybe ()
+stat [Star, Star, Star, Id] :: Maybe ()
