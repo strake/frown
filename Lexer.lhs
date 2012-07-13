@@ -229,7 +229,7 @@ tokens.
 
 > isSpecial, isSymbol, isIdChar	:: Char -> Bool
 > isSpecial c			=  c `elem` ",;()[]{}`"
-> isSymbol c			=  c `elem` "!@#$%&*+./<=>?\\^|:-~"
+> isSymbol c			=  (Data.Char.isSymbol c || isPunctuation c) && not (isSpecial c)
 > isIdChar c			=  isAlphaNum c || c `elem` "_'"
 
 Reserved identifiers in Haskell.

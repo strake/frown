@@ -155,5 +155,5 @@
 > lexStrLit (c : s)		=  c <| lexStrLit s
 
 > isSymbol, isIdChar	        :: Char -> Bool
-> isSymbol c			=  c `elem` "!@#$%&*+./<=>?\\^|:-~"
+> isSymbol c			=  (Data.Char.isSymbol c || isPunctuation c) && not (c `elem` "()[]{};,`")
 > isIdChar c			=  isAlphaNum c || c `elem` "_'"
