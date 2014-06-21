@@ -60,7 +60,7 @@
 
 > prune                         :: Int -> Future -> Future
 > prune 0 (Future _ts)          =  fromList []
-> prune (n + 1) (Future ts)     =  fromList [ (a, prune n us) | (a, us) <- FM.toList ts ]
+> prune n (Future ts)           =  fromList [ (a, prune (n - 1) us) | (a, us) <- FM.toList ts ]
 
 > domain                        :: Future -> Set Symbol
 > domain (Future f)             =  Set.fromList (map fst (FM.toList f))

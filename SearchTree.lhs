@@ -60,10 +60,10 @@ Construction.
 > fromOrdList avs               =  fst (build (Prelude.length avs) avs)
 >   where
 >   build 0 x                   =  (Leaf, x)
->   build (n + 1) x             =  (Node l a v r, z)
->     where m                   =  n `div` 2
+>   build n x                   =  (Node l a v r, z)
+>     where m                   =  (n - 1) `div` 2
 >           (l, (a, v) : y)     =  build m       x
->           (r, z)              =  build (n - m) y
+>           (r, z)              =  build (n - m - 1) y
 
 > fromList_C                    :: (Ord a) => (v -> v -> v) -> [(a, v)] -> FM a v
 > fromList_C combine            =  fromOrdList . group . mergeSortBy (\ (a1, _) (a2, _) -> a1 <= a2)

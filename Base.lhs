@@ -166,13 +166,13 @@ A simple exception monad.
 
 > revTake                       :: Int -> RevList a -> RevList a
 > revTake 0 _                   =  Nil
-> revTake (_n + 1) Nil          =  Nil
-> revTake (n + 1) (as :> a)     =  revTake n as :> a
+> revTake _ Nil                 =  Nil
+> revTake n (as :> a)           =  revTake (n - 1) as :> a
 
 > revDrop                       :: Int -> RevList a -> RevList a
 > revDrop 0 as                  =  as
-> revDrop (_n + 1) Nil          =  Nil
-> revDrop (n + 1) (as :> _a)    =  revDrop n as
+> revDrop _ Nil                 =  Nil
+> revDrop n (as :> _a)          =  revDrop (n - 1) as
 
 %-------------------------------------------------------------------------------
 \subsection{Formatting text}
