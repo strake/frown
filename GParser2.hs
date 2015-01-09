@@ -47,6 +47,9 @@
   import qualified Base
   import Prettier               (  Pretty  )
   import Options
+  import Control.Category.Unicode
+  import Control.Applicative    hiding (  (<$>)  )
+  import Control.Monad (ap)
   import Data.Char hiding ( isSymbol )
   import Data.List
   import System.IO
@@ -2129,6 +2132,13 @@
                                                          -> [String]    -- past k lines
                                                          -> m Answer) }
  
+  instance (Functor m) => Functor (Lex m) where
+      f `fmap` Lex x            = Lex (\ k -> x (k ∘ f))
+
+  instance (Applicative m, Monad m) => Applicative (Lex m) where
+      pure a                    = Lex (\ k -> k a)
+      (<*>)                     = ap
+
   instance (Monad m) => Monad (Lex m) where
       return a                  =  Lex (\ cont -> cont a)
       m >>= k                   =  Lex (\ cont -> unLex m (\ a -> unLex (k a) cont))

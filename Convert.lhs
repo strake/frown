@@ -47,6 +47,7 @@
 > import Base
 > import Prettier               hiding (  concat, intersperse  )
 > import qualified Prettier as PP
+> import Control.Applicative
 > import Control.Monad
 > import System.IO                     hiding (  isEOF  )
 > import Options
@@ -232,6 +233,13 @@ Expand rule schemes.
 Writer monad for collecting multiple error messages.
 
 > data Writer w a               =  Writer a [w]
+
+> instance Functor (Writer w) where
+>     f `fmap` Writer a ss      = Writer (f a) ss
+
+> instance Applicative (Writer w) where
+>     pure                      = flip Writer []
+>     Writer f ss <*> Writer x ts = Writer (f x) (ss ++ ts)
 
 > instance Monad (Writer w) where
 >     return a                  =  Writer a []

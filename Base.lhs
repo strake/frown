@@ -36,6 +36,7 @@
 > where
 >
 > import Prettier
+> import Control.Applicative
 > import Control.Monad                  (  MonadPlus(..)  )
 > import System.IO
 > import System.Exit
@@ -114,6 +115,20 @@ Required?
 A simple exception monad.
 
 > data Result a                 =  Fail String | Return a
+
+> instance Functor Result where
+>     f `fmap` Return x         = Return (f x)
+>     f `fmap` Fail xs          = Fail xs
+
+> instance Applicative Result where
+>     pure                      = Return
+>     Return f <*> Return x     = Return (f x)
+>     Fail xs <*> Fail ys       = Fail (xs ++ ys)
+
+> instance Alternative Result where
+>     empty                     = fail ""
+>     Fail _ <|> m              = m
+>     m@(Return _) <|> _        = m
 
 > instance Monad Result where
 >     Fail s   >>= _k           =  Fail s
