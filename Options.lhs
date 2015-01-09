@@ -52,7 +52,7 @@
 >                               |  Help
 >                               |  Info
 >                               |  Lookahead Int
->                               |  Lexer
+>                               |  Lexer String
 >                               |  Noinline
 >                               |  Optimize
 >                               |  Pagewidth Int
@@ -98,7 +98,7 @@
 >                                        "put additional information into generated file"
 >                                  , Option "k" ["lookahead"] (OptArg getLookahead "nat")
 >                                        "use k tokens of lookahead"
->                                  , Option "l" ["lexer"] (NoArg Lexer)
+>                                  , Option "l" ["lexer"] (ReqArg Lexer "identifier")
 >                                        "use a monadic lexer (`get :: M Terminal')"
 >                                  , Option "n" ["noinline"] (NoArg Noinline)
 >                                        "generate NOINLINE pragmas"

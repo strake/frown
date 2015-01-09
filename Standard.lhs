@@ -48,6 +48,8 @@
 > import Base
 > import Generate
 > import Data.Char
+> import Data.Foldable (  foldMap  )
+> import Data.Monoid
 > import System.IO
 > import Data.Maybe
 > import Prelude                hiding (  lookup  )
@@ -107,9 +109,9 @@ The parsers for the start symbols.
 
 >                               ++ concat [ Empty
 >                                           : [ Sig [unVar (globalNTName n)]
->                                                 ([ x_tcon | not lexFlag ] <->> result_tcon <$> [Tuple (typesOf n)])
+>                                                 (case m_lexName of { Nothing -> [ x_tcon ]; _ -> [] } <->> result_tcon <$> [Tuple (typesOf n)])
 >                                             | sigFlag ] 
->                                           ++ [funbind (globalNTName n <$> [tr_var | not lexFlag])
+>                                           ++ [funbind (globalNTName n <$> case m_lexName of { Nothing -> [tr_var]; _ -> [] })
 >                                                  (next_n s (empty_con) False <>>=>
 >                                                       Fun [ntName n <$> genVars n]
 >                                                           (hsReturn <$> [Tuple (genVars n)]))]
@@ -147,13 +149,14 @@ The |impossible| function (final failure).
 Options and settings.
 
 >     trFlag                    =  Trace    `elem` opts
->     lexFlag                   =  Lexer    `elem` opts
 >     expFlag                   =  Expected `elem` opts
 >     backtrFlag                =  Backtrack `elem` opts
 >     sigFlag                   =  Signature False `elem` opts || Signature True `elem` opts
+>     Last m_lexName            =  foldMap (\ case { Lexer v -> Last (Just v); _ -> mempty; }) opts
 >
->     x_var                     =  if lexFlag then t_var else ts_var
->     x_tcon                    =  if lexFlag then terminal_tcon else List [terminal_tcon]
+>     (x_var, x_tcon)
+>       | Just _ <- m_lexName   = (t_var, terminal_tcon)
+>       | otherwise             = (ts_var, List [terminal_tcon])
 
 Generate code.
 
@@ -195,14 +198,14 @@ epsilon transitions) must be treated specially (no input is consumed).
 >
 >     next_n s st errCorr
 >         | errCorr             =  parse_n s st x_var
->         | lexFlag             =  hsGet <>>=> Fun [t'_var] (parse_n s st t'_var)
+>         | Just v <- m_lexName =  var v <>>=> Fun [t'_var] (parse_n s st t'_var)
 >         | otherwise           =  parse_n s st tr_var
 
 Generate input pattern for shift action (the as patterns are only
 required if the rhs includes reductions).
 
 >     genNewPat v flag
->         | lexFlag             =  asPat' t_var (fresh v)
+>         | Just _ <- m_lexName =  asPat' t_var (fresh v)
 >         | isNewEOF (pattern v)=  asPat' ts_var (asPat tr_var hsNil)
 >         | otherwise           =  asPat' ts_var (fresh v <:> tr_var)
 >         where asPat' x p
@@ -234,7 +237,7 @@ avoid name capture).
 
 >     genAnoPat Nothing         =  x_var
 >     genAnoPat (Just v)
->         | lexFlag             =  asPat t_var (anonymous v)
+>         | Just _ <- m_lexName =  asPat t_var (anonymous v)
 >         | isNewEOF (pattern v)=  asPat ts_var (asPat tr_var hsNil)
 >         | otherwise           =  asPat ts_var (anonymous v <:> tr_var)
 

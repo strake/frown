@@ -6,5 +6,6 @@ Build-Depends:		base, directory
 Synopsis:		A parser generator for Haskell
 
 Executable:		frown
+Extensions:		LambdaCase
 Main-Is:		Main.lhs
 Hs-Source-Dirs:		.,./Lib

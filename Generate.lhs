@@ -146,9 +146,8 @@ name capture.
 
 User supplied functions.
 
-> hsGet, hsFrown, result_tcon, terminal_tcon
+> hsFrown, result_tcon, terminal_tcon
 >                               :: Expr
-> hsGet                         =  var "get"
 > hsFrown                       =  var "frown"
 > result_tcon                   =  con "Result"
 > terminal_tcon                 =  con "Terminal"

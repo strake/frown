@@ -48,7 +48,9 @@
 > import Generate
 > import MergeSort
 > import Data.Char
+> import Data.Foldable          (  foldMap  )
 > import Data.Maybe
+> import Data.Monoid
 > import System.IO
 > import Control.Monad
 > import Prelude                hiding (  lookup  )
@@ -122,7 +124,7 @@ generate monomorphic type signatures).
 
 The parsers for the start symbols.
 
->                               ++ [ funbind (globalNTName n <$> [tr_var | not lexFlag])
+>                               ++ [ funbind (globalNTName n <$> case m_lexName of { Nothing -> [tr_var]; _ -> [] })
 >                                       (if Signature False `elem` opts then
 >                                            (next_n s [Fun (genVars n ++ [anon]) 
 >                                                           (hsReturn <$> [ntName n <$> genVars n])]) <>>=>
@@ -165,15 +167,16 @@ Options and settings.
 
 >     k                         =  lookahead opts
 >     trFlag                    =  Trace     `elem` opts
->     lexFlag                   =  Lexer     `elem` opts
 >     expFlag                   =  Expected  `elem` opts
 >     backtrFlag                =  Backtrack `elem` opts
 >     sigFlag                   =  Signature False `elem` opts || Signature True `elem` opts
 >     noinline                  =  Noinline `elem` opts
 >     optimize                  =  Optimize  `elem` opts
+>     Last m_lexName            =  foldMap (\ case { Lexer v -> Last (Just v); _ -> mempty; }) opts
 >
->     x_var                     =  if lexFlag then t_var else ts_var
->     x_tcon                    =  if lexFlag then terminal_tcon else List [terminal_tcon]
+>     (x_var, x_tcon)
+>       | Just _ <- m_lexName   = (t_var, terminal_tcon)
+>       | otherwise             = (ts_var, List [terminal_tcon])
 
 `Identity' states.
 
@@ -261,12 +264,12 @@ Generate code.
 >         --impossible "Stackless.genExpr"
 >
 >     genPat v
->         | lexFlag             =  fresh v
+>         | Just _ <- m_lexName =  fresh v
 >         | isNewEOF (pattern v)=  asPat tr_var hsNil
 >         | otherwise           =  fresh v <:> tr_var
 >
 >     next_n s ks
->         | lexFlag             =  hsGet <>>=> state_n s ks
+>         | Just v <- m_lexName =  var v <>>=> state_n s ks
 >         | otherwise           =  state_n s ks <$> [tr_var]
 >
 >     frown la

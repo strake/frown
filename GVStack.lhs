@@ -48,7 +48,9 @@
 > import System.IO
 > import Control.Monad
 > import Data.Char
+> import Data.Foldable               (  foldMap  )
 > import Data.List                   (  maximumBy  )
+> import Data.Monoid;
 > import Prelude                hiding (  lookup  )
 
 %-------------------------------=  --------------------------------------------
@@ -79,7 +81,7 @@ The data type of nonterminals.
 >                                  , DataDecl nonterminal_tcon
 >                                       [ (unCon (ntName n), typesOf n) | n <- nonterminals grammar ]
 >                                  , Empty
->                                  , TypeDecl parser_tcon ([if lexFlag then terminal_tcon else List [terminal_tcon]]
+>                                  , TypeDecl parser_tcon ([case m_lexName of { Just _ -> terminal_tcon; _ -> List [terminal_tcon]; }]
 >                                                          <->> (result_tcon <$> [nonterminal_tcon]))
 >                                  , Empty
 >                                  , TypeDecl (vstack_tcon <$> [vs_var, v_var])
@@ -88,7 +90,7 @@ The data type of nonterminals.
 
 The parsers for the start symbols.
 
->                               ++ [ funbind (globalNTName n <$> [tr_var | not lexFlag])
+>                               ++ [ funbind (globalNTName n <$> case m_lexName of { Nothing -> [tr_var]; _ -> [] })
 >                                       (next_n s [Tuple []] <>>=>
 >                                            Fun [ntName n <$> (genVars n)]
 >                                                (hsReturn <$> [Tuple (genVars n)]))
@@ -118,20 +120,19 @@ The |impossible| function (final failure).
 >                                  , funbind (state_var <$> [action_var, goto_var, vs_var, x_var])
 >                                        (local [ funbind gs_var (Tuple [vs_var, g_var])
 >                                               , funbind (g_var <$> [v_var]) (goto_var <$> [v_var, gs_var])]
->                                             (action_var <$> [if lexFlag then t_var
->                                                              else hsHead <$> [ts_var], gs_var, x_var]))
+>                                             (action_var <$> [case m_lexName of
+>                                                                Just _ -> t_var
+>                                                                _ -> hsHead <$> [ts_var], gs_var, x_var]))
 >                                  , Empty
 >                                  , funbind (shift_var <$> [state_var, v_var, vs_var, x_var])
->                                        (if lexFlag then
->                                             hsGet <>>=> (state_var <$> [Tuple [vs_var, v_var]])
->                                         else
->                                             state_var <$> [Tuple [vs_var, v_var], hsTail <$> [ts_var]])
+>                                        (case m_lexName of
+>                                           Just v -> var v <>>=> (state_var <$> [Tuple [vs_var, v_var]])
+>                                           _ -> state_var <$> [Tuple [vs_var, v_var], hsTail <$> [ts_var]])
 >                                  , Empty
 >                                  , funbind (shift'_var <$> [state_var, v_var, vs_var, x_var])
->                                        (if lexFlag then
->                                             state_var <$> [Tuple [vs_var, v_var], t_var]
->                                         else
->                                             state_var <$> [Tuple [vs_var, v_var], ts_var])
+>                                        (case m_lexName of
+>                                           Just _ ->  state_var <$> [Tuple [vs_var, v_var], t_var]
+>                                           _ -> state_var <$> [Tuple [vs_var, v_var], ts_var])
 >                                  , Empty
 >                                  , funbind (accept_var <$> [v_var, anon]) (hsReturn <$> [v_var])
 >                                  , Empty
@@ -148,10 +149,10 @@ Options and settings.
 
 >     k                         =  lookahead opts
 >     trFlag                    =  Trace     `elem` opts
->     lexFlag                   =  Lexer     `elem` opts
 >     expFlag                   =  Expected  `elem` opts
 >     backtrFlag                =  Backtrack `elem` opts
 >     noinline                  =  Noinline `elem` opts
+>     Last m_lexName            =  foldMap (\ case { Lexer v -> Last (Just v); _ -> mempty; }) opts
 >
 >     genState_n s cases
 >                               =  [ Sig [unVar (state_n s)]
@@ -202,7 +203,7 @@ Options and settings.
 >     stack_type (st :> v)      =  vstack_tcon <$> [stack_type st, Tuple (typesOf v)]
 >
 >     next_n s ks
->         | lexFlag             =  hsGet <>>=> state_n' s ks
+>         | Just v <- m_lexName =  var v <>>=> state_n' s ks
 >         | otherwise           =  state_n' s ks <$> [tr_var]
 >         where state_n' i ks'  =  state_n i <$> ks' -- HACK to fit the type
 >
@@ -212,7 +213,9 @@ Options and settings.
 >         | expFlag             =  error_var <$> [expected la]
 >         | otherwise           =  error_var
 >
->     x_var                     =  if lexFlag then t_var else ts_var
+>     x_var
+>         | Just _ <- m_lexName = t_var
+>         | otherwise           = ts_var
 
 Possibly generate a backtracking parser.
 

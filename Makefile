@@ -54,9 +54,9 @@ ifeq ($(hc),nhc98)
 	mv Main $(main)
 else
 ifeq ($(hc),ghc)
-	$(hc) --make -O2 -iLib -LLib -o $(main) Main.lhs
+	$(hc) -XLambdaCase --make -O2 -iLib -LLib -o $(main) Main.lhs
 else
-	ghc --make -Wall -O2 -package util -package rh -o $(main) Main.lhs
+	ghc -XLambdaCase --make -Wall -O2 -package util -package rh -o $(main) Main.lhs
 endif
 endif
 #	strip $(main)
