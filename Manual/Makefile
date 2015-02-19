@@ -21,9 +21,9 @@
 #   Email:      Ralf Hinze <ralf@cs.uni-bonn.de>                              #
 #   Homepage:   http://www.informatik.uni-bonn.de/~ralf/                      #
 #   Paper mail: Dr. Ralf Hinze                                                #
-#               Institut für Informatik III                                   #
-#               Universität Bonn                                              #
-#               Römerstraße 164                                               #
+#               Institut fÃ¼r Informatik III                                   #
+#               UniversitÃ¤t Bonn                                              #
+#               RÃ¶merstraÃŸe 164                                               #
 #               53117 Bonn, Germany                                           #
 #                                                                             #
 ###############################################################################
