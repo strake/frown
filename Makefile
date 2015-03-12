@@ -91,3 +91,6 @@ distclean: clean
 	@rm -f frown
 	cd Examples && $(MAKE) distclean
 	cd Manual   && $(MAKE) distclean
+
+GParser2.hs: GParser2.lg
+	frown --expected --signature -l get -Occompact GParser2.lg
