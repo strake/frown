@@ -53,6 +53,7 @@ Compile me with
 > import Prettier               hiding (  string, concat  )
 > import qualified Prettier as PP
 > import qualified SearchTree as ST
+> import Control.Applicative
 > import Control.Monad                  (  when  )
 > import System.Directory
 > import System.Environment
@@ -74,10 +75,12 @@ Compile me with
 >                                                 putStrLn warranty
 >                                             | Help `elem` opts ->
 >                                                 putStrLn (usageInfo header options)
->                                             | Version `elem` opts || null fnames ->
+>                                             | Version `elem` opts ->
 >                                                 putStrLn license
+>                                             | [] <- fnames ->
+>                                                 getContents >>= frown False opts >>= putStr
 >                                             | otherwise ->
->                                                 mapM_ (frown opts) fnames
+>                                                 mapM_ (frownFile opts) fnames
 >                                         (_, _, errors) ->
 >                                             panic (concat errors ++ usageInfo header options)
 >                                     exitWith ExitSuccess 
@@ -124,12 +127,16 @@ Should go to |Pretty|.
 > indent                        :: String -> Doc -> Doc
 > indent s d                    =  PP.string s <> group (nest (length s) d)
 
-> frown                         :: [Flag] -> FilePath -> IO ()
-> frown opts fname              =  
->     do --putStrLn ("*** Processing " ++ fname)
->        verb ("*** Processing " ++ fname)
->        input   <- readFile fname
->        let raw = if literate then unlit input else input
+> frownFile                     :: [Flag] -> FilePath -> IO ()
+> frownFile opts fname          =
+>     verbose opts ("*** Processing " ++ fname) >>
+>     case literate of { True -> unlit; _ -> id; } <$> readFile fname >>= frown literate opts >>=
+>     (verbose opts ("* Writing to " ++ haskell fname) >>) . safeWriteFile (haskell fname)
+>     where literate = snd (revBreak (== '.') fname) == "lg"
+
+> frown                         :: Bool -> [Flag] -> [Char] -> IO [Char]
+> frown literate opts raw       =
+>     do
 >
 >--        ts <- tokenize opts raw
 >--        debug "Token list" (pretty ts)
@@ -199,8 +206,7 @@ Should go to |Pretty|.
 >               else 
 >                   Standard.generate opts initials gotoTable branchTable -- optkActionTable
 >
->        verb ("* Writing to " ++ haskell fname)
->        safeWriteFile (haskell fname)
+>        return
 >            ("" -- "{-# OPTIONS -fno-warn-unused-binds #-}\n\n"
 >             ++ concatMap toString l
 >             ++ "\n\n{-\n\n"
@@ -213,9 +219,6 @@ Should go to |Pretty|.
 >             ++ end
 >             ++ concatMap toString r)
 >     where
->     (_, ext)                  =  revBreak (== '.') fname
->     literate                  =  ext == "lg"
->
 >     pageWidth                 =  head ([ w | Pagewidth w <- opts ] ++ [80]) `max` 40
 >     prettyProgram ds
 >       | literate              =  unlines [ "  " ++ l | l <- lines str ]
