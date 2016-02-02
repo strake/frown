@@ -25,7 +25,48 @@ Description:		Frown is an LALR(k) parser generator for Haskell 98 written in Has
 			  generation of backtracking parsers, multiple start symbols, error reporting, and a weak form of error
 			  correction.
 Build-Type:		Simple
-Cabal-Version:		>=1.4
+Cabal-Version:		>=1.6
+Extra-Doc-Files:	Manual/Manual.lhs
+			Manual/Manual.ps
+			Manual/Manual.fmt
+			Manual/Manual.htoc
+			Manual/Manual.pdf
+			Manual/Manual.bib
+			Manual/Manual.ptb
+			Manual/Manual.dvi
+			Manual/Manual.haux
+			Manual/Makefile
+			Manual/polycode.fmt
+			Manual/html/*.html
+			Manual/html/*.gif
+			Manual/html/*.css
+			Manual/Pics/*.ps
+			Manual/Pics/*.gif
+			Manual/Examples/Makefile
+			Manual/Examples/*.lhs
+			Manual/Examples/*.lg
+			Manual/Examples/*.in
+			Manual/Examples/*.out
+			Manual/Examples/*.session
+			Manual/Examples/append.let
+			Manual/auto.1
+			Manual/GParser2.lg
+Extra-Source-Files:	Examples/*.in
+			Examples/*.out
+			Examples/*.g
+			Examples/*.lg
+			Examples/*.lhs
+			Examples/*.y
+			Examples/Makefile
+			Examples/Haskell/Lib/*.lhs
+			Examples/Haskell/Makefile.dist
+			Examples/Haskell/Makefile
+			Examples/Haskell/*.lg
+			Examples/Haskell/*.lhs
+			Examples/Haskell/Test/*.hs
+			Examples/Haskell/Test/*.out
+			Examples/Haskell/Input/*.hs
+			Examples/Haskell/Input/*.out
 
 Executable		frown
   Build-Depends:	base <4.10, directory
