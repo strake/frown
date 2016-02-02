@@ -2,6 +2,7 @@ Name:			Frown
 Version:		0.6
 License:		GPL
 Author:			Ralf Hinze
+Maintainer:		strake888@gmail.com
 Build-Depends:		base, directory
 Synopsis:		A parser generator for Haskell
 
