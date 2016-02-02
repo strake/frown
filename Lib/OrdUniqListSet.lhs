@@ -112,6 +112,10 @@ Yes, \tr{Set} is a functor and a monad.
 > instance Functor Set where
 >     fmap f (Set s)		=  Set (map f s)
 >
+> instance Applicative Set where
+>     pure = return
+>     (<*>) = ap
+>
 > instance Monad Set where
 >     Set s >>= k		=  Set (s >>= (unSet . k))
 >     return			=  singleton
