@@ -51,7 +51,7 @@
 > import Data.Foldable               (  foldMap  )
 > import Data.List                   (  maximumBy  )
 > import Data.Monoid;
-> import Prelude                hiding (  lookup  )
+> import Prelude                hiding (  lookup, (<$>)  )
 
 %-------------------------------=  --------------------------------------------
 \subsection{Helper functions}

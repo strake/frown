@@ -52,7 +52,7 @@
 > import Data.Monoid
 > import System.IO
 > import Data.Maybe
-> import Prelude                hiding (  lookup  )
+> import Prelude                hiding (  lookup, (<$>)  )
 
 Characteristics.
 %

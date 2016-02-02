@@ -39,6 +39,7 @@
 
   module GParser2               (  Term, Nonterm, parse, Sym(..), Decl(..)  )
   where
+  import Prelude                hiding (  (<$>)  )
   import Lexer2
   import Grammar
   import Atom
@@ -47,7 +48,6 @@
   import qualified Base
   import Prettier               (  Pretty  )
   import Options
-  import Control.Category.Unicode
   import Control.Applicative    hiding (  (<$>)  )
   import Control.Monad (ap)
   import Data.Char hiding ( isSymbol )
@@ -2133,7 +2133,7 @@
                                                          -> m Answer) }
  
   instance (Functor m) => Functor (Lex m) where
-      f `fmap` Lex x            = Lex (\ k -> x (k ∘ f))
+      f `fmap` Lex x            = Lex (\ k -> x (k . f))
 
   instance (Applicative m, Monad m) => Applicative (Lex m) where
       pure a                    = Lex (\ k -> k a)
