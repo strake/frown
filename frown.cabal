@@ -1,12 +1,16 @@
-Name:			Frown
+Name:			frown
 Version:		0.6
 License:		GPL
 Author:			Ralf Hinze
 Maintainer:		strake888@gmail.com
-Build-Depends:		base, directory
-Synopsis:		A parser generator for Haskell
+Synopsis:		LALR(k) parser generator
+Build-Type:		Simple
+Cabal-Version:		>=1.4
 
-Executable:		frown
-Extensions:		LambdaCase
-Main-Is:		Main.lhs
-Hs-Source-Dirs:		.,./Lib
+Executable		frown
+  Build-Depends:	base <4.10, directory
+  Extensions:		LambdaCase
+  Main-Is:		Main.lhs
+  Other-Modules:	Atom, Base, Case, Compact, Convert, Future, GParser2, GVStack, Generate, Grammar, Haskell, LR0, Lexer, Lexer2, Lookahead, Optimize, Options, Quote, SearchTree, Stackless, Standard, Stdenv,
+                        GetOpt, MergeSort, OrdUniqList, OrdUniqListFM, OrdUniqListSet, Prettier, Uniq
+  Hs-Source-Dirs:	.,./Lib
