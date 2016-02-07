@@ -33,7 +33,6 @@
 \documentclass[a4paper,fleqn]{report}
 
 \usepackage{a4wide}
-\usepackage[latin1]{inputenc}
 \usepackage{graphicx}
 \usepackage{calc}
 \usepackage{ulem}\normalem
@@ -103,9 +102,9 @@ An LALR($k$) Parser Generator for Haskell \\[4mm]
 
 \author
 {RALF HINZE
-\\Institut für Informatik III
-\\Universität Bonn
-\\Römerstraße 164
+\\Institut fÃ¼r Informatik III
+\\UniversitÃ¤t Bonn
+\\RÃ¶merstraÃŸe 164
 \\53117 Bonn
 \\Germany
 \\\texttt{ralf\symbol{64}cs.uni-bonn.de}
@@ -338,7 +337,7 @@ and he devised the @--code=stackless@ and @--code=gvstack@ output
 formats. Doaitse invented the @--code=standard@ format, which was
 historically the first format \Frown\ supported.
 
-A big thank you goes to Andres Löh and Ross Paterson for various bug
+A big thank you goes to Andres LÃ¶h and Ross Paterson for various bug
 reports and suggestions for improvement.
 
 %================================  ============================================
