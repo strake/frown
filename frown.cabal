@@ -1,5 +1,5 @@
 Name:			frown
-Version:		0.6.2.1
+Version:		0.6.2.2
 License:		GPL
 Author:			Ralf Hinze
 Maintainer:		strake888@gmail.com
@@ -51,7 +51,11 @@ Extra-Doc-Files:	Manual/Manual.lhs
 			Manual/Examples/append.let
 			Manual/auto.1
 			Manual/GParser2.lg
-Extra-Source-Files:	Examples/*.in
+			QuickStart/*.lhs
+			QuickStart/*.lg
+			QuickStart/*.tig
+Extra-Source-Files:	*.lg
+			Examples/*.in
 			Examples/*.out
 			Examples/*.g
 			Examples/*.lg
