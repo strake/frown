@@ -32,6 +32,7 @@
 
 \documentclass[a4paper,fleqn]{report}
 
+\usepackage[utf8]{inputenc}
 \usepackage{a4wide}
 \usepackage{graphicx}
 \usepackage{calc}
