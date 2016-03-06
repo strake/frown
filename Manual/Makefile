@@ -117,7 +117,7 @@ html: $(file).lhs $(file).fmt $(sessions)
 	hacha $(file).html
 	imagen $(file)
 	mkdir -p html
-	mv index.html $(file).html $(file).css $(file)[0-9]*.html $(file)[0-9]*.gif *motif.gif html
+	mv index.html $(file).html $(file).css $(file)[0-9]*.html $(file)[0-9]*.png *motif.gif html
 
 spell: $(file).tex
 	egrep -v '$\%' $(file).tex | $(spell) $(file).spell | sort | uniq
