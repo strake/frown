@@ -36,7 +36,7 @@
 > import Prettier               hiding (  strip  )
 > import qualified Prettier as PP
 > import Base
-> import Prelude                hiding (  concat  )
+> import Prelude                hiding (  concat, (<>)  )
 
 %-------------------------------=  --------------------------------------------
 \section{Modifier}

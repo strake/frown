@@ -44,7 +44,7 @@
 >     Width, Style(Page, OneLine), render,
 >     Pretty(pretty, prettyPrec, prettyList) )
 > where
-> import Prelude hiding(concat)
+> import Prelude hiding(concat, (<>))
 
 Todo: add Jeff Lewis's |tab| and |indent| combinators (see email).
 Todo: add ribbon width (maximum number of characters on a line).

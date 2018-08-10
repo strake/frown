@@ -33,6 +33,7 @@
 >                               ,  Literal, numeral, charLit, stringLit, numeralAt, charLitAt, stringLitAt, litSrcLoc  )
 > where
 > import Prettier               hiding (  string  )
+> import Prelude                hiding (  (<>)  )
 > import qualified Prettier as PP
 
 > data SrcLoc                   =  At Int Int

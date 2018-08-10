@@ -45,6 +45,7 @@
 > import System.IO
 > import Data.Maybe
 > import Control.Monad                  (  when  )
+> import Prelude                hiding (  (<>)  )
 
 %-------------------------------=  --------------------------------------------
 \section{Grouping of actions}

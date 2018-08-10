@@ -59,7 +59,7 @@
 > where
 
 > import Prelude		hiding (  length, null, elem, lookup,
->				          foldl, foldr  )
+>				          foldl, foldr, (<>)  )
 > import qualified Prelude
 > import qualified OrdUniqList as OUL
 > import MergeSort		(  mergeSort  )
