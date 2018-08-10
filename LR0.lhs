@@ -44,7 +44,7 @@
 > import Future                 hiding (  lookup  )
 > import Base                   hiding (  list  )
 > import qualified Base
-> import Prelude                hiding (  null  )
+> import Prelude                hiding (  null, (<>)  )
 > import System.IO
 > import Options
 

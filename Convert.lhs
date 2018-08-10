@@ -51,6 +51,7 @@
 > import Control.Monad
 > import System.IO                     hiding (  isEOF  )
 > import Options
+> import Prelude                hiding (  (<>)  )
 
 > newEOF                        :: Ident
 > newEOF                        =  prime (ident "EOF")

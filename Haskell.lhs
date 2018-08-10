@@ -36,7 +36,7 @@
 > import qualified Atom
 > import Prettier
 > import Data.Char
-> import Prelude                hiding (  concat  )
+> import Prelude                hiding (  concat, (<>)  )
 
 %-------------------------------=  --------------------------------------------
 \section{Expressions}

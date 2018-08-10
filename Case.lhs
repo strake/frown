@@ -49,7 +49,7 @@
 > import System.IO
 > import Control.Monad
 > import Data.List                   (  partition  )
-> import Prelude                hiding (  lookup  )
+> import Prelude                hiding (  lookup, (<>)  )
 
 %-------------------------------=  --------------------------------------------
 \section{Back paths}

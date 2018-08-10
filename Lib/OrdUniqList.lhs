@@ -54,7 +54,7 @@
 >				)
 > where
 
-> import Prelude		hiding (  elem, lookup  )
+> import Prelude		hiding (  elem, lookup, (<>)  )
 > import MergeSort		(  mergeSort  )
 > import Uniq			(  unique  )
 

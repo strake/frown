@@ -60,6 +60,7 @@ Compile me with
 > import System.Exit
 > import System.IO
 > import System.Console.GetOpt
+> import Prelude                hiding (  (<>)  )
 
 %-------------------------------=  --------------------------------------------
 \section{The main program}
