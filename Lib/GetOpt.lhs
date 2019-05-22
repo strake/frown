@@ -1,4 +1,4 @@
-A Haskell port of GNU's getopt library 
+A Haskell port of GNU's getopt library
 
 Sven Panne <Sven.Panne@informatik.uni-muenchen.de> Oct. 1996 (small
 changes Dec. 1997)
@@ -20,7 +20,7 @@ including a 46 line example! :-)
 \begin{code}
 module GetOpt (ArgOrder(..), OptDescr(..), ArgDescr(..), usageInfo, getOpt) where
 
-import List(isPrefixOf)
+import Data.List(isPrefixOf)
 
 data ArgOrder a                        -- what to do with options following non-options:
    = RequireOrder                      --    no option processing after first non-option
@@ -185,11 +185,11 @@ test order cmdline = case getOpt order options cmdline of
 -- putStr (test Permute ["--ver","foo"])
 --    ==> option `--ver' is ambiguous; could be one of:
 --          -v      --verbose             verbosely list files
---          -V, -?  --version, --release  show version info   
+--          -V, -?  --version, --release  show version info
 --        Usage: foobar [OPTION...] files...
---          -v        --verbose             verbosely list files  
---          -V, -?    --version, --release  show version info     
---          -o[FILE]  --output[=FILE]       use FILE for dump     
+--          -v        --verbose             verbosely list files
+--          -V, -?    --version, --release  show version info
+--          -o[FILE]  --output[=FILE]       use FILE for dump
 --          -n USER   --name=USER           only dump USER's files
 -----------------------------------------------------------------------------------------
 -}

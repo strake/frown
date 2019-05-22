@@ -36,7 +36,7 @@
 > import qualified Atom
 > import Prettier
 > import Data.Char
-> import Prelude                hiding (  concat  )
+> import Prelude                hiding (  concat, (<>)  )
 
 %-------------------------------=  --------------------------------------------
 \section{Expressions}
@@ -300,7 +300,7 @@ TODO: better names.
 >                                  in  (List ps', vs')
 > combine' (App p q) vs         =  let (p', vs1) = combine' p vs
 >                                      (q', vs2) = combine' q vs1
-> 
+>
 >                                  in  (App p' q', vs2)
 > combine' (Guard p q) vs       =  let (p', vs') = combine' p vs
 >                                  in  (Guard p' q, vs')

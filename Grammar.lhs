@@ -36,7 +36,7 @@
 > import Prettier               hiding (  strip  )
 > import qualified Prettier as PP
 > import Base
-> import Prelude                hiding (  concat  )
+> import Prelude                hiding (  concat, (<>)  )
 
 %-------------------------------=  --------------------------------------------
 \section{Modifier}
@@ -161,7 +161,7 @@ Productions.
 >     prettyPrec d (Rule i n r p)
 >                               =  condParens (d > 9)
 >                               $  group (PP.string s
->                                         <> nest (length s) (pretty n <+> PP.string ":" 
+>                                         <> nest (length s) (pretty n <+> PP.string ":"
 >                                                             <+> intersperse (PP.string "," <> nl)
 >                                                                     (map pretty r))
 >                                                             <+> prettyPrec 10 p)

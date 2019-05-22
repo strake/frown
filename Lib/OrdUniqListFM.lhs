@@ -59,7 +59,7 @@
 > where
 
 > import Prelude		hiding (  length, null, elem, lookup,
->				          foldl, foldr  )
+>				          foldl, foldr, (<>) )
 > import qualified Prelude
 > import qualified OrdUniqList as OUL
 > import MergeSort		(  mergeSort  )
@@ -273,7 +273,7 @@ The list argument of |fromList_C| need not be functional.
 > lookup (FM f)			=  fmap (snd . unAssoc) . OUL.lookup f . dummy
 
 > lookupWithDefault		:: Ord a => FM a b -> b -> a -> b
-> lookupWithDefault fm def	=  fromMaybe def . lookup fm 
+> lookupWithDefault fm def	=  fromMaybe def . lookup fm
 
 > lookupWithContinuation	:: Ord a => FM a b -> (b -> c) -> c -> a -> c
 > lookupWithContinuation fm succ err a

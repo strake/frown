@@ -31,7 +31,7 @@
 > module Quote ( unquotify )
 > where
 > import Lexer
-> import IO
+> import System.IO
 > import Options
 
 Simple facility for a Haskell quote/unquote mechanism:
@@ -94,7 +94,7 @@ TODO: what happens if |ts| contains a lexical error?
 >     | otherwise               =  expected x ts
 
 > expected                      :: Token -> [Token] -> [Token]
-> expected x ts                 =  [Error ("quote/unquote error: expected `" ++ toString x ++ "'" 
+> expected x ts                 =  [Error ("quote/unquote error: expected `" ++ toString x ++ "'"
 >                                          ++ "\n<...> " ++ next 3 (concatMap toString ts))]
 
 Breaks at the point where it finds the first left quote or the

@@ -55,7 +55,7 @@
 >				)
 > where
 
-> import Prelude		hiding (  length, null, elem, foldl, foldr  )
+> import Prelude		hiding (  length, null, elem, foldl, foldr, (<>)  )
 > import qualified Prelude
 > import qualified OrdUniqList as OUL
 > import Prettier               hiding (  empty  )

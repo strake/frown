@@ -51,6 +51,7 @@
 > import Control.Monad
 > import System.IO                     hiding (  isEOF  )
 > import Options
+> import Prelude                hiding ( (<>) )
 
 > newEOF                        :: Ident
 > newEOF                        =  prime (ident "EOF")
@@ -60,7 +61,7 @@
 > isNewEOF _                    =  False
 
 > convert                       :: [Flag] -> [Decl] -> IO (Grammar, Int)
-> convert opts ds               =  
+> convert opts ds               =
 
 Check whether terminals and nonterminals are declared.
 
@@ -77,7 +78,7 @@ usually determines the start symbol).
 >        let decls              =  ds ++ stdenv
 >
 >        verb "* Checking grammar ..."
->        
+>
 >        let dataTerms          =  [ cs | Terminals cs <- decls ]
 >        terms                  <- case dataTerms of
 >                                      []        -> return []

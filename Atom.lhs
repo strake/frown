@@ -34,6 +34,7 @@
 > where
 > import Prettier               hiding (  string  )
 > import qualified Prettier as PP
+> import Prelude hiding         ((<>))
 
 > data SrcLoc                   =  At Int Int
 >                               |  Unknown

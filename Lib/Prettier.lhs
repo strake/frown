@@ -44,7 +44,7 @@
 >     Width, Style(Page, OneLine), render,
 >     Pretty(pretty, prettyPrec, prettyList) )
 > where
-> import Prelude hiding(concat)
+> import Prelude hiding(concat, (<>))
 
 Todo: add Jeff Lewis's |tab| and |indent| combinators (see email).
 Todo: add ribbon width (maximum number of characters on a line).
@@ -304,7 +304,7 @@ The length of the string is cached in |String| and |Newline|.
 > oneliner (FillGroup d)        =  oneliner d
 
 Simple documents.
-    			 
+
 > data Simple                   =  Nil
 >                               |  StringApp Int String Simple
 >                               |  NestLineApp Int Simple
@@ -322,7 +322,7 @@ Simple documents.
 > fits _w (NestLineApp _i _d)   =  True
 
 Nested documents.
-    			 
+
 > data Item                     =  Std !Int Doc | Grp !Int Doc | Fill !Int Doc
 
 TODO: |Grp| needs no |i| argument.
@@ -404,7 +404,7 @@ Rendering.
 
 > d1 </> d2		        =  d1 <> nl <> d2
 > d1 <+> d2		        =  d1 <> sp <> d2
-		
+
 > stack		                =  foldr1 (</>)
 > strip		                =  foldr1 (<+>)
 

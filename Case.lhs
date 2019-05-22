@@ -28,7 +28,7 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-> module Case                  (  nexts, Branch(..) -- , caseAnalysis, 
+> module Case                  (  nexts, Branch(..) -- , caseAnalysis,
 >                              ,  reportConflicts, BranchTable, branchLogic  )
 > where
 > import Grammar               hiding (  prec  )
@@ -49,7 +49,7 @@
 > import System.IO
 > import Control.Monad
 > import Data.List                   (  partition  )
-> import Prelude                hiding (  lookup  )
+> import Prelude                hiding (  lookup, (<>)  )
 
 %-------------------------------=  --------------------------------------------
 \section{Back paths}
@@ -241,7 +241,7 @@ shifts in a default branch.
 >     nsr                       =  sum [ shiftReduce b | (s, b) <- FM.toList branchTable ]
 >     nrr                       =  sum [ reduceReduce b | (s, b) <- FM.toList branchTable ]
 >     nii                       =  sum [ insertInsert b | (s, b) <- FM.toList branchTable ]
->     
+>
 >     caseAnalysis as
 >       | useLALR               =  b
 >       | optimize && reduceReduce b == 0
@@ -318,7 +318,7 @@ use further lookahead information.
 >         | not (conflict t)    =  ReduceN (collect t)
 >         | j == 0              =  ReduceReduce (collect t)
 >         | otherwise           =  localTokenCase
->                                      [ (x, caseexpr (j - 1) (actions' x t)) | x <- Set.toList la, modifier x == Copy  ] 
+>                                      [ (x, caseexpr (j - 1) (actions' x t)) | x <- Set.toList la, modifier x == Copy  ]
 >                                      [ caseexpr (j - 1) (actions' x t) | x <- Set.toList la, modifier x == Insert ] la
 >         where la              =  nexts' t
 

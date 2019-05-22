@@ -60,6 +60,7 @@ Compile me with
 > import System.Exit
 > import System.IO
 > import System.Console.GetOpt
+> import Prelude                        hiding ( (<>) )
 
 %-------------------------------=  --------------------------------------------
 \section{The main program}
@@ -83,7 +84,7 @@ Compile me with
 >                                                 mapM_ (frownFile opts) fnames
 >                                         (_, _, errors) ->
 >                                             panic (concat errors ++ usageInfo header options)
->                                     exitWith ExitSuccess 
+>                                     exitWith ExitSuccess
 >     where header              =  "Usage: frown [option ...] file.[l]g ..."
 
 > license                       :: String
@@ -140,7 +141,7 @@ Should go to |Pretty|.
 >
 >--        ts <- tokenize opts raw
 >--        debug "Token list" (pretty ts)
->        
+>
 >--        ts' <- unquotify opts ts
 >--        debug "Quote" (pretty ts')
 >
@@ -203,7 +204,7 @@ Should go to |Pretty|.
 >                   Stackless.generate opts g initials gotoTable branchTable -- optkActionTable
 >               else if Code Compact `elem` opts then
 >                   Compact.generate opts g initials reachable gotoTable branchTable -- optkActionTable
->               else 
+>               else
 >                   Standard.generate opts initials gotoTable branchTable -- optkActionTable
 >
 >        return
@@ -670,7 +671,7 @@ o  Tracing:
 
    ODER
 
-   So viele Informationen übergeben, daß der Stack rekonstruiert werden
+   So viele Informationen Ã¼bergeben, daÃŸ der Stack rekonstruiert werden
    kann.
 
 Experimental
