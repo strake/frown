@@ -45,6 +45,7 @@
 > import System.IO
 > import Data.Maybe
 > import Control.Monad                  (  when  )
+> import Prelude                hiding ( (<>) )
 
 %-------------------------------=  --------------------------------------------
 \section{Grouping of actions}
@@ -77,7 +78,7 @@ Differential fixed point iteration.
 
 > fixedpoint                    :: (Ord a, Show a, Ord v) => [a] -> ((a -> Set v) -> (a -> Set v)) -> ((a -> Set v) -> (a -> Set v))
 > fixedpoint dom step start     =  FM.unsafeLookup (FM.fromOrdList (iterate start' start'))
->     where 
+>     where
 >     start'                    =  [ (a, start a) | a <- dom ]
 >     step' fm                  =  [ (a, step (FM.unsafeLookup (FM.fromOrdList fm)) a) | a <- dom ]
 >
@@ -235,7 +236,7 @@ infinitely. The following grammar serves as an example.
 
 X : Y, X, C;
   | A;
- 
+
 Y : B;
   | ;
 

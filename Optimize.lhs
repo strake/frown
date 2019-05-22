@@ -36,7 +36,7 @@
 > import Haskell
 > import qualified SearchTree as FM
 > import Base
-> import Maybe                  (  fromMaybe  )
+> import Data.Maybe            (  fromMaybe  )
 
 %-------------------------------=  --------------------------------------------
 \section{Elimination of reduction by single productions}

@@ -44,7 +44,7 @@
 > import Future                 hiding (  lookup  )
 > import Base                   hiding (  list  )
 > import qualified Base
-> import Prelude                hiding (  null  )
+> import Prelude                hiding (  null, (<>)  )
 > import System.IO
 > import Options
 
@@ -132,7 +132,7 @@ Calculation of the LR(0) automaton.
 
 TODO: pretty print not reachable nts.
 
->                                     verb ("  " ++ show (Set.length reachable) ++ " reachable nonterminals (not reachable: " ++ 
+>                                     verb ("  " ++ show (Set.length reachable) ++ " reachable nonterminals (not reachable: " ++
 >                                           show (Set.minus (set (nonterminals g)) reachable) ++ ")")
 >                                     return (states, initials, gotoTable, reachable)
 >     where
@@ -149,7 +149,7 @@ TODO: pretty print not reachable nts.
 >                                      ,  p <- productionsOf g v ]
 >
 >     goto                      :: Items -> FM Symbol Items
->     goto q                    =  fmap closure $ 
+>     goto q                    =  fmap closure $
 >                                  FM.fromList_C Set.union
 >                                  [  (v, Set.singleton (Item i n (l :> v) r a))
 >                                  |  Item i n l (v : r) a <- toList q ]
@@ -164,7 +164,7 @@ Each start symbol gives rise to an initial item set.
 >                                      | q <- list qs
 >                                      , (_, q') <- FM.toList (goto q) ]
 
-For reasons of effiency and convenience we number the states. 
+For reasons of effiency and convenience we number the states.
 
 >     fm                        =  [ (q, State n q)
 >                                  | (q, n) <- zip (list itemSets) [1 ..] ]
@@ -175,7 +175,7 @@ For reasons of effiency and convenience we number the states.
 >
 >     gotoTable                 =  [ (n, v, safeLookup q')
 >                                  | (q, n) <- fm
->                                  , (v, q') <- FM.toList (goto q) 
+>                                  , (v, q') <- FM.toList (goto q)
 >                                  , not (null q') ] -- we don't list error transitions
 
 >     safeLookup a              =  case lookup a fm of
@@ -185,7 +185,7 @@ For reasons of effiency and convenience we number the states.
 Determine reachable nonterminals. NB We should use a binary search
 tree instead of an ordered list here:
 
->     reachable                 =  set [ v | s <- states, Item _ v _ [] _ <- toList (items s) ] 
+>     reachable                 =  set [ v | s <- states, Item _ v _ [] _ <- toList (items s) ]
 
 %-------------------------------=  --------------------------------------------
 \section{Shift and reduce table}

@@ -38,11 +38,16 @@
 > import Prettier               hiding (  string, concat  )
 > import qualified Prettier as PP
 > import Prelude                hiding (  lex  )
-> import Char                   hiding (  lexLitChar  )
-> import IO
-> import Monad
+> import Data.Char              hiding (  lexLitChar, Space, isSymbol  )
+> import qualified Data.Char    (isSymbol)
+> import System.IO
+> import Control.Monad
+> import qualified Control.Monad.Fail
 > import Base
 > import Options
+
+> instance Control.Monad.Fail.MonadFail Result where
+>   fail _ = mzero
 
 A simple Haskell lexer, essentially a modification of the Prelude
 function |lex|.
@@ -51,7 +56,7 @@ function |lex|.
 > tokenize opts str             =  do verb "* Lexing ..."
 >                                     verb ("  " ++ show (length ts) ++ " tokens")
 >                                     return ts
->     where 
+>     where
 >     ts			=  tidyup (qualify (lexify str))
 >     verb                      =  verbose opts
 
@@ -142,7 +147,7 @@ tokens.
 >     Return (t, s')		-> t : lexify s'
 
 > next                          :: Int -> String -> String
-> next n                        =  unlines . take n . lines 
+> next n                        =  unlines . take n . lines
 
 > lex				:: String -> Result (Token, String)
 > lex ""			=  fail "unexpected end of input"
@@ -191,16 +196,20 @@ tokens.
 >
 > lexExp			:: String -> Result (String, String)
 > lexExp (e:s)
->      | e `elem` "eE" 		=  do (c : t) <- return s
->				      if c `elem` "+-" then return () else mzero
->				      (ds, u) <- lexDigits' t
->				      return (e : c : ds, u)
->				`mplus` do (ds, t) <- lexDigits' s
->				           return (e : ds, t)
+>      | e `elem` "eE" 		= withSign `mplus` withoutSign
+>       where withSign = do
+>                               -- get head, returning mzero if fail
+>                               (c : t) <- return s
+>                               if c `elem` "+-" then return () else mzero
+>                               (ds, u) <- lexDigits' t
+>                               return (e : c : ds, u)
+>             withoutSign = do
+>                               (ds, t) <- lexDigits' s
+>                               return (e : ds, t)
 > lexExp s			=  return ("", s)
 >
 > lexDigits'			:: String -> Result (String, String)
-> lexDigits' s			=  do (cs@(_ : _), t) <- return (span isDigit s)
+> lexDigits' s			=  do (cs, t) <- return (span isDigit s)
 >                                     return (cs, t)
 
 > match				:: String -> String -> Result String
