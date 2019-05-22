@@ -76,6 +76,6 @@ Executable		frown
   Build-Depends:	base <5, directory
   Extensions:		LambdaCase, MonadComprehensions
   Main-Is:		Main.lhs
-  Other-Modules:	Atom, Base, Case, Compact, Convert, Future, GParser2, GVStack, Generate, Grammar, Haskell, LR0, Lexer, Lexer2, Lookahead, Optimize, Options, Quote, SearchTree, Stackless, Standard, Stdenv,
+  Other-Modules:	Atom, Base, Case, Compact, Convert, Future, GParser2, GVStack, Generate, Grammar, Haskell, LR0, Lexer, Lexer2, Lookahead, Options, Quote, SearchTree, Stackless, Standard, Stdenv,
                         GetOpt, MergeSort, OrdUniqList, OrdUniqListFM, OrdUniqListSet, Prettier, Uniq
   Hs-Source-Dirs:	.,./Lib
