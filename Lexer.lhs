@@ -209,7 +209,7 @@ tokens.
 > lexExp s			=  return ("", s)
 >
 > lexDigits'			:: String -> Result (String, String)
-> lexDigits' s			=  do (cs, t) <- return (span isDigit s)
+> lexDigits' s			=  do (cs@(_ : _), t) <- return (span isDigit s)
 >                                     return (cs, t)
 
 > match				:: String -> String -> Result String
