@@ -667,11 +667,11 @@ o  Errors and warnings:
 o  Tracing:
 
    use user-defined functions `shift', `reduce' and `accept' and pass
-   *all* the information to these functions (stack, input, and action).
+       *all* the information to these functions (stack, input, and action).
 
    ODER
 
-   So viele Informationen ?bergeben, da?der Stack rekonstruiert werden
+   So viele Informationen übergeben, daß der Stack rekonstruiert werden
    kann.
 
 Experimental
