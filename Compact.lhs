@@ -67,7 +67,7 @@
 
 > {-
 
-NEU: für die optimierten Reduktionen.
+NEU: fÃ¼r die optimierten Reduktionen.
 
 > ntArgsOf v ctx                =  args (pattern v)
 >   where

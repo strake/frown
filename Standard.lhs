@@ -21,9 +21,9 @@
 %   Email:      Ralf Hinze <ralf@cs.uni-bonn.de>                              %
 %   Homepage:   http://www.informatik.uni-bonn.de/~ralf/                      %
 %   Paper mail: Dr. Ralf Hinze                                                %
-%               Institut für Informatik III                                   %
-%               Universität Bonn                                              %
-%               Römerstraße 164                                               %
+%               Institut fÃ¼r Informatik III                                   %
+%               UniversitÃ¤t Bonn                                              %
+%               RÃ¶merstraÃe 164                                               %
 %               53117 Bonn, Germany                                           %
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +70,7 @@ has only shifts and |t| has no semantic values can be omitted.
 
 > {-
 
-NEU: f�r die optimierten Reduktionen.
+NEU: für die optimierten Reduktionen.
 
 > ntArgsOf v ctx                =  args (pattern v)
 >   where
