@@ -349,7 +349,7 @@ A continuation-based state monad.
 
 > type CPS a ans                =  (a -> ans) -> ans
 >
-> data Lex m a                  =  Lex { unLex :: CPS a (Bool           -- skip white space?
+> newtype Lex m a               =  Lex { unLex :: CPS a (Bool           -- skip white space?
 >                                                        -> String      -- input
 >                                                        -> Int         -- line count
 >                                                        -> [String]    -- past k lines

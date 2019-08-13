@@ -1,6 +1,6 @@
 > module Lexer where
-> import Char
-> import Maybe
+> import Data.Char
+> import Data.Maybe
 >
 > data Terminal  =  DO
 >                |  ELSE

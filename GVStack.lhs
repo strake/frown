@@ -92,13 +92,13 @@ The parsers for the start symbols.
 
 >                               ++ [ funbind (globalNTName n <$> case m_lexName of { Nothing -> [tr_var]; _ -> [] })
 >                                       (next_n s [Tuple []] <>>=>
->                                            Fun [ntName n <$> (genVars n)]
+>                                            Fun [ntName n <$> genVars n]
 >                                                (hsReturn <$> [Tuple (genVars n)]))
 >                                  | (n, s) <- entries ]
 
 The |state_i| functions.
 
->                               ++ concat [ Empty 
+>                               ++ concat [ Empty
 >--                                           : AComment [" state " ++ show (snumber s) ++ reportConflicts cases ++ " "]
 >                                           : genState_n s cases
 >                                         | (s, cases) <- ST.toList table ]

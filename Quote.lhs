@@ -103,8 +103,7 @@ first unmatched right unquote.
 > lquote                        :: Int -> [Token] -> ([Token], [Token], Int)
 > lquote n (LQuote : ts)        =  ([], LQuote : ts, n)
 > lquote 0 (Special '}' : ts)   =  ([], Special '}' : ts, 0)
-> lquote (n + 1) (Special '}' : ts)
->                               =  Special '}' <| lquote n ts
+> lquote n (Special '}' : ts)   =  Special '}' <| lquote n ts
 > lquote n (Special '{' : ts)   =  Special '{' <| lquote (n + 1) ts
 > lquote n []                   =  ([], [], n)
 > lquote n (t : ts)             =  t <| lquote n ts

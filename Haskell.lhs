@@ -227,7 +227,7 @@ Abbreviations for Haskell operators.
 Float guarded patterns to the top-level.
 
 > funbind                       :: Expr -> Expr -> Decl
-> funbind lhs rhs               =  FunBind (guard lhs' gs) rhs
+> funbind lhs                   =  FunBind (guard lhs' gs)
 >   where (lhs', gs)            =  guards lhs
 
 > switch                        :: Expr -> [(Pat, Expr)] -> Expr

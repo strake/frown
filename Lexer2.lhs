@@ -119,7 +119,7 @@
 > lexExp			:: String -> Maybe (String, String)
 > lexExp (e : s)
 >      | e `elem` "eE" 		=  do (c : t) <- return s
->				      if c `elem` "+-" then return () else mzero
+>				      guard (c `elem` "+-")
 >				      (ds, u) <- lexDigits' t
 >				      return (e : c : ds, u)
 >				`mplus` do (ds, t) <- lexDigits' s

@@ -67,24 +67,22 @@ Compile me with
 %-------------------------------=  --------------------------------------------
 
 > main                          :: IO ()
-> main                          =  do argv <- getArgs
->                                     case (getOpt Permute options argv) of
->                                         (opts, fnames, []  )
->                                             | Copying `elem` opts ->
->                                                 putStrLn copying
->                                             | Warranty `elem` opts ->
->                                                 putStrLn warranty
->                                             | Help `elem` opts ->
->                                                 putStrLn (usageInfo header options)
->                                             | Version `elem` opts ->
->                                                 putStrLn license
->                                             | [] <- fnames ->
->                                                 getContents >>= frown False opts >>= putStr
->                                             | otherwise ->
->                                                 mapM_ (frownFile opts) fnames
->                                         (_, _, errors) ->
->                                             panic (concat errors ++ usageInfo header options)
->                                     exitWith ExitSuccess
+> main                          =  getOpt Permute options <$> getArgs >>= \ case
+>                                      (opts, fnames, []  )
+>                                          | Copying `elem` opts ->
+>                                              putStrLn copying
+>                                          | Warranty `elem` opts ->
+>                                              putStrLn warranty
+>                                          | Help `elem` opts ->
+>                                              putStrLn (usageInfo header options)
+>                                          | Version `elem` opts ->
+>                                              putStrLn license
+>                                          | [] <- fnames ->
+>                                              getContents >>= frown False opts >>= putStr
+>                                          | otherwise ->
+>                                              mapM_ (frownFile opts) fnames
+>                                      (_, _, errors) ->
+>                                          panic (concat errors ++ usageInfo header options)
 >     where header              =  "Usage: frown [option ...] file.[l]g ..."
 
 > license                       :: String

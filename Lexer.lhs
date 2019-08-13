@@ -217,7 +217,7 @@ tokens.
 > nested			:: Int -> String -> (String, String)
 > nested _     []		=  ([], [])
 > nested 0     ('-' : '}' : s)	=  ([], '-':'}':s)
-> nested (n+1) ('-' : '}' : s)	=  '-' <| '}' <| nested n s
+> nested n     ('-' : '}' : s)	=  '-' <| '}' <| nested (n - 1) s
 > nested n     ('{' : '-' : s)	=  '{' <| '-' <| nested (n + 1) s
 > nested n     (c : s)		=  c <| nested n s
 

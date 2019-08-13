@@ -106,7 +106,7 @@ A type class for pretty printing.
 >	prettyPrec       	:: Int -> a -> Doc
 >	prettyList		:: [a] -> Doc
 >
->       pretty a                =  prettyPrec 0 a
+>       pretty                  =  prettyPrec 0
 >       prettyPrec d a          =  string (showsPrec d a "")
 >	prettyList as		=  brackets ( -- or |fillgroup| instead of |group|?
 >                                    intersperse (char ',' <> nl) (map pretty as))
@@ -427,7 +427,7 @@ Rendering.
 > instance Pretty Float
 > instance Pretty Double
 > instance (Pretty a) => Pretty [a] where
->	prettyPrec _d as	=  prettyList as
+>	prettyPrec _d		=  prettyList
 > instance Pretty ()
 > instance (Pretty a, Pretty b) => Pretty (a, b) where
 >       prettyPrec _d (a, b)	=  parens (

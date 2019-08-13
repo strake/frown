@@ -143,8 +143,7 @@ Order branches by symbol (this is necessary in case patterns are
 overlapping).
 
 > tokenCase                     :: [(Symbol, Branch)] -> [Branch] -> Set Symbol -> Branch
-> tokenCase es def la           =  TokenCase es' def la
->     where es'                 =  mergeSortBy (\ (v1, _b1) (v2, _b2) -> number v1 <= number v2) es
+> tokenCase                     =  TokenCase . mergeSortBy (\ (v1, _b1) (v2, _b2) -> number v1 <= number v2)
 
 Move identical branches into a default branch.
 
@@ -284,7 +283,7 @@ shift/reduce conflicts.
 >     branch, branch'           :: [Action] -> Branch
 >     branch [Shift e]          =  Shift1 e
 >     branch rs@(Shift e1@(_, t1, _) : rs')
->         | assoc t1 /= Unspecified && and [ prec r /= Nothing | r <- rs' ]
+>         | assoc t1 /= Unspecified && all (isNothing . prec) rs'
 >                               =  let ps = map (fromJust . prec) rs'
 >                                  in  case (assoc t1, aprec (assoc t1), minimum ps, maximum ps) of
 >                                      (_, n1, nmin, nmax)

@@ -72,10 +72,14 @@ Extra-Source-Files:	*.lg
 			Examples/Haskell/Input/*.hs
 			Examples/Haskell/Input/*.out
 
-Executable		frown
-  Build-Depends:	base <5, directory
-  Extensions:		LambdaCase, MonadComprehensions
-  Main-Is:		Main.lhs
-  Other-Modules:	Atom, Base, Case, Compact, Convert, Future, GParser2, GVStack, Generate, Grammar, Haskell, LR0, Lexer, Lexer2, Lookahead, Options, Quote, SearchTree, Stackless, Standard, Stdenv,
+Executable              frown
+  Build-Depends:        base <5
+                      , directory
+  Default-Language:     Haskell2010
+  Default-Extensions:   LambdaCase
+                      , MonadComprehensions
+                      , DeriveFunctor, DeriveFoldable, DeriveTraversable
+  Main-Is:              Main.lhs
+  Other-Modules:        Atom, Base, Case, Compact, Convert, Future, GParser2, GVStack, Generate, Grammar, Haskell, LR0, Lexer, Lexer2, Lookahead, Options, Quote, Stackless, Standard, Stdenv,
                         GetOpt, MergeSort, OrdUniqList, OrdUniqListFM, OrdUniqListSet, Prettier, Uniq
-  Hs-Source-Dirs:	.,./Lib
+  Hs-Source-Dirs:       .,./Lib

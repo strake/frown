@@ -160,15 +160,14 @@ A simple exception monad.
 > list x                        =  shunt x []
 >
 > revList                       :: List a -> RevList a
-> revList x                     =  revShunt Nil x
+> revList                       =  revShunt Nil
 
 > shunt                         :: RevList a -> List a -> List a
-> shunt Nil r                   =  r
-> shunt (l :> a) r              =  shunt l (a : r)
+> shunt Nil                     =  id
+> shunt (l :> a)                =  shunt l . (a :)
 >
 > revShunt                      :: RevList a -> List a -> RevList a
-> revShunt l []                 =  l
-> revShunt l (a : r)            =  revShunt (l :> a) r
+> revShunt                      =  foldl (:>)
 >
 > revLength                     :: RevList a -> Int
 > revLength Nil                 =  0

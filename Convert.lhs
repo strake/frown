@@ -41,7 +41,7 @@
 > --import OrdUniqListSet         (  Set, MinView(..)  )
 > import OrdUniqListSet         (  Set, MinView(Empty, Min)  ) -- for nhc98
 > import Atom                   hiding (  string  )
-> import Haskell                hiding (  Empty, Decl, guard  )
+> import Haskell                hiding (  Empty, Decl, guard, (<$>)  )
 > import Data.Maybe
 > import Data.List
 > import Base
@@ -50,7 +50,6 @@
 > import Control.Applicative
 > import Control.Monad
 > import System.IO                     hiding (  isEOF  )
-> import Options
 > import Prelude                hiding ( (<>) )
 
 > newEOF                        :: Ident
@@ -280,9 +279,8 @@ abbreviation.
 >                                      Just v  -> return v
 
 > nontermLookup                 :: (Expr, Int) -> [(Maybe Literal, Symbol)] -> [Symbol] -> XXX Symbol
-> nontermLookup e ts nts        =  do v  <- safeLookup e [ ((name v, arity v), v) | v <- nts ]
->                                     vs <- sequence [ nontermLookup' (a, arity arg) ts nts | (a, arg) <- zip (args (fst e)) (arguments v) ] -- args (fst e) ]
->                                     return (updateArgs v vs)
+> nontermLookup e ts nts        =  do v <- safeLookup e [ ((name v, arity v), v) | v <- nts ]
+>                                     updateArgs v <$> sequence [ nontermLookup' (a, arity arg) ts nts | (a, arg) <- args (fst e) `zip` arguments v ] -- args (fst e)
 
 > nontermLookup'                :: (Expr, Int) -> [(Maybe Literal, Symbol)] -> [Symbol] -> XXX Symbol
 > nontermLookup' e ts nts
@@ -335,8 +333,7 @@ be identical, except for the quoted components.
 
 > matches                       :: Expr -> Symbol -> Maybe Symbol
 > matches p (v@(Terminal { pattern = p' }))
->                               =  do q <- match p p'
->                                     return (v{pattern = q})
+>                               =  [v { pattern = q } | q <- match p p']
 > matches _ _                   =  impossible "Convert.matches"
 
 > match                         :: Expr -> Expr -> Maybe Expr
@@ -350,14 +347,10 @@ be identical, except for the quoted components.
 >     | s == s'                 =  return (Literal s)
 >     | otherwise               =  fail "match"
 > match (Tuple ps) (Tuple ps')  =  do guard (length ps == length ps')
->                                     qs <- zipWithM match ps ps'
->                                     return (Tuple qs)
+>                                     Tuple <$> zipWithM match ps ps'
 > match (List ps) (List ps')    =  do guard (length ps == length ps')
->                                     qs <- zipWithM match ps ps'
->                                     return (List qs)
-> match (App p q) (App p' q')   =  do r <- match p p'
->                                     r' <- match q q'
->                                     return (App r r')
+>                                     List <$> zipWithM match ps ps'
+> match (App p q) (App p' q')   =  App <$> match p p' <*> match q q'
 > match (Quoted as) (Quoted ts) =  return (TypeOf as ts)
 > match _ _                     =  fail "match"
 

@@ -93,7 +93,7 @@ NEU: für die optimierten Reduktionen.
 The stack data type.
 
 >     decls                     =  [ DataDecl stack_tcon (
->                                        (unCon empty_con, []) 
+>                                        (unCon empty_con, [])
 >                                        : [ (unCon (con_s_s e), stack_tcon : typesOf v)
 >                                          | e@(s, v, s') <- edges ]) ]
 
@@ -103,16 +103,16 @@ symbols).
 
 >                               ++ [ Empty
 >                                  , DataDecl nonterminal_tcon
->                                       [ (unCon (ntName n), typesOf n) | (n, _) <- entries ] ] 
+>                                       [ (unCon (ntName n), typesOf n) | (n, _) <- entries ] ]
 
 The parsers for the start symbols.
 
 >                               ++ concat [ Empty
 >                                           : [ Sig [unVar (globalNTName n)]
 >                                                 (case m_lexName of { Nothing -> [ x_tcon ]; _ -> [] } <->> result_tcon <$> [Tuple (typesOf n)])
->                                             | sigFlag ] 
+>                                             | sigFlag ]
 >                                           ++ [funbind (globalNTName n <$> case m_lexName of { Nothing -> [tr_var]; _ -> [] })
->                                                  (next_n s (empty_con) False <>>=>
+>                                                  (next_n s empty_con False <>>=>
 >                                                       Fun [ntName n <$> genVars n]
 >                                                           (hsReturn <$> [Tuple (genVars n)]))]
 >                                         | (n, s) <- entries ]
@@ -176,8 +176,8 @@ Generate code.
 >     caseexpr (Shift1 e)       =  shiftRHS e   -- this must be an error-correcting transition
 >     caseexpr (ReduceN rs)     =  switch st_var ([ (genStack (stack r), reduceRHS r) | r <- rs ]
 >                               ++ [ (anon, notpossible x_var) | backtrFlag ])
->     caseexpr (ReduceReduce rs)=  foldr1 (<|>) [ switch st_var ([ (genStack (stack r), reduceRHS r)]
->                                                                ++ [(anon, frown (Set.empty))]) | r <- rs ] -- TODO: pass set of expected tokens
+>     caseexpr (ReduceReduce rs)=  foldr1 (<|>) [ switch st_var [ (genStack (stack r), reduceRHS r)
+>                                                               , (anon, frown Set.empty)] | r <- rs ] -- TODO: pass set of expected tokens
 >     caseexpr (TokenCase es bs la) -- does not work with a monadic lexer
 >                               =  switch tr_var ([ ( genNewPat x False, caseexpr t)
 >                                                 | (x, t) <- es ]

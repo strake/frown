@@ -35,7 +35,7 @@
 > module Stackless              (  generate  )
 > where
 > import Atom
-> import Haskell
+> import Haskell               hiding (  guard  )
 > import Grammar               hiding (  prec  )
 > import qualified Grammar as G
 > import Convert
@@ -137,7 +137,7 @@ The parsers for the start symbols.
 
 The |state_i| functions.
 
->                               ++ concat [ Empty 
+>                               ++ concat [ Empty
 >--                                           : AComment ["state " ++ show (snumber s) ++ reportConflicts cases ++ " "]
 >                                           : genState_n s cases
 >                                         | (s, cases) <- ST.toList table, not (isIdState s) ]
@@ -205,8 +205,8 @@ Generate code.
 >                               =  [ Sig [unVar (state_var s)] ([ k_type i | i <- Set.toList q ] <->> parser_type)
 >                                  | sigFlag]
 >                               ++ [ funbind (state_n s [ k_var i | i <- Set.toList q ] <$> [x_var])
->                                        (local [ funbind (goto_var v <$> (genVars v)) --(argsOf v))
->                                                     (state_n s2 [ kernel i <$> (genVars v) | i <- itemsOf v ])
+>                                        (local [ funbind (goto_var v <$> genVars v) --(argsOf v))
+>                                                     (state_n s2 [ kernel i <$> genVars v | i <- itemsOf v ])
 >                                               | (s1, v, s2) <- edges, s1 == s, nonterminal v ]
 >                                            (genBody cases))]
 >         where

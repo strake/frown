@@ -81,10 +81,10 @@
 > ident s                       =  Ident s Unknown
 >
 > identAt                       :: String -> SrcLoc -> Ident
-> identAt s loc                 =  Ident s loc
+> identAt                       =  Ident
 >
 > prime                         :: Ident -> Ident
-> prime i                       =  Prime i
+> prime                         =  Prime
 >
 > string                        :: Ident -> String
 > string (Ident s _)            =  s
@@ -133,9 +133,9 @@
 > stringLit s                   =  String  s Unknown
 >
 > numeralAt, charLitAt, stringLitAt   :: String -> SrcLoc -> Literal
-> numeralAt   s loc             =  Numeral s loc
-> charLitAt   s loc             =  Char    s loc
-> stringLitAt s loc             =  String  s loc
+> numeralAt                     =  Numeral
+> charLitAt                     =  Char
+> stringLitAt                   =  String
 >
 > litSrcLoc                     :: Literal -> SrcLoc
 > litSrcLoc (Numeral _ loc)     =  loc

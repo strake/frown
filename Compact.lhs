@@ -34,8 +34,10 @@
 
 > module Compact                (  generate  )
 > where
+> import Control.Monad          (  guard  )
 > import Atom
-> import Haskell
+> import Haskell                hiding (  guard  )
+> import qualified Haskell as Hs
 > import Grammar                hiding (  prec  )
 > import qualified Grammar as G
 > import Convert
@@ -54,7 +56,7 @@
 > import Data.Monoid
 > import System.IO
 > import Data.Maybe
-> import Prelude                hiding (  lookup, (<$>)  )
+> import Prelude                hiding (  lookup  )
 
 %-------------------------------=  --------------------------------------------
 \subsection{Helper functions}
@@ -106,7 +108,7 @@ different modifiers are distinguished).
 \subsection{Generate Haskell code}
 %-------------------------------=  --------------------------------------------
 
-> generate                      :: [Flag] -> Grammar -> [(Symbol, State)] 
+> generate                      :: [Flag] -> Grammar -> [(Symbol, State)]
 >                                  -> Set Symbol -> GotoTable -> BranchTable -> IO [Decl]
 > generate opts grammar entries reachable edges table
 >                               =  do verb "* Generating Haskell code ... (--code=compact)"
@@ -126,7 +128,7 @@ The stack data type. The generation of the stack data type relies on
 the fact that terminals and nonterminals are numbered consecutively.
 
 >     decls                     =  [ DataDecl stack_tcon (
->                                        (unCon empty_con, []) 
+>                                        (unCon empty_con, [])
 >                                         : [ (unCon (wrap_con ("T_" ++ s)), state_tcon : stack_tcon : ts)
 >                                           | (ts, s) <- stTypes ]
 >                                         ++ if optimize then
@@ -150,24 +152,24 @@ entry points into the parser (that is, multiple start symbols).
 
 >                               ++ [ Empty
 >                                  , DataDecl nonterminal_tcon
->                                       [ (unCon (ntName n), typesOf n) | (n, _) <- entries ] ] 
+>                                       [ (unCon (ntName n), typesOf n) | (n, _) <- entries ] ]
 >                               ++ [ Empty ]
 
 The parsers for the start symbols.
 
 >                               ++ concat [ Empty
 >                                           : [ Sig [unVar (globalNTName n)]
->                                                 (case m_lexName of { Nothing -> [ x_tcon ]; _ -> []; } <->> result_tcon <$> [Tuple (typesOf n)])
->                                             | sigFlag ] 
->                                           ++ [funbind (globalNTName n <$> case m_lexName of { Nothing -> [tr_var]; _ -> []; })
+>                                                 (case m_lexName of { Nothing -> [ x_tcon ]; _ -> []; } <->> result_tcon Hs.<$> [Tuple (typesOf n)])
+>                                             | sigFlag ]
+>                                           ++ [funbind (globalNTName n Hs.<$> case m_lexName of { Nothing -> [tr_var]; _ -> []; })
 >                                                  (next_n s (empty_con) False <>>=>
->                                                       Fun [ntName n <$> genVars n]
->                                                           (hsReturn <$> [Tuple (genVars n)]))]
+>                                                       Fun [ntName n Hs.<$> genVars n]
+>                                                           (hsReturn Hs.<$> [Tuple (genVars n)]))]
 >                                         | (n, s) <- entries ]
 
 The |parse_i| functions.
 
->                               ++ concat [ Empty 
+>                               ++ concat [ Empty
 >--                                           : AComment [" state" ++ (if stateless s then "*" else "") ++ " " ++ show (snumber s) ++ reportConflicts cases ++ " "]
 
 Problems with supplying the type signatures: for parsers with a
@@ -181,23 +183,20 @@ monadic lexer we don't know the type (for instance, `|Lex a|' or
 The |reduce| functions.
 
 >                               ++ concat [ Empty
->                                                : [ funbind (reduce_var p <$>
+>                                                : [ funbind (reduce_var p Hs.<$>
 >                                                      ([x_var] ++ [ s_var | epsilon && not (stateless (let (s, _, _) = goto r' in s)) ] ++ [genStack2 (stack r')]))
 >                                                      (reduceRHS' r')
 >                                                  | r' <- collapse (map snd prs) ]
->                                                ++ if epsilon || not backtrFlag then
->                                                       []
->                                                   else
->                                                       funbind (reduce_var p <$>
->                                                           ([x_var, st_var]))
->                                                           (notpossible st_var x_var) : []
+>                                                ++ (guard (not epsilon && backtrFlag) *>
+>                                                    [funbind (reduce_var p Hs.<$> [x_var, st_var])
+>                                                             (notpossible st_var x_var)])
 >                                              | prs <- reductions (map snd (ST.toList table))
 >                                              , let (p, r) = head prs, let epsilon = stack r == Nil ] 
 
 The |goto| functions.
 
 >                                       ++ concat [ Empty
->                                                   : [ funbind (goto_var v <$> [s_con s])
+>                                                   : [ funbind (goto_var v Hs.<$> [s_con s])
 >                                                           (parse_var s')
 >                                                     | e@(s, v', s') <- edges, v' == v ]
 >                                                 | v <- Set.toList reachable, not (singleGoto v) ]
@@ -206,7 +205,7 @@ The |impossible| function (final failure).
 
 >                               ++ [ Empty
 >                                  , funbind (notpossible st_var x_var) (
->                                        hsFail <$> [stringLiteral "\"The `impossible' happened.\""])]
+>                                        hsFail Hs.<$> [stringLiteral "\"The `impossible' happened.\""])]
 
 Options and settings.
 
@@ -259,8 +258,8 @@ Generate parser.
 >       | equal (map pnumber rs)=  reduceRHS (head rs) True
 >       | otherwise             =  switch st_var ([ (genStack1 (stack r), reduceRHS r False) | r <- rs ]
 >                               ++ [ (anon, notpossible st_var x_var) | backtrFlag ])
->     caseexpr (ReduceReduce rs)=  foldr1 (<|>) [ switch st_var ([ (genStack1 (stack r), reduceRHS r False)]
->                                                                ++ [(anon, frown (Set.empty))]) | r <- rs ] -- TODO: pass set of expected tokens
+>     caseexpr (ReduceReduce rs)=  foldr1 (<|>) [ switch st_var ([ (genStack1 (stack r), reduceRHS r False)
+>                                                                , (anon, frown (Set.empty))]) | r <- rs ] -- TODO: pass set of expected tokens
 >     caseexpr (TokenCase es bs la)
 >                               =  switch tr_var ([ ( genNewPat x False, caseexpr t)
 >                                                 | (x, t) <- es ]
@@ -273,9 +272,9 @@ epsilon transitions) must be treated specially (no input is consumed).
 >     shift e@(s, t, _) flag    =  funbind (parse_n s st_var (genNewPat t flag)) (shiftRHS e)
 >
 >     shiftRHS e@(s, t, s')     =  trace
->                                      (hsPutStrLn <$>
+>                                      (hsPutStrLn Hs.<$>
 >                                          [stringLiteral ("\"shift " ++ smangle s  ++ " (\"")
->                                           <++> hsShow <$> [fresh t]
+>                                           <++> hsShow Hs.<$> [fresh t]
 >                                           <++> stringLiteral ("\") " ++ smangle s' ++ "\"")])
 >                                      (next_n s' (con_s_s e st_var (genVars t)) (modifier t == Insert))
 >
@@ -307,17 +306,16 @@ Code for reduce actions.
 >                                       (reduceRHS r False)
 >
 >     reduceRHS (Reduce st (s, _, _) _ _ i) True
->                               =  reduce_var i <$>
+>                               =  reduce_var i Hs.<$>
 >			               ([x_var] ++ [ s_con s | st == Nil && not (stateless s) ] ++ [st_var])
 >     reduceRHS (Reduce _ e@(_, v, s') _ _ i) False
 >         | isStart v           =  trace
->                                      (hsPutStrLn <$> [stringLiteral "\"accept\""])
->                                      (evaluate (argsOf v) (\ args -> hsReturn <$> [ntName v <$> args]))
+>                                      (hsPutStrLn Hs.<$> [stringLiteral "\"accept\""])
+>                                      (evaluate (argsOf v) (\ args -> hsReturn Hs.<$> [ntName v Hs.<$> args]))
 >         | otherwise           =  trace traceReduce
->                                      (evaluate (argsOf v) (\args -> 
->                                          proceed_n s' (con_s_s e st_var args)))
+>                                      (evaluate (argsOf v) (proceed_n s' . con_s_s e st_var))
 >         where
->         traceReduce           =  hsPutStrLn <$> [stringLiteral ("\"reduce by " ++ show i ++ "\"")]
+>         traceReduce           =  hsPutStrLn Hs.<$> [stringLiteral ("\"reduce by " ++ show i ++ "\"")]
 >
 >         proceed_n s st'       =  parse_n s st' x_var
 >
@@ -327,21 +325,20 @@ Separate reduce action.
 
 >     reduceRHS' (Reduce _ (s, v, s') _ _ i)
 >         | isStart v           =  trace
->                                      (hsPutStrLn <$> [stringLiteral "\"accept\""])
->                                      (evaluate (argsOf v) (\ args -> hsReturn <$> [ntName v <$> args]))
+>                                      (hsPutStrLn Hs.<$> [stringLiteral "\"accept\""])
+>                                      (evaluate (argsOf v) (\ args -> hsReturn Hs.<$> [ntName v Hs.<$> args]))
 >         | otherwise           =  trace traceReduce
->                                      (evaluate (argsOf v) (\ args -> 
->                                          proceed_n (x st_var args)))
+>                                      (evaluate (argsOf v) (proceed_n . x st_var))
 >         where
->         traceReduce           =  hsPutStrLn <$> [stringLiteral ("\"reduce by " ++ show i ++ "\"")]
+>         traceReduce           =  hsPutStrLn Hs.<$> [stringLiteral ("\"reduce by " ++ show i ++ "\"")]
 >
 >         x st vs
->           | stateless s       =  if null vs then st else st_con v <$> (st : vs)
->           | otherwise         =  sts_con v <$> (s_var : st : vs)
+>           | stateless s       =  if null vs then st else st_con v Hs.<$> (st : vs)
+>           | otherwise         =  sts_con v Hs.<$> (s_var : st : vs)
 >
 >         proceed_n st'
 >           | singleGoto v      =  parse_n s' st' x_var
->           | otherwise         =  goto_var v <$> [s_var, x_var, st']
+>           | otherwise         =  goto_var v Hs.<$> [s_var, x_var, st']
 >
 >     reduceRHS' _              =  impossible "Compact.reduceRHS"
 
@@ -367,8 +364,8 @@ The error case; if we have any |Insert| transitions we use these.
 >     catchallRHS bs la         =  if null bs then frown la else foldr1 (<|>) (map caseexpr bs)
 >
 >     frown la
->         | expFlag             =  hsFrown <$> [expected la, x_var]
->         | otherwise           =  hsFrown <$> [x_var]
+>         | expFlag             =  hsFrown Hs.<$> [expected la, x_var]
+>         | otherwise           =  hsFrown Hs.<$> [x_var]
 >
 >     (x_var, x_tcon)
 >         | Just _ <- m_lexName = (t_var, terminal_tcon)
@@ -385,13 +382,13 @@ constructors rather than the |StS_| constructors).
 >     genStack2 Nil             =  st_var
 >     genStack2 (st :> e@(s, v, _))
 >         | stateless s         =  con_s_s e (genStack2 st) (argsOf v)
->         | otherwise           =  sts_con v <$> ((if st == Nil then s_var else anon): genStack2 st : argsOf v)
+>         | otherwise           =  sts_con v Hs.<$> ((if st == Nil then s_var else anon): genStack2 st : argsOf v)
 
 Stack constructors.
 
 >     con_s_s (s, v, _s') st vs
->         | stateless s         =  if null vs then st else st_con v <$> (st : vs)
->         | otherwise           =  sts_con v <$> (s_con s : st : vs)
+>         | stateless s         =  if null vs then st else st_con v Hs.<$> (st : vs)
+>         | otherwise           =  sts_con v Hs.<$> (s_con s : st : vs)
 
 Collapse reductions.
 
@@ -424,8 +421,8 @@ Names.
 >     sts_con v                 =  wrap_con ("T_" ++ lookupStFM v)
 >     st_con v                  =  wrap_con ("T'_" ++ lookupStFM v)
 >
->     parse_n i st ts           =  parse_var i <$> [ts, st]
->     notpossible st ts         =  impossible_var <$> [ts, st]
+>     parse_n i st ts           =  parse_var i Hs.<$> [ts, st]
+>     notpossible st ts         =  impossible_var Hs.<$> [ts, st]
 
 >     parse_var i               =  wrap_var ("parse_" ++ smangle i)
 >     goto_var v                =  wrap_var ("goto_" ++ vmangle 1 v)
