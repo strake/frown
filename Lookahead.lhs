@@ -32,11 +32,12 @@
 >                               ,  klookahead  )
 > where
 > import Grammar
-> import LR0
-> import qualified OrdUniqListSet as Set
-> import OrdUniqListSet         (  Set  )
-> import qualified SearchTree as FM
-> import SearchTree             (  FM  )
+> import LR0 hiding (fixedpoint)
+> import qualified LR0 as Set (fixedpoint)
+> import qualified Data.Set as Set
+> import Data.Set         (  Set  )
+> import qualified Data.Map as Map
+> import Data.Map         (  Map  )
 > import MergeSort
 > import Prettier               hiding (  concat, empty, group  )
 > import qualified Prettier as PP
@@ -53,10 +54,10 @@
 
 Group the actions state-wise.
 
-> type ActionTable              =  FM State [Action]
+> type ActionTable              =  Map State [Action]
 >
 > groupActions                  :: Table -> ActionTable
-> groupActions table            =  FM.fromList_C (++) [(current a, [a]) | a <- table ]
+> groupActions table            =  Map.fromListWith (++) [(current a, [a]) | a <- table ]
 
 > current                       :: Action -> State
 > current (Shift (s, _, _))     =  s
@@ -68,7 +69,7 @@ Group the actions state-wise.
 > ppActionTable                 :: ActionTable -> Doc
 > ppActionTable table           =  PP.concat [ header ("State " ++ show (snumber s))
 >                                              <> pretty acts <> nl <> nl
->                                            | (s, acts) <- FM.toList table ]
+>                                            | (s, acts) <- Map.toList table ]
 
 %-------------------------------=  --------------------------------------------
 \section{Fixed points of finite maps}
@@ -77,10 +78,10 @@ Group the actions state-wise.
 Differential fixed point iteration.
 
 > fixedpoint                    :: (Ord a, Show a, Ord v) => [a] -> ((a -> Set v) -> (a -> Set v)) -> ((a -> Set v) -> (a -> Set v))
-> fixedpoint dom step start     =  FM.unsafeLookup (FM.fromOrdList (iterate start' start'))
+> fixedpoint dom step start     =  (Map.fromAscList (iterate start' start') Map.!)
 >     where
 >     start'                    =  [ (a, start a) | a <- dom ]
->     step' fm                  =  [ (a, step (FM.unsafeLookup (FM.fromOrdList fm)) a) | a <- dom ]
+>     step' fm                  =  [ (a, step (Map.fromAscList fm Map.!) a) | a <- dom ]
 >
 >     iterate n a
 >         | null n'             =  a
@@ -89,14 +90,14 @@ Differential fixed point iteration.
 >
 >     null kvs                  =  and [ Set.null v | (k, v) <- kvs ]
 >     kvs1 `union` kvs2         =  [ (k, v1 `Set.union` v2) | ((k, v1), (_, v2)) <- zip kvs1 kvs2 ]
->     kvs1 `minus` kvs2         =  [ (k, v1 `Set.minus` v2) | ((k, v1), (_, v2)) <- zip kvs1 kvs2 ]
+>     kvs1 `minus` kvs2         =  [ (k, v1 `Set.difference` v2) | ((k, v1), (_, v2)) <- zip kvs1 kvs2 ]
 
 Naive fixed point iteration (only used by |nullableOf|).
 
 > naivefixedpoint               :: (Ord a, Show a, Eq v) => [a] -> ((a -> v) -> (a -> v)) -> ((a -> v) -> (a -> v))
-> naivefixedpoint dom step start=  FM.unsafeLookup (lfp step' start')
->     where start'              =  FM.fromOrdList [ (a, start a) | a <- dom ]
->           step' fm            =  FM.fromOrdList [ (a, step (FM.unsafeLookup fm) a) | a <- dom ]
+> naivefixedpoint dom step start=  (lfp step' start' Map.!)
+>     where start'              =  Map.fromAscList [ (a, start a) | a <- dom ]
+>           step' fm            =  Map.fromAscList [ (a, step (fm Map.!) a) | a <- dom ]
 
 > lfp                           :: (Eq a) => (a -> a) -> a -> a
 > lfp f a
@@ -146,7 +147,7 @@ ahead information.
 >
 >     table                     =  groupActions table'
 >
->     lookup s                  =  applyWithDefault (FM.lookup table) [] s
+>     lookup                    =  applyWithDefault (flip Map.lookup table) []
 >
 >     add a@(Shift _)           =  a
 >     add (Reduce st e _ p i)   =  Reduce st e (prune k (lainfo e)) p i
@@ -165,7 +166,7 @@ ahead information.
 >       start e                 =  Set.empty
 >
 >       step f e@(_, _, s)      =  Set.singleton e `Set.union`
->                                  Set.unionMany [ f (s, v, goto' gotoTable s v)
+>                                  Set.unions [ f (s, v, goto' gotoTable s v)
 >                                                | Item _ _ _ (v : _) _ <- toList (items s)
 >                                                , nullable [v] ]
 > -}
@@ -174,7 +175,7 @@ ahead information.
 >       start e                 =  Set.empty
 >
 >       step f e@(_, _, s)      =  Set.singleton e `Set.union`
->                                  Set.unionMany [ f (s, v, goto' gotoTable s v)
+>                                  Set.unions [ f (s, v, goto' gotoTable s v)
 >                                                | Item _ _ _ (v : _) _ <- toList (items s)
 >                                                , nullable [v] ]
 >
@@ -183,7 +184,7 @@ ahead information.
 >       start e                 =  Set.empty
 >
 >       step f e@(s0, _, s)     =  ereachable e `Set.union`
->                                  Set.unionMany [ f (s', v, s'')
+>                                  Set.unions [ f (s', v, s'')
 >                                                | Item _ v (l :> _) r _ <- toList (items s)
 >                                                , nullable r
 >                                                , s' <- snd <$> backtrack gotoTable l s0
@@ -195,10 +196,10 @@ ahead information.
 >       start e                 =  Set.empty
 >
 >       step f e@(s0, _, s)     =  Set.singleton e `Set.union`
->                                  Set.unionMany [ f (s, v, goto' gotoTable s v)
+>                                  Set.unions [ f (s, v, goto' gotoTable s v)
 >                                                | Item _ _ (_ :> _) (v : _) _ <- toList (items s)
 >                                                , nullable [v] ] `Set.union`
->                                  Set.unionMany [ f (s', v, s'')
+>                                  Set.unions [ f (s', v, s'')
 >                                                | Item _ v (l :> _) [] _ <- toList (items s)
 >                                                , s' <- snd <$> backtrack gotoTable l s0
 >                                                , let s'' = goto' gotoTable s' v
@@ -240,7 +241,7 @@ of lookahead token.
 >
 >     table                     =  groupActions table'
 >
->     lookup s                  =  applyWithDefault (FM.lookup table) [] s
+>     lookup                    =  applyWithDefault (flip Map.lookup table) []
 >
 >     add a@(Shift _)           =  a
 >     add (Reduce st e _ p i)   =  Reduce st e (prune k (lainfo 1 (Nil :> e))) p i
@@ -274,7 +275,7 @@ epsilon transitions.
 
 TODO: DANGER of looping??? Inserts are like epsilon transitions.
 
->       reachable'              =  fmap unConf $ Set.fixedpoint forward' (Set.singleton (Conf st0))
+>       reachable'              =  Set.map unConf $ Set.fixedpoint forward' (Set.singleton (Conf st0))
 >
 >       forward' sts            =  Set.fromList
 >                                  [ Conf (nst :> e)

@@ -39,8 +39,8 @@
 > import Haskell
 > import Grammar
 > import LR0
-> import qualified OrdUniqListSet as Set
-> import OrdUniqListSet         (  Set  )
+> import qualified Data.Set as Set
+> import Data.Set         (  Set  )
 > import Base
 > --import Char                   (  toLower, toUpper  )
 > import Data.List                   (  intersperse  )

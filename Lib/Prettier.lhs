@@ -45,6 +45,10 @@
 >     Pretty(pretty, prettyPrec, prettyList) )
 > where
 > import Prelude hiding(concat, (<>))
+> import Data.Map (Map)
+> import qualified Data.Map as Map
+> import Data.Set (Set)
+> import qualified Data.Set as Set
 
 Todo: add Jeff Lewis's |tab| and |indent| combinators (see email).
 Todo: add ribbon width (maximum number of characters on a line).
@@ -460,3 +464,8 @@ Rendering.
 >     prettyPrec d (Just a)     =  condParens (d > 9) (
 >                                      block 4 (string "Just" </> prettyPrec 10 a))
 
+> instance (Pretty k, Pretty a) => Pretty (Map k a) where
+>      prettyPrec _d = braces . intersperse (char ',' <> nl) . fmap pretty . Map.toList
+>
+> instance (Pretty a) => Pretty (Set a) where
+>     prettyPrec _d = braces . intersperse (char ',' <> nl) . fmap pretty . Set.toList

@@ -74,6 +74,7 @@ Extra-Source-Files:	*.lg
 
 Executable              frown
   Build-Depends:        base <5
+                      , containers
                       , directory
   Default-Language:     Haskell2010
   Default-Extensions:   LambdaCase
@@ -81,5 +82,5 @@ Executable              frown
                       , DeriveFunctor, DeriveFoldable, DeriveTraversable
   Main-Is:              Main.lhs
   Other-Modules:        Atom, Base, Case, Compact, Convert, Future, GParser2, GVStack, Generate, Grammar, Haskell, LR0, Lexer, Lexer2, Lookahead, Options, Quote, Stackless, Standard, Stdenv,
-                        GetOpt, MergeSort, OrdUniqList, OrdUniqListFM, OrdUniqListSet, Prettier, Uniq
+                        GetOpt, MergeSort, Prettier
   Hs-Source-Dirs:       .,./Lib

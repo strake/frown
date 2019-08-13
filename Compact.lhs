@@ -44,9 +44,10 @@
 > import LR0                    hiding (  fromList  )
 > import Lookahead
 > import Case
-> import qualified OrdUniqListSet as Set
-> import OrdUniqListSet         (  Set  )
-> import qualified SearchTree as ST
+> import qualified Data.Set as Set
+> import Data.Set         (  Set  )
+> import Data.Map         (  Map  )
+> import qualified Data.Map as Map
 > import Options
 > import Base
 > import Generate
@@ -90,8 +91,8 @@ Extract reductions.
 > reductions bs                 =  groupBy equ1 (mergeSortBy leq1 rs)
 >     where rs                  =  [ (pnumber r, r) | b <- bs, r <- extract b ]
 
-> safeLookup                    :: (Show a, Ord a) => ST.FM a v -> a -> v
-> safeLookup fm a               =  fromMaybe (error ("not found: " ++ show a)) (ST.lookup fm a)
+> safeLookup                    :: (Show a, Ord a) => Map a v -> a -> v
+> safeLookup fm a               =  fromMaybe (error ("not found: " ++ show a)) (Map.lookup a fm)
 
 Key of a symbol (we cannot use equality below, because terminals with
 different modifiers are distinguished).
@@ -114,12 +115,12 @@ different modifiers are distinguished).
 >                               =  do verb "* Generating Haskell code ... (--code=compact)"
 > --                                    print (symbols grammar)
 >--                                     print reachable
->                                     let sgs = length [ n | (n, b) <- ST.toList singleGotoFM, b ]
+>                                     let sgs = length [ n | (n, b) <- Map.toList singleGotoFM, b ]
 >                                     verb ("  " ++ show sgs ++ " singleton gotos (of "
->                                           ++ show (ST.length singleGotoFM) ++ ")")
->                                     let sss = length [ s | (s, b) <- ST.toList shiftOnlyFM, b ]
+>                                           ++ show (length singleGotoFM) ++ ")")
+>                                     let sss = length [ s | (s, b) <- Map.toList shiftOnlyFM, b ]
 >                                     verb ("  " ++ show sss ++ " `stateless' states (of "
->                                           ++ show (ST.length shiftOnlyFM) ++ ")")
+>                                           ++ show (length shiftOnlyFM) ++ ")")
 >                                     return decls
 >     where
 >     verb                      =  verbose opts
@@ -140,7 +141,7 @@ the fact that terminals and nonterminals are numbered consecutively.
 >                                       []
 >                                   else
 >                                       let constrs = [ (unCon (s_con s), [])
->                                                     | (s, _) <- ST.toList table
+>                                                     | (s, _) <- Map.toList table
 >                                                     , not (stateless s) ]
 >                                       in [ Empty
 >                                          , DataDecl state_tcon (if null constrs then
@@ -178,7 +179,7 @@ monadic lexer we don't know the type (for instance, `|Lex a|' or
 
 
 >                                           : genParse_n s cases
->                                         | (s, cases) <- ST.toList table ]
+>                                         | (s, cases) <- Map.toList table ]
 
 The |reduce| functions.
 
@@ -190,7 +191,7 @@ The |reduce| functions.
 >                                                ++ (guard (not epsilon && backtrFlag) *>
 >                                                    [funbind (reduce_var p Hs.<$> [x_var, st_var])
 >                                                             (notpossible st_var x_var)])
->                                              | prs <- reductions (map snd (ST.toList table))
+>                                              | prs <- reductions (map snd (Map.toList table))
 >                                              , let (p, r) = head prs, let epsilon = stack r == Nil ] 
 
 The |goto| functions.
@@ -220,21 +221,21 @@ Group the symbols by type.
 
 >     symbolsByType             =  groupBy equ2 (mergeSortBy leq2 [ (v, typesOf v) | v <- symbols grammar ])
 >     stTypes                   =  zip (map (snd . head) symbolsByType) (map show [(1 :: Int) ..])
->     stFM                      =  ST.fromList [ (key v, show i)
+>     stFM                      =  Map.fromList [ (key v, show i)
 >                                              | (i, sx) <- zip [(1 :: Int) ..] symbolsByType, (v, _) <- sx ]
 >     lookupStFM v              =  safeLookup stFM (key v)
 
 Determine states with no nonterminal transition.
 
->     shiftOnlyFM               =  ST.fromList [ (snumber s, and [ singleGoto v
+>     shiftOnlyFM               =  Map.fromList [ (snumber s, and [ singleGoto v
 >                                                                | (s1, v, s2) <- edges
 >                                                                , s1 == s, nonterminal v ])
->                                              | (s, _) <- ST.toList table ]
+>                                              | (s, _) <- Map.toList table ]
 >     stateless s               =  optimize && safeLookup shiftOnlyFM (snumber s)
 
 Determine singleton gotos.
 
->     singleGotoFM              =  ST.fromList [ (n, length [ e | e@(s, v, s') <- edges, v == n ] <= 1)
+>     singleGotoFM              =  Map.fromList [ (n, length [ e | e@(s, v, s') <- edges, v == n ] <= 1)
 >                                              | n <- Set.toList reachable ]
 >     singleGoto v              =  optimize && safeLookup singleGotoFM v
 

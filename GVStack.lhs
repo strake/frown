@@ -40,8 +40,8 @@
 > import qualified Grammar as G
 > import LR0                   hiding (  fromList  )
 > import Case
-> import qualified OrdUniqListSet as Set
-> import qualified SearchTree as ST
+> import qualified Data.Set as Set
+> import qualified Data.Map as Map
 > import Options
 > import Base
 > import Generate
@@ -101,7 +101,7 @@ The |state_i| functions.
 >                               ++ concat [ Empty
 >--                                           : AComment [" state " ++ show (snumber s) ++ reportConflicts cases ++ " "]
 >                                           : genState_n s cases
->                                         | (s, cases) <- ST.toList table ]
+>                                         | (s, cases) <- Map.toList table ]
 
 The |reduce| functions. BUG: if a symbol is unreachable then
 reductions must not be generated (cf `Dead.g')

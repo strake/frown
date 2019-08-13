@@ -36,10 +36,10 @@
 > import LR0                   hiding (  fromList  )
 > import Lookahead
 > import Future                hiding (  fromList  )
-> import qualified OrdUniqListSet as Set
-> import OrdUniqListSet         (  Set  )
-> import qualified SearchTree as FM
-> import SearchTree             (  FM  )
+> import qualified Data.Set as Set
+> import Data.Set         (  Set  )
+> import qualified Data.Map as Map
+> import Data.Map         (  Map  )
 > import Prettier               hiding (  concat, empty, group, stack  )
 > import qualified Prettier as PP
 > import MergeSort
@@ -96,7 +96,7 @@ reduce actions).
 >                               =  True
 
 > lalrConflict                  :: Past -> Bool
-> lalrConflict t                =  Set.length (Set.fromList [ pnumber a | a <- as ]) > 1
+> lalrConflict t                =  length (Set.fromList [ pnumber a | a <- as ]) > 1
 >     where as                  =  extract t
 
 %-------------------------------=  --------------------------------------------
@@ -214,15 +214,15 @@ shifts in a default branch.
 > mergeLookaheads               :: [Action] -> [Action]
 > mergeLookaheads as            =  map merge as
 >     where
->     fm                        =  FM.fromList_C union [ (n, f) | Reduce _ _ f _ n <- as ]
+>     fm                        =  Map.fromListWith union [ (n, f) | Reduce _ _ f _ n <- as ]
 >     merge (Shift e)           =  Shift e
->     merge (Reduce st e _ p n) =  Reduce st e (fromJust (FM.lookup fm n)) p n
+>     merge (Reduce st e _ p n) =  Reduce st e (fromJust (Map.lookup n fm)) p n
 
 %-------------------------------=  --------------------------------------------
 \section{Case analysis}
 %-------------------------------=  --------------------------------------------
 
-> type BranchTable              =  FM State Branch
+> type BranchTable              =  Map State Branch
 
 > branchLogic                   :: [Flag] -> ActionTable -> IO BranchTable
 > branchLogic opts table        =  do verb "* branch logic"
@@ -237,9 +237,9 @@ shifts in a default branch.
 >
 >     branchTable               =  fmap caseAnalysis table
 >
->     nsr                       =  sum [ shiftReduce b | (s, b) <- FM.toList branchTable ]
->     nrr                       =  sum [ reduceReduce b | (s, b) <- FM.toList branchTable ]
->     nii                       =  sum [ insertInsert b | (s, b) <- FM.toList branchTable ]
+>     nsr                       =  sum [ shiftReduce b | (s, b) <- Map.toList branchTable ]
+>     nrr                       =  sum [ reduceReduce b | (s, b) <- Map.toList branchTable ]
+>     nii                       =  sum [ insertInsert b | (s, b) <- Map.toList branchTable ]
 >
 >     caseAnalysis as
 >       | useLALR               =  b
@@ -322,7 +322,7 @@ use further lookahead information.
 >         where la              =  nexts' t
 
 > nexts                         :: [Action] -> Set Symbol
-> nexts as                      =  Set.unionMany [ la a | a <- as ]
+> nexts as                      =  Set.unions [ la a | a <- as ]
 >     where
 >     la (Shift (_, t, _))      =  Set.singleton t
 >     la (Reduce _ _ f _ _)     =  domain f
@@ -340,8 +340,8 @@ use further lookahead information.
 More lookahead.
 
 > nexts'                        :: Past -> Set Symbol
-> nexts' (Node es ts)           =  Set.unionMany [ domain (future a) | a <- es ]
->                                  `Set.union` Set.unionMany [ nexts' t | (_, t) <- ts ]
+> nexts' (Node es ts)           =  Set.unions [ domain (future a) | a <- es ]
+>                                  `Set.union` Set.unions [ nexts' t | (_, t) <- ts ]
 
 > actions'                      :: Symbol -> Past -> Past
 > actions' x (Node es ts)       =  Node [ a{ future = f } | a <- es

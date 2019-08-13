@@ -36,10 +36,8 @@
 > import Grammar
 > import GParser2
 > import Stdenv
-> --import qualified FiniteMap as FM
-> import qualified OrdUniqListSet as Set
-> --import OrdUniqListSet         (  Set, MinView(..)  )
-> import OrdUniqListSet         (  Set, MinView(Empty, Min)  ) -- for nhc98
+> import qualified Data.Set as Set
+> import Data.Set         (  Set  )
 > import Atom                   hiding (  string  )
 > import Haskell                hiding (  Empty, Decl, guard, (<$>)  )
 > import Data.Maybe
@@ -151,12 +149,12 @@ Check whether there are undefined symbols.
 Expand rule schemes.
 
 >        let expand             :: Set Symbol -> Set Symbol -> [(Symbol, [Symbol])]
->            expand done todo   =  case Set.minview todo of
->              Empty            -> []
->              Min v todo'      -> rs ++ expand done' (Set.union todo' new)
+>            expand done todo   =  case Set.minView todo of
+>              Nothing          -> []
+>              Just (v, todo')  -> rs ++ expand done' (Set.union todo' new)
 >                where rs       =  [ ruleInstance v r | r <- rules, name (fst r) == name v && arity (fst r) == arity v ]
->                      done'    =  Set.add v done
->                      new      =  Set.fromList [ w | (_, ws) <- rs, w@(Nonterminal {}) <- ws ] `Set.minus` done'
+>                      done'    =  Set.insert v done
+>                      new      =  Set.fromList [ w | (_, ws) <- rs, w@(Nonterminal {}) <- ws ] `Set.difference` done'
 >
 >            starts             =  take (length newstarts) nonterms''
 >

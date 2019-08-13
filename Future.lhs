@@ -32,10 +32,10 @@
 >				)
 > where
 > import Grammar
-> import qualified OrdUniqListSet as Set
-> import OrdUniqListSet         (  Set  )
-> import qualified OrdUniqListFM as FM
-> import OrdUniqListFM          (  FM  )
+> import qualified Data.Set as Set
+> import Data.Set         (  Set  )
+> import qualified Data.Map as Map
+> import Data.Map          (  Map  )
 > -- import Base
 > import Prettier
 
@@ -43,31 +43,30 @@
 \section{Lookahead information}
 %-------------------------------=  --------------------------------------------
 
-> newtype Future                =  Future { unFuture :: FM Symbol Future }
+> newtype Future                =  Future { unFuture :: Map Symbol Future }
 >                                  deriving (Eq, Ord, Show)
 >
 > fromList                      :: [(Symbol, Future)] -> Future
-> fromList ts                   =  Future (FM.fromList ts)
+> fromList ts                   =  Future (Map.fromList ts)
 >
 > instance Pretty Future where
 >     prettyPrec d (Future s)   =  prettyPrec d s
 >
 > union                         :: Future -> Future -> Future
-> union (Future a) (Future b)   =  Future (FM.union_C union a b)
+> union (Future a) (Future b)   =  Future (Map.unionWith union a b)
 >
 > unionMany                     :: [Future] -> Future
-> unionMany                     =  Future . FM.unionMany_C union . map unFuture
+> unionMany                     =  Future . Map.unionsWith union . map unFuture
 
 > prune                         :: Int -> Future -> Future
 > prune 0 (Future _ts)          =  fromList []
-> prune n (Future ts)           =  fromList [ (a, prune (n - 1) us) | (a, us) <- FM.toList ts ]
+> prune n (Future ts)           =  fromList [ (a, prune (n - 1) us) | (a, us) <- Map.toList ts ]
 
 > domain                        :: Future -> Set Symbol
-> domain (Future f)             =  Set.fromList (map fst (FM.toList f))
+> domain (Future f)             =  Set.fromList (map fst (Map.toList f))
 >
 > lookup                        :: Future -> Symbol -> Maybe Future
-> lookup (Future f) a           =  FM.lookup f a
+> lookup (Future f) a           =  Map.lookup a f
 >
 > empty                         :: Future -> Bool
-> empty (Future f)              =  FM.null f
-
+> empty (Future f)              =  Map.null f

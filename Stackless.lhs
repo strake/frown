@@ -41,8 +41,9 @@
 > import Convert
 > import LR0                   hiding (  fromList  )
 > import Case
-> import qualified OrdUniqListSet as Set
-> import qualified SearchTree as ST
+> import qualified Data.Set as Set
+> import Data.Map (Map)
+> import qualified Data.Map as Map
 > import Options
 > import Base
 > import Generate
@@ -66,8 +67,8 @@ Characteristics.
 \subsection{Helper functions}
 %-------------------------------=  --------------------------------------------
 
-> safeLookup                    :: (Show a, Ord a) => ST.FM a v -> a -> v
-> safeLookup fm a               =  fromMaybe (error ("not found: " ++ show a)) (ST.lookup fm a)
+> safeLookup                    :: (Show a, Ord a) => Map a v -> a -> v
+> safeLookup fm a               =  fromMaybe (error ("not found: " ++ show a)) (Map.lookup a fm)
 
 > data Branch'                  =  Shift1' Symbol State
 >                               |  ReduceN' [Int]
@@ -109,30 +110,27 @@ codeEqu (_s1, b1) (_s2, b2)   =  branch' b1 == branch' b2
 The data type of nonterminals (this type is only required if we
 generate monomorphic type signatures).
 
->     decls                     =  (if sigFlag then
->                                       [ TypeDecl parser_type ([x_tcon] <->> 
+>     decls                     =  guard sigFlag *>
+>                                  [ TypeDecl parser_type
+>                                    ([x_tcon] <->>
 >                                             result_tcon <$> [if Signature False `elem` opts then nonterminal_tcon else t_var])
->                                       , Empty ]
->                                       ++ (if Signature False `elem` opts then
+>                                  , Empty ] ++
+>                                  (guard (Signature False `elem` opts) *>
 >                                               [ DataDecl nonterminal_tcon
 >                                                   [ (unCon (ntName n), typesOf n) | (n, _) <- entries ] 
->                                               , Empty ]
->                                           else
->                                               [])
->                                   else
->                                       [])
+>                                   , Empty ])
 
 The parsers for the start symbols.
 
 >                               ++ [ funbind (globalNTName n <$> case m_lexName of { Nothing -> [tr_var]; _ -> [] })
 >                                       (if Signature False `elem` opts then
->                                            (next_n s [Fun (genVars n ++ [anon]) 
->                                                           (hsReturn <$> [ntName n <$> genVars n])]) <>>=>
+>                                            next_n s [Fun (genVars n ++ [anon])
+>                                                          (hsReturn <$> [ntName n <$> genVars n])] <>>=>
 >                                                 Fun [ntName n <$> genVars n]
 >                                                     (hsReturn <$> [Tuple (genVars n)])
 >                                        else
->                                            (next_n s [Fun (genVars n ++ [anon]) 
->                                                           (hsReturn <$> [Tuple (genVars n)])]))
+>                                            next_n s [Fun (genVars n ++ [anon])
+>                                                          (hsReturn <$> [Tuple (genVars n)])])
 >                                  | (n, s) <- entries ]
 
 The |state_i| functions.
@@ -140,7 +138,7 @@ The |state_i| functions.
 >                               ++ concat [ Empty
 >--                                           : AComment ["state " ++ show (snumber s) ++ reportConflicts cases ++ " "]
 >                                           : genState_n s cases
->                                         | (s, cases) <- ST.toList table, not (isIdState s) ]
+>                                         | (s, cases) <- Map.toList table, not (isIdState s) ]
 >--                                         | (s, cases) <- mergeSort (map head groupedTable), not (isIdState s) ]
 
 The |reduce| functions. BUG: if a symbol is unreachable then
@@ -180,7 +178,7 @@ Options and settings.
 
 `Identity' states.
 
->     idStates                  =  ST.fromList [ (s, isId cases) | (s, cases) <- ST.toList table ]
+>     idStates                  =  Map.fromList [ (s, isId cases) | (s, cases) <- Map.toList table ]
 >     isIdState s               =  optimize && safeLookup idStates s
 >     isId (ReduceN as)         =  equal (map pnumber as) && stack (head as) /= Nil
 >     isId _                    =  False
@@ -191,8 +189,8 @@ are predict items).
 `Code-identical' states. TODO: consider also lookahead information.
 TODO: order continuation arguments by `|iinput|'.
 
->     groupedTable              =  groupBy codeEqu (mergeSortBy codeLeq (ST.toList table))
->     codeEquState              =  ST.fromList [ (s, fst (head g)) | g <- groupedTable, (s, _) <- g ]
+>     groupedTable              =  groupBy codeEqu (mergeSortBy codeLeq (Map.toList table))
+>     codeEquState              =  Map.fromList [ (s, fst (head g)) | g <- groupedTable, (s, _) <- g ]
 
 >     state_n s ks
 >       | isIdState s           =  head ks
@@ -230,7 +228,7 @@ Generate code.
 >         itemsOf v             =  [ item | item@(Item i n l (v' : r) a) <- LR0.toList (items s), v' == v ]
 >
 >         kernel i
->             | i `Set.elem` q  =  k_var i
+>             | i `elem` q  =  k_var i
 >             | otherwise       =  reduce_var (inumber i) <$> [goto_var (ilhs i)]
 >
 >         kernel' a

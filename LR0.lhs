@@ -32,16 +32,18 @@
 >                               ,   lr0automaton, State(..), Edge, GotoTable
 >                               ,  Future(..), fromList, union, unionMany, prune
 >                               ,  lr0info, Action(..), Table, isErrCorr
->                               ,  backtrack, goto'  )
+>                               ,  backtrack, goto', fixedpoint  )
 > where
 > import Grammar
-> import qualified OrdUniqListSet as Set
-> import OrdUniqListSet         (  Set, set, list, fixedpoint  )
-> import qualified OrdUniqListFM as FM
-> import OrdUniqListFM          (  FM  )
-> import qualified SearchTree as BST
+> import Control.Monad (join)
+> import Data.Foldable (find, length)
+> import qualified Data.Set as Set
+> import Data.Set         (  Set  )
+> import qualified Data.Map as Map
+> import Data.Map          (  Map  )
+> import qualified Data.Map as Map
 > import Prettier               hiding (  concat, empty  )
-> import Haskell
+> import Haskell                hiding (  (<$>)  )
 > import Future                 hiding (  lookup  )
 > import Base                   hiding (  list  )
 > import qualified Base
@@ -92,7 +94,7 @@ Since the kernel items determine the predict items we only compare the
 kernel items.
 
 > toList                        :: Items -> [Item]
-> toList (q :\/ q')             =  list (q `Set.union` q')
+> toList (q :\/ q')             =  Set.toList (q `Set.union` q')
 >
 > null                          :: Items -> Bool
 > null (q :\/ _)                =  Set.null q
@@ -133,8 +135,8 @@ Calculation of the LR(0) automaton.
 
 TODO: pretty print not reachable nts.
 
->                                     verb ("  " ++ show (Set.length reachable) ++ " reachable nonterminals (not reachable: " ++
->                                           show (Set.minus (set (nonterminals g)) reachable) ++ ")")
+>                                     verb ("  " ++ show (length reachable) ++ " reachable nonterminals (not reachable: " ++
+>                                           show (Set.difference (Set.fromList (nonterminals g)) reachable) ++ ")")
 >                                     return (states, initials, gotoTable, reachable)
 >     where
 >     verb                      =  verbose opts
@@ -144,31 +146,31 @@ TODO: pretty print not reachable nts.
 >
 >     predict                   :: Set Item -> Set Item
 >     predict q0                =  fixedpoint step (step q0)
->         where step q          =  set [  item p
->                                      |  Item _ _ _ (v : _) _ <- list q
+>         where step q          =  Set.fromList [  item p
+>                                      |  Item _ _ _ (v : _) _ <- Set.toList q
 >                                      ,  nonterminal v
 >                                      ,  p <- productionsOf g v ]
 >
->     goto                      :: Items -> FM Symbol Items
+>     goto                      :: Items -> Map Symbol Items
 >     goto q                    =  fmap closure $
->                                  FM.fromList_C Set.union
+>                                  Map.fromListWith Set.union
 >                                  [  (v, Set.singleton (Item i n (l :> v) r a))
 >                                  |  Item i n l (v : r) a <- toList q ]
 
 Each start symbol gives rise to an initial item set.
 
 >     starts                    =  [ (t, q0 t) | t <- startSymbols g ] --nonterminals g, isStart t ]
->         where q0 s            =  closure $ set [ item r | r <- productions g, rlhs r == s]
+>         where q0 s            =  closure $ Set.fromList [ item r | r <- productions g, rlhs r == s]
 >
->     itemSets                  =  fixedpoint step (set (map snd starts))
->         where step qs         =  set [ q'
->                                      | q <- list qs
->                                      , (_, q') <- FM.toList (goto q) ]
+>     itemSets                  =  fixedpoint step (Set.fromList (map snd starts))
+>         where step qs         =  Set.fromList [ q'
+>                                      | q <- Set.toList qs
+>                                      , (_, q') <- Map.toList (goto q) ]
 
 For reasons of effiency and convenience we number the states.
 
 >     fm                        =  [ (q, State n q)
->                                  | (q, n) <- zip (list itemSets) [1 ..] ]
+>                                  | (q, n) <- zip (Set.toList itemSets) [1 ..] ]
 >
 >     states                    =  map snd fm
 >
@@ -176,7 +178,7 @@ For reasons of effiency and convenience we number the states.
 >
 >     gotoTable                 =  [ (n, v, safeLookup q')
 >                                  | (q, n) <- fm
->                                  , (v, q') <- FM.toList (goto q)
+>                                  , (v, q') <- Map.toList (goto q)
 >                                  , not (null q') ] -- we don't list error transitions
 
 >     safeLookup a              =  case lookup a fm of
@@ -186,7 +188,7 @@ For reasons of effiency and convenience we number the states.
 Determine reachable nonterminals. NB We should use a binary search
 tree instead of an ordered list here:
 
->     reachable                 =  set [ v | s <- states, Item _ v _ [] _ <- toList (items s) ]
+>     reachable                 =  Set.fromList [ v | s <- states, Item _ v _ [] _ <- toList (items s) ]
 
 %-------------------------------=  --------------------------------------------
 \section{Shift and reduce table}
@@ -265,16 +267,24 @@ productions such as |Start# : Start, EOF;|.
 > backtrack gotoTable = go where
 >     go Nil s       = [(Nil, s)]
 >     go (vs :> v) s = [(st :> (s', v, s), x)
->                      | s' <- Set.list (invGoto v s)
+>                      | s' <- Set.toList (invGoto v s)
 >                      , (st, x) <- go vs s' ]
 >
->     invGoto v s' = applyWithDefault (FM.lookup fm) Set.empty (v, s')
->     fm = FM.fromList_C Set.union
+>     invGoto v s' = applyWithDefault (flip Map.lookup fm) Set.empty (v, s')
+>     fm = Map.fromListWith Set.union
 >          [ ((vi, si'), Set.singleton si) | (si, vi, si') <- gotoTable ]
 > {-# INLINE backtrack #-}
 >
 > goto' :: (Ord a, Ord b) => [(a, b, State)] -> a -> b -> State
 > goto' gotoTable = go where
->   go s v = applyWithDefault (FM.lookup fm) errorState (s, v)
->   fm = FM.fromList [ ((si, vi), si') | (si, vi, si') <- gotoTable ]
+>   go s v = applyWithDefault (flip Map.lookup fm) errorState (s, v)
+>   fm = Map.fromList [ ((si, vi), si') | (si, vi, si') <- gotoTable ]
 > {-# INLINE goto' #-}
+
+> fixedpoint                    :: Ord a => (Set a -> Set a) -> (Set a -> Set a)
+> fixedpoint f s                =  iterate s s
+>     where
+>     iterate n a
+>         | Set.null n'         =  a
+>         | otherwise           =  iterate n' (a `Set.union` n')
+>         where n'              =  f n `Set.difference` a

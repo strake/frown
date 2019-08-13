@@ -52,7 +52,7 @@ Compile me with
 > import Options
 > import Prettier               hiding (  string, concat  )
 > import qualified Prettier as PP
-> import qualified SearchTree as ST
+> import qualified Data.Map as Map
 > import Control.Applicative
 > import Control.Monad                  (  when  )
 > import System.Directory
@@ -194,7 +194,7 @@ Should go to |Pretty|.
 >        debugBranchTable <- debug "branch logic" (
 >            PP.concat [ header ("State " ++ show (snumber s))
 >                        <> pretty branch <> nl <> nl
->                      | (s, branch) <- ST.toList branchTable ])
+>                      | (s, branch) <- Map.toList branchTable ])
 >
 >        prg <- if Code GVStack `elem` opts then
 >                   GVStack.generate opts g initials gotoTable branchTable -- optkActionTable

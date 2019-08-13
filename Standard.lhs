@@ -42,8 +42,8 @@
 > import LR0                   hiding (  fromList  )
 > import Lookahead
 > import Case
-> import qualified OrdUniqListSet as Set
-> import qualified SearchTree as ST
+> import qualified Data.Set as Set
+> import qualified Data.Map as Map
 > import Options
 > import Base
 > import Generate
@@ -132,7 +132,7 @@ monadic lexer we don't know the type (for instance, `|Lex a|' or
 `|Lex m a|' which requires a constraint on `|m|').
 
 >                                           ++ genParse_n s cases
->                                         | (s, cases) <- ST.toList table ]
+>                                         | (s, cases) <- Map.toList table ]
 
 The |impossible| function (final failure).
 
