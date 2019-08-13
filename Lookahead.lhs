@@ -167,7 +167,7 @@ ahead information.
 >
 >       step f e@(_, _, s)      =  Set.singleton e `Set.union`
 >                                  Set.unions [ f (s, v, goto' gotoTable s v)
->                                                | Item _ _ _ (v : _) _ <- toList (items s)
+>                                                | Item _ _ _ (v : _) _ <- itemsToList (items s)
 >                                                , nullable [v] ]
 > -}
 >     ereachable                =  fixedpoint gotoTable step start
@@ -176,7 +176,7 @@ ahead information.
 >
 >       step f e@(_, _, s)      =  Set.singleton e `Set.union`
 >                                  Set.unions [ f (s, v, goto' gotoTable s v)
->                                                | Item _ _ _ (v : _) _ <- toList (items s)
+>                                                | Item _ _ _ (v : _) _ <- itemsToList (items s)
 >                                                , nullable [v] ]
 >
 >     reachable                 =  fixedpoint gotoTable step start
@@ -185,7 +185,7 @@ ahead information.
 >
 >       step f e@(s0, _, s)     =  ereachable e `Set.union`
 >                                  Set.unions [ f (s', v, s'')
->                                                | Item _ v (l :> _) r _ <- toList (items s)
+>                                                | Item _ v (l :> _) r _ <- itemsToList (items s)
 >                                                , nullable r
 >                                                , s' <- snd <$> backtrack gotoTable l s0
 >                                                , let s'' = goto' gotoTable s' v
@@ -197,10 +197,10 @@ ahead information.
 >
 >       step f e@(s0, _, s)     =  Set.singleton e `Set.union`
 >                                  Set.unions [ f (s, v, goto' gotoTable s v)
->                                                | Item _ _ (_ :> _) (v : _) _ <- toList (items s)
+>                                                | Item _ _ (_ :> _) (v : _) _ <- itemsToList (items s)
 >                                                , nullable [v] ] `Set.union`
 >                                  Set.unions [ f (s', v, s'')
->                                                | Item _ v (l :> _) [] _ <- toList (items s)
+>                                                | Item _ v (l :> _) [] _ <- itemsToList (items s)
 >                                                , s' <- snd <$> backtrack gotoTable l s0
 >                                                , let s'' = goto' gotoTable s' v
 >                                                , s'' /= errorState ]

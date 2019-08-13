@@ -38,6 +38,7 @@
 > import Prettier
 > import Control.Applicative
 > import Control.Monad                  (  MonadPlus(..)  )
+> import Data.Foldable                  (  toList  )
 > import System.IO
 > import System.Exit
 
@@ -115,10 +116,7 @@ Required?
 A simple exception monad.
 
 > data Result a                 =  Fail String | Return a
-
-> instance Functor Result where
->     f `fmap` Return x         = Return (f x)
->     f `fmap` Fail xs          = Fail xs
+>   deriving (Functor)
 
 > instance Applicative Result where
 >     pure                      = Return
@@ -147,17 +145,10 @@ A simple exception monad.
 
 > infixl 5 :>
 > data RevList a                =  Nil | RevList a :> a
->                                  deriving (Show, Eq, Ord)
+>                                  deriving (Show, Eq, Ord, Functor, Foldable, Traversable)
 >
 > instance (Pretty a) => Pretty (RevList a) where
->     prettyPrec _ as           =  prettyList (list as)
->
-> instance Functor RevList where
->     fmap _f Nil               =  Nil
->     fmap f  (x :> a)          =  fmap f x :> f a
->
-> list                          :: RevList a -> List a
-> list x                        =  shunt x []
+>     prettyPrec _ as           =  prettyList (toList as)
 >
 > revList                       :: List a -> RevList a
 > revList                       =  revShunt Nil
@@ -168,10 +159,6 @@ A simple exception monad.
 >
 > revShunt                      :: RevList a -> List a -> RevList a
 > revShunt                      =  foldl (:>)
->
-> revLength                     :: RevList a -> Int
-> revLength Nil                 =  0
-> revLength (x :> _a)           =  revLength x + 1
 >
 > isSuffix                      :: (Eq a) => RevList a -> RevList a -> Bool
 > Nil `isSuffix` _y             =  True

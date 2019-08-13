@@ -49,7 +49,7 @@
 > import Generate
 > import MergeSort
 > import Data.Char
-> import Data.Foldable          (  foldMap  )
+> import Data.Foldable          (  foldMap, toList  )
 > import Data.Maybe
 > import Data.Monoid
 > import System.IO
@@ -91,7 +91,7 @@ codeEqu (_s1, b1) (_s2, b2)   =  branch' b1 == branch' b2
 > codeLeq (s1, _b1) (s2, _b2) =  rests s1 <= rests s2
 > codeEqu (s1, _b1) (s2, _b2) =  rests s1 == rests s2
 
-> rests s                     =  mergeSort (map iinput (toList (items s)))
+> rests s                     =  mergeSort (map iinput (itemsToList (items s)))
 
 %-------------------------------=  --------------------------------------------
 \subsection{Generate Haskell code}
@@ -225,7 +225,7 @@ Generate code.
 >                                                               genExpr (head bs) [])])
 >         genBody _             =  impossible "Stackless.genBody"
 >
->         itemsOf v             =  [ item | item@(Item i n l (v' : r) a) <- LR0.toList (items s), v' == v ]
+>         itemsOf v             =  [ item | item@(Item i n l (v' : r) a) <- itemsToList (items s), v' == v ]
 >
 >         kernel i
 >             | i `elem` q  =  k_var i
@@ -291,8 +291,8 @@ Names.
 >--     notpossible ts            =  impossible_var <$> [ts]
 
 >     state_var s               =  wrap_var ("state_" ++ smangle s)
->     k_var i                   =  wrap_var ("k_" ++ imangle i ++ "_" ++ show (length (list (istack i))))
->     k_var' a                  =  wrap_var ("k_" ++ show (pnumber a) ++ "_" ++ show (length (list (stack a))))
+>     k_var i                   =  wrap_var ("k_" ++ imangle i ++ "_" ++ show (length (toList (istack i))))
+>     k_var' a                  =  wrap_var ("k_" ++ show (pnumber a) ++ "_" ++ show (length (toList (stack a))))
 >     goto_var v                =  wrap_var ("goto_" ++ vmangle 1 v)
 >     reduce_var i              =  wrap_var ("reduce_" ++ show i)
 >     ts_var                    =  wrap_var "ts"

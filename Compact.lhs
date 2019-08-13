@@ -34,6 +34,7 @@
 
 > module Compact                (  generate  )
 > where
+> import Data.Foldable          (  toList  )
 > import Control.Monad          (  guard  )
 > import Atom
 > import Haskell                hiding (  guard  )
@@ -394,7 +395,7 @@ Stack constructors.
 Collapse reductions.
 
 >     collapse rs               =  map (fst . head) gs
->         where char r          =  (r, [ stateless s | (s, _, _) <- list (stack r) ])
+>         where char r          =  (r, [ stateless s | (s, _, _) <- toList (stack r) ])
 >               gs              =  groupBy equ2 (mergeSortBy leq2 (map char rs))
 
 Possibly use GHC extensions, that is, unboxed types.

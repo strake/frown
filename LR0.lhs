@@ -28,12 +28,13 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-> module LR0                    (  Item(..), Items(..), toList
+> module LR0                    (  Item(..), Items(..), itemsToList
 >                               ,   lr0automaton, State(..), Edge, GotoTable
 >                               ,  Future(..), fromList, union, unionMany, prune
 >                               ,  lr0info, Action(..), Table, isErrCorr
 >                               ,  backtrack, goto', fixedpoint  )
 > where
+> import Data.Foldable (toList)
 > import Grammar
 > import Control.Monad (join)
 > import Data.Foldable (find, length)
@@ -45,8 +46,7 @@
 > import Prettier               hiding (  concat, empty  )
 > import Haskell                hiding (  (<$>)  )
 > import Future                 hiding (  lookup  )
-> import Base                   hiding (  list  )
-> import qualified Base
+> import Base
 > import Prelude                hiding (  null, (<>)  )
 > import System.IO
 > import Options
@@ -93,8 +93,8 @@ empty productions are classified as predict items.
 Since the kernel items determine the predict items we only compare the
 kernel items.
 
-> toList                        :: Items -> [Item]
-> toList (q :\/ q')             =  Set.toList (q `Set.union` q')
+> itemsToList                   :: Items -> [Item]
+> itemsToList (q :\/ q')        =  Set.toList (q `Set.union` q')
 >
 > null                          :: Items -> Bool
 > null (q :\/ _)                =  Set.null q
@@ -155,7 +155,7 @@ TODO: pretty print not reachable nts.
 >     goto q                    =  fmap closure $
 >                                  Map.fromListWith Set.union
 >                                  [  (v, Set.singleton (Item i n (l :> v) r a))
->                                  |  Item i n l (v : r) a <- toList q ]
+>                                  |  Item i n l (v : r) a <- itemsToList q ]
 
 Each start symbol gives rise to an initial item set.
 
@@ -188,7 +188,7 @@ For reasons of effiency and convenience we number the states.
 Determine reachable nonterminals. NB We should use a binary search
 tree instead of an ordered list here:
 
->     reachable                 =  Set.fromList [ v | s <- states, Item _ v _ [] _ <- toList (items s) ]
+>     reachable                 =  Set.fromList [ v | s <- states, Item _ v _ [] _ <- itemsToList (items s) ]
 
 %-------------------------------=  --------------------------------------------
 \section{Shift and reduce table}
@@ -230,7 +230,7 @@ ordered by |pnumber|).
 >     prettyPrec d (Reduce st e f a i)
 >                               =  condParens (d > 9)
 >                               $  block 4 (string ("reduce by " ++ show i ++ ":")
->                                           </> intersperse nl (map pretty (Base.list st))
+>                                           </> intersperse nl (pretty <$> toList st)
 >                                           </> string "=>" <+> pretty e
 >                                           </> prettyPrec 10 f
 >                                           </> prettyPrec 10 a)
@@ -253,7 +253,7 @@ ordered by |pnumber|).
 >
 >     reduceTable               =  [ Reduce st (s', v, goto' gotoTable s' v) (fromList []) p i
 >                                  | n <- states
->                                  , Item i v l [] p <- toList (items n)
+>                                  , Item i v l [] p <- itemsToList (items n)
 >                                  , (st, s') <- backtrack gotoTable l n ]
 >
 
