@@ -31,7 +31,8 @@
 > module LR0                    (  Item(..), Items(..), toList
 >                               ,   lr0automaton, State(..), Edge, GotoTable
 >                               ,  Future(..), fromList, union, unionMany, prune
->                               ,  lr0info, Action(..), Table, isErrCorr  )
+>                               ,  lr0info, Action(..), Table, isErrCorr
+>                               ,  backtrack, goto'  )
 > where
 > import Grammar
 > import qualified OrdUniqListSet as Set
@@ -248,25 +249,32 @@ ordered by |pnumber|).
 >                                  | e@(_, t, _) <- gotoTable
 >                                  , terminal t ]
 >
->     reduceTable               =  [ Reduce st (s', v, goto s' v) (fromList []) p i
+>     reduceTable               =  [ Reduce st (s', v, goto' gotoTable s' v) (fromList []) p i
 >                                  | n <- states
 >                                  , Item i v l [] p <- toList (items n)
->                                  , (st, s') <- backtrack l n ]
+>                                  , (st, s') <- backtrack gotoTable l n ]
 >
->     backtrack Nil s           =  [ (Nil, s) ]
->     backtrack (vs :> v) s     =  [ (st :> (s', v, s), x)
->                                  | s' <- list (invGoto v s)
->                                  , (st, x) <- backtrack vs s' ]
->
->     goto s v                  =  applyWithDefault (BST.lookup fm) errorState (s, v)
->       where fm                =  BST.fromList [ ((si, vi), si') | (si, vi, si') <- gotoTable ]
->
->     invGoto v s'              =  applyWithDefault (BST.lookup fm) Set.empty (v, s')
->       where fm                =  BST.fromList_C Set.union
->                                      [ ((vi, si'), Set.singleton si) | (si, vi, si') <- gotoTable ]
 
 State |0| is the error or trap state and the goto state for start
 productions such as |Start# : Start, EOF;|.
 
 > errorState                    :: State
 > errorState                    =  State 0 (Set.empty :\/ Set.empty)
+
+> backtrack :: (Ord a, Ord b) => [(b, a, b)] -> RevList a -> b -> [(RevList (b, a, b), b)]
+> backtrack gotoTable = go where
+>     go Nil s       = [(Nil, s)]
+>     go (vs :> v) s = [(st :> (s', v, s), x)
+>                      | s' <- Set.list (invGoto v s)
+>                      , (st, x) <- go vs s' ]
+>
+>     invGoto v s' = applyWithDefault (FM.lookup fm) Set.empty (v, s')
+>     fm = FM.fromList_C Set.union
+>          [ ((vi, si'), Set.singleton si) | (si, vi, si') <- gotoTable ]
+> {-# INLINE backtrack #-}
+>
+> goto' :: (Ord a, Ord b) => [(a, b, State)] -> a -> b -> State
+> goto' gotoTable = go where
+>   go s v = applyWithDefault (FM.lookup fm) errorState (s, v)
+>   fm = FM.fromList [ ((si, vi), si') | (si, vi, si') <- gotoTable ]
+> {-# INLINE goto' #-}

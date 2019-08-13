@@ -165,7 +165,7 @@ ahead information.
 >       start e                 =  Set.empty
 >
 >       step f e@(_, _, s)      =  Set.singleton e `Set.union`
->                                  Set.unionMany [ f (s, v, goto s v)
+>                                  Set.unionMany [ f (s, v, goto' gotoTable s v)
 >                                                | Item _ _ _ (v : _) _ <- toList (items s)
 >                                                , nullable [v] ]
 > -}
@@ -174,7 +174,7 @@ ahead information.
 >       start e                 =  Set.empty
 >
 >       step f e@(_, _, s)      =  Set.singleton e `Set.union`
->                                  Set.unionMany [ f (s, v, goto s v)
+>                                  Set.unionMany [ f (s, v, goto' gotoTable s v)
 >                                                | Item _ _ _ (v : _) _ <- toList (items s)
 >                                                , nullable [v] ]
 >
@@ -186,8 +186,8 @@ ahead information.
 >                                  Set.unionMany [ f (s', v, s'')
 >                                                | Item _ v (l :> _) r _ <- toList (items s)
 >                                                , nullable r
->                                                , s' <- backtrack l s0
->                                                , let s'' = goto s' v
+>                                                , s' <- snd <$> backtrack gotoTable l s0
+>                                                , let s'' = goto' gotoTable s' v
 >                                                , s'' /= errorState ]
 
 >     reachableWrong                 =  fixedpoint gotoTable step start --- this is an oversimplification
@@ -195,28 +195,14 @@ ahead information.
 >       start e                 =  Set.empty
 >
 >       step f e@(s0, _, s)     =  Set.singleton e `Set.union`
->                                  Set.unionMany [ f (s, v, goto s v)
+>                                  Set.unionMany [ f (s, v, goto' gotoTable s v)
 >                                                | Item _ _ (_ :> _) (v : _) _ <- toList (items s)
 >                                                , nullable [v] ] `Set.union`
 >                                  Set.unionMany [ f (s', v, s'')
 >                                                | Item _ v (l :> _) [] _ <- toList (items s)
->                                                , s' <- backtrack l s0
->                                                , let s'' = goto s' v
+>                                                , s' <- snd <$> backtrack gotoTable l s0
+>                                                , let s'' = goto' gotoTable s' v
 >                                                , s'' /= errorState ]
-
-Copied (more or less) from `LR0.lhs'.
-
->     backtrack Nil s           =  [ s ]
->     backtrack (vs :> v) s     =  [ x
->                                  | s' <- Set.list (invGoto v s)
->                                  , x <- backtrack vs s' ]
->
->     goto s v                  =  applyWithDefault (FM.lookup fm) errorState (s, v)
->       where fm                =  FM.fromList [ ((si, vi), si') | (si, vi, si') <- gotoTable ]
->
->     invGoto v s'              =  applyWithDefault (FM.lookup fm) Set.empty (v, s')
->       where fm                =  FM.fromList_C Set.union
->                                      [ ((vi, si'), Set.singleton si) | (si, vi, si') <- gotoTable ]
 
 State |0| is the error or trap state and the goto state for start
 productions such as |Start# : Start, EOF;|.
