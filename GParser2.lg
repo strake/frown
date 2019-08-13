@@ -354,9 +354,7 @@ A continuation-based state monad.
 >                                                        -> Int         -- line count
 >                                                        -> [String]    -- past k lines
 >                                                        -> m Answer) }
->
-> instance (Functor m) => Functor (Lex m) where
->     f `fmap` Lex x            = Lex (\ k -> x (k . f))
+>   deriving (Functor)
 >
 > instance (Applicative m, Monad m) => Applicative (Lex m) where
 >     pure a                    = Lex (\ k -> k a)

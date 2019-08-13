@@ -31,6 +31,8 @@
 > module Convert (convert, isNewEOF)
 > where
 
+> import Control.Monad.Trans.Writer
+> import Data.Functor.Identity
 > import qualified Lexer2 as Lex
 > import Options
 > import Grammar
@@ -41,6 +43,7 @@
 > import Atom                   hiding (  string  )
 > import Haskell                hiding (  Empty, Decl, guard, (<$>)  )
 > import Data.Maybe
+> import Data.Monoid (Alt (..))
 > import Data.List
 > import Base
 > import Prettier               hiding (  concat, intersperse  )
@@ -113,8 +116,8 @@ declares multiple |EOF| symbols we add one production for each).
 
 Add fixity information to the terminals.
 
->        let Writer fixities vs =  sequence [ termLookup t terms' >>= \ v -> return (v, a)
->                                           | Fixity a t <- decls ]
+>        let WriterT (Identity (fixities, Alt vs)) =  sequence [ termLookup t terms' >>= \ v -> return (v, a)
+>                                                              | Fixity a t <- decls ]
 >        when (not (null vs))
 >            (panic (render OneLine (string "undefined symbols: " <> prettySymbols vs <> string ".")))
 >
@@ -128,7 +131,8 @@ Converting the productions.
 >            rhs ps (_m, Nonterm (e, qs))
 >                               =  nontermLookup (e, length qs) terms'' (ps ++ nonterms'') >>= \ v -> return (v{ attributes = map Quoted qs })
 >
->            Writer userRules vs=  sequence [ do w'  <- lhs w
+>            WriterT (Identity (userRules, Alt vs)) =
+>                                  sequence [ do w'  <- lhs w
 >                                                ws' <- mapM (rhs (arguments w')) ws
 >                                                return (w', ws')
 >                                           | Production w ws <- decls ]
@@ -230,25 +234,12 @@ Expand rule schemes.
 
 Writer monad for collecting multiple error messages.
 
-> data Writer w a               =  Writer a [w]
-
-> instance Functor (Writer w) where
->     f `fmap` Writer a ss      = Writer (f a) ss
-
-> instance Applicative (Writer w) where
->     pure                      = flip Writer []
->     Writer f ss <*> Writer x ts = Writer (f x) (ss ++ ts)
-
-> instance Monad (Writer w) where
->     return a                  =  Writer a []
->     Writer a ss >>= k         =  let Writer b ss' = k a in Writer b (ss ++ ss')
-
-> write                         :: w -> Writer w ()
-> write s                       =  Writer () [s]
+> write                         :: w -> Writer (Alt [] w) ()
+> write                         =  tell . pure
 
 \begin{THIS IS A MESS!}
 
-> type XXX a                    =  Writer (Expr, Int) a
+> type XXX a                    =  Writer (Alt [] (Expr, Int)) a
 
 Looking up symbols. If |p| is a string literal, then it might be an
 abbreviation.

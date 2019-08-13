@@ -76,6 +76,7 @@ Executable              frown
   Build-Depends:        base <5
                       , containers
                       , directory
+                      , transformers
   Default-Language:     Haskell2010
   Default-Extensions:   LambdaCase
                       , MonadComprehensions
