@@ -132,6 +132,8 @@ A simple exception monad.
 >     Fail s   >>= _k           =  Fail s
 >     Return a >>= k            =  k a
 >     return                    =  Return
+
+> instance MonadFail Result where
 >     fail                      =  Fail
 
 > instance MonadPlus Result where

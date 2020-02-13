@@ -363,6 +363,8 @@ A continuation-based state monad.
 > instance (Applicative m, Monad m) => Monad (Lex m) where
 >     return                    =  pure
 >     m >>= k                   =  Lex (\ cont -> unLex m (\ a -> unLex (k a) cont))
+>
+> instance (MonadFail m) => MonadFail (Lex m) where
 >     fail s                    =  lift (fail s)
 >
 > lift                          :: (Monad m) => m a -> Lex m a

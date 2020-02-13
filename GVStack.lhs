@@ -58,7 +58,7 @@
 %-------------------------------=  --------------------------------------------
 
 > cmpLength                     :: RevList a -> RevList a -> Ordering
-> cmpLength x y                 =  compare (revLength x) (revLength y)
+> cmpLength x y                 =  compare (length x) (length y)
 
 %-------------------------------=  --------------------------------------------
 \subsection{Generate Haskell code}

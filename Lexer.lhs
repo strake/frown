@@ -47,9 +47,6 @@
 > import Base
 > import Options
 
-> instance Control.Monad.Fail.MonadFail Result where
->   fail _ = mzero
-
 A simple Haskell lexer, essentially a modification of the Prelude
 function |lex|.
 

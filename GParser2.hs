@@ -2142,6 +2142,8 @@
   instance (Monad m) => Monad (Lex m) where
       return a                  =  Lex (\ cont -> cont a)
       m >>= k                   =  Lex (\ cont -> unLex m (\ a -> unLex (k a) cont))
+
+  instance (MonadFail m) => MonadFail (Lex m) where
       fail s                    =  lift (fail s)
  
   lift                          :: (Monad m) => m a -> Lex m a
